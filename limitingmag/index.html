@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCD Limiting Magnitude Calculator</title>
+<style>
+:root {
+  --bg: #0b0f15;
+  --card: #151b25;
+  --border: #252d3a;
+  --text: #e0e6ed;
+  --muted: #7a8599;
+  --accent-mag: #58a6ff;
+  --accent-snr: #3fb950;
+  --accent-exp: #d29922;
+  --input-bg: #0b0f15;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;padding:1.5rem 1rem}
+.container{max-width:880px;margin:0 auto}
+header{text-align:center;margin-bottom:1.5rem}
+header h1{font-size:1.6rem;font-weight:600}
+header p{color:var(--muted);font-size:0.9rem}
+
+.mode-tabs{display:flex;gap:2px;background:var(--border);border-radius:10px;padding:3px;margin-bottom:1.2rem}
+.mode-tab{flex:1;padding:0.55rem 0.4rem;border:none;background:transparent;color:var(--muted);font-size:0.85rem;font-weight:500;cursor:pointer;border-radius:8px;transition:all 0.2s}
+.mode-tab:hover{color:var(--text)}
+.mode-tab.active{background:var(--card);font-weight:600}
+.mode-tab.active[data-mode="mag"]{color:var(--accent-mag)}
+.mode-tab.active[data-mode="snr"]{color:var(--accent-snr)}
+.mode-tab.active[data-mode="exp"]{color:var(--accent-exp)}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.3rem 1.5rem;margin-bottom:1rem}
+.card h2{font-size:0.9rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1rem}
+
+.result-card{text-align:center;padding:1.6rem 1.5rem;position:relative;overflow:hidden}
+.result-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+body[data-mode="mag"] .result-card{border-color:var(--accent-mag)}
+body[data-mode="mag"] .result-card::before{background:var(--accent-mag)}
+body[data-mode="mag"] .result-value{color:var(--accent-mag)}
+body[data-mode="snr"] .result-card{border-color:var(--accent-snr)}
+body[data-mode="snr"] .result-card::before{background:var(--accent-snr)}
+body[data-mode="snr"] .result-value{color:var(--accent-snr)}
+body[data-mode="exp"] .result-card{border-color:var(--accent-exp)}
+body[data-mode="exp"] .result-card::before{background:var(--accent-exp)}
+body[data-mode="exp"] .result-value{color:var(--accent-exp)}
+.result-value{font-size:3.2rem;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums;transition:color 0.2s}
+.result-label{font-size:0.95rem;color:var(--muted);margin-top:0.3rem}
+.result-error{font-size:0.9rem;color:#f85149;margin-top:0.4rem;display:none}
+
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.8rem}
+@media(max-width:700px){.grid{grid-template-columns:1fr 1fr}}
+@media(max-width:450px){.grid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column}
+.field label{font-size:0.8rem;color:var(--muted);margin-bottom:0.2rem}
+.field .unit{font-size:0.72rem;opacity:0.7}
+.field input{background:var(--input-bg);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:0.5rem 0.6rem;font-size:0.95rem;outline:none;transition:border-color 0.2s;width:100%}
+.field input:focus{border-color:var(--accent-mag)}
+body[data-mode="snr"] .field input:focus{border-color:var(--accent-snr)}
+body[data-mode="exp"] .field input:focus{border-color:var(--accent-exp)}
+
+.mode-field{display:none}
+.mode-field.visible{display:flex}
+
+.mode-hint{font-size:0.78rem;color:var(--muted);margin-bottom:0.8rem;font-style:italic}
+
+.noise-bar{display:flex;height:22px;border-radius:6px;overflow:hidden;background:var(--bg);margin-bottom:0.5rem}
+.noise-bar>div{transition:width 0.3s;min-width:0}
+.nb-src{background:#58a6ff}
+.nb-sky{background:#bc8cff}
+.nb-dark{background:#d29922}
+.nb-read{background:#f85149}
+.noise-legend{display:flex;gap:0.8rem;flex-wrap:wrap;font-size:0.75rem;color:var(--muted)}
+.noise-legend span::before{content:'';display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:middle}
+.nl-src::before{background:#58a6ff}
+.nl-sky::before{background:#bc8cff}
+.nl-dark::before{background:#d29922}
+.nl-read::before{background:#f85149}
+
+.details-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;margin-top:1rem}
+@media(max-width:600px){.details-grid{grid-template-columns:1fr 1fr}}
+.detail-item{background:var(--bg);border-radius:6px;padding:0.55rem;text-align:center}
+.detail-item .val{font-size:0.95rem;font-weight:600;font-variant-numeric:tabular-nums}
+.detail-item .lbl{font-size:0.7rem;color:var(--muted);margin-top:0.1rem}
+
+.formula{font-size:0.78rem;color:var(--muted);font-family:'SF Mono',Consolas,monospace;line-height:1.8;padding:0.5rem;background:var(--bg);border-radius:6px}
+
+footer{text-align:center;color:var(--muted);font-size:0.75rem;margin-top:1.5rem}
+</style>
+</head>
+<body data-mode="mag">
+<div class="container">
+  <header>
+    <h1>CCD Limiting Magnitude Calculator</h1>
+    <p>Three-mode CCD imaging detection limit calculator</p>
+  </header>
+
+  <div class="mode-tabs">
+    <button class="mode-tab active" data-mode="mag" onclick="setMode('mag')">Find Limiting Mag</button>
+    <button class="mode-tab" data-mode="snr" onclick="setMode('snr')">Find SNR</button>
+    <button class="mode-tab" data-mode="exp" onclick="setMode('exp')">Find Exposure</button>
+  </div>
+
+  <div class="card result-card">
+    <div class="result-value" id="result-value">--</div>
+    <div class="result-label" id="result-label">Limiting Magnitude (mag)</div>
+    <div class="result-error" id="result-error">No valid solution for these parameters</div>
+  </div>
+
+  <div class="card">
+    <h2>Exposure &amp; Detection</h2>
+    <div class="mode-hint" id="mode-hint">Input exposure, frames, and SNR below</div>
+    <div class="grid">
+      <div class="field mode-field visible" id="field-singletime">
+        <label>Single Exposure <span class="unit">(seconds)</span></label>
+        <input type="number" id="singletime" value="10" step="any" min="0.001">
+      </div>
+      <div class="field mode-field visible" id="field-frames">
+        <label>Number of Frames</label>
+        <input type="number" id="frames" value="10" step="1" min="1">
+      </div>
+      <div class="field mode-field visible" id="field-snr">
+        <label>Detection SNR <span class="unit">(&sigma;)</span></label>
+        <input type="number" id="snr" value="4" step="any" min="0.1">
+      </div>
+      <div class="field mode-field" id="field-limitmag">
+        <label>Target Magnitude <span class="unit">(mag)</span></label>
+        <input type="number" id="limitmag" value="18" step="any">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Sky &amp; Telescope</h2>
+    <div class="grid">
+      <div class="field">
+        <label>Sky Brightness <span class="unit">(mag/arcsec&sup2;)</span></label>
+        <input type="number" id="skymag" value="20.0" step="any">
+      </div>
+      <div class="field">
+        <label>Aperture <span class="unit">(m)</span></label>
+        <input type="number" id="aperture" value="0.3" step="any" min="0.01">
+      </div>
+      <div class="field">
+        <label>Focal Ratio <span class="unit">(f/N)</span></label>
+        <input type="number" id="fn" value="5" step="any" min="0.5">
+      </div>
+      <div class="field">
+        <label>Seeing FWHM <span class="unit">(arcsec)</span></label>
+        <input type="number" id="seeing" value="5.0" step="any" min="0.1">
+      </div>
+      <div class="field">
+        <label>Elevation <span class="unit">(degrees)</span></label>
+        <input type="number" id="elev" value="40" step="any" min="5" max="90">
+      </div>
+      <div class="field">
+        <label>Throughput <span class="unit">(QE &times; Trans)</span></label>
+        <input type="number" id="qbase" value="0.8" step="any" min="0.01" max="1">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Camera</h2>
+    <div class="grid">
+      <div class="field">
+        <label>Pixel Size <span class="unit">(&micro;m)</span></label>
+        <input type="number" id="campix" value="3.76" step="any" min="0.1">
+      </div>
+      <div class="field">
+        <label>Dark Current <span class="unit">(e&minus;/s/pix)</span></label>
+        <input type="number" id="dc" value="0.1" step="any" min="0">
+      </div>
+      <div class="field">
+        <label>Read Noise <span class="unit">(e&minus;/pix/frame)</span></label>
+        <input type="number" id="readnoise" value="3" step="any" min="0">
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="diag-card" style="display:none">
+    <h2>Noise Budget</h2>
+    <div class="noise-bar" id="noise-bar"></div>
+    <div class="noise-legend" id="noise-legend"></div>
+    <div class="details-grid" id="details-grid"></div>
+  </div>
+
+  <div class="card">
+    <h2>Formula</h2>
+    <div class="formula">
+      SNR = Source / &radic;(Source + Sky + Dark + RN)<br>
+      Source&sup2; &minus; SNR&sup2;&middot;Source &minus; SNR&sup2;&middot;(Sky+Dark+RN) = 0<br>
+      Source = 10<sup>&minus;0.4m</sup>&middot;F<sub>0</sub>&middot;A&middot;t&middot;Q
+      &ensp;|&ensp; F<sub>0</sub> &asymp; 10<sup>10</sup> ph/m&sup2;/s (V-band)
+    </div>
+  </div>
+
+  <footer>CCD Limiting Magnitude Calculator</footer>
+</div>
+
+<script>
+let currentMode = 'mag';
+let lastCalc = {};
+
+const modeInputs = {
+  mag: ['singletime','frames','snr'],
+  snr: ['singletime','frames','limitmag'],
+  exp: ['frames','snr','limitmag']
+};
+const modeInfo = {
+  mag: {label:'Limiting Magnitude (mag)', hint:'Input exposure, frames, and SNR below', dec:2},
+  snr: {label:'Signal-to-Noise Ratio (\u03c3)',  hint:'Input exposure, frames, and target magnitude below', dec:1},
+  exp: {label:'Single Exposure Time (seconds)',   hint:'Input frames, SNR, and target magnitude below', dec:2}
+};
+const allFields = ['singletime','frames','snr','limitmag'];
+
+function setMode(mode) {
+  // Carry result forward as input for new mode
+  if (lastCalc.mag != null && mode !== 'mag')
+    document.getElementById('limitmag').value = lastCalc.mag.toFixed(2);
+  if (lastCalc.snr != null && mode !== 'snr')
+    document.getElementById('snr').value = +lastCalc.snr.toFixed(2);
+  if (lastCalc.exp != null && mode !== 'exp')
+    document.getElementById('singletime').value = +lastCalc.exp.toFixed(2);
+
+  currentMode = mode;
+  document.body.dataset.mode = mode;
+
+  document.querySelectorAll('.mode-tab').forEach(t =>
+    t.classList.toggle('active', t.dataset.mode === mode));
+
+  allFields.forEach(f =>
+    document.getElementById('field-'+f).classList.toggle('visible', modeInputs[mode].includes(f)));
+
+  document.getElementById('result-label').textContent = modeInfo[mode].label;
+  document.getElementById('mode-hint').textContent = modeInfo[mode].hint;
+  calculate();
+}
+
+function v(id) { return parseFloat(document.getElementById(id).value); }
+
+function commonParams() {
+  const skymag=v('skymag'), aperture=v('aperture'), fn=v('fn'), seeing=v('seeing'),
+        elev=v('elev'), qbase=v('qbase'), campix=v('campix'), dc=v('dc'), rn=v('readnoise');
+  if ([skymag,aperture,fn,seeing,elev,qbase,campix,dc,rn].some(isNaN)) return null;
+
+  const m0=0, ref=1e10;
+  const Q = qbase / (2 / Math.cos((90-elev)*Math.PI/180));
+  const Aarea = Math.PI*aperture*aperture/4;
+  const pixscale = (campix/(1e6*aperture*fn))/Math.PI*648000;
+  const psfpix = seeing/pixscale;
+  const npix = Math.PI*psfpix*psfpix/4;
+  const psfarea = pixscale*pixscale*npix;
+  return {m0,ref,Q,Aarea,pixscale,psfpix,npix,psfarea,skymag,dc,rn,aperture,fn,seeing,elev,qbase,campix};
+}
+
+/* ── Mode 1: find limiting magnitude ── */
+function calcMag(p, singletime, frames, SNR) {
+  const time = singletime*frames;
+  const Readout = p.rn*frames;
+  const Sky  = Math.pow(10,-0.4*(p.skymag-p.m0))*p.ref*p.psfarea*p.Aarea*time*p.Q;
+  const Dark = p.dc*time*p.npix;
+  const RN   = Readout*Readout*p.npix;
+  const A0   = p.ref*p.Aarea*time*p.Q;
+
+  const a = (A0/SNR)*(A0/SNR), b = -A0, c = -(Sky+Dark+RN);
+  const disc = b*b - 4*a*c;
+  if (disc < 0) return null;
+
+  const x = (A0 + Math.sqrt(disc))/(2*a);
+  const mag = Math.log10(x)/(-0.4) + p.m0;
+  const Source = x*A0;
+  return {value:mag, d:{time,Source,Sky,Dark,RN,Readout}};
+}
+
+/* ── Mode 2: find SNR ── */
+function calcSNR(p, singletime, frames, mag) {
+  const time = singletime*frames;
+  const Readout = p.rn*frames;
+  const x = Math.pow(10, -0.4*(mag-p.m0));
+  const A0 = p.ref*p.Aarea*time*p.Q;
+  const Source = x*A0;
+  const Sky  = Math.pow(10,-0.4*(p.skymag-p.m0))*p.ref*p.psfarea*p.Aarea*time*p.Q;
+  const Dark = p.dc*time*p.npix;
+  const RN   = Readout*Readout*p.npix;
+
+  const denom = Math.sqrt(Source+Sky+Dark+RN);
+  if (denom <= 0) return null;
+  const snr = Source/denom;
+  if (!isFinite(snr) || snr <= 0) return null;
+  return {value:snr, d:{time,Source,Sky,Dark,RN,Readout}};
+}
+
+/* ── Mode 3: find single exposure time ── */
+/*
+  SNR² = Source² / (Source + Sky + Dark + RN)
+  With Source = α·t, Sky = β·t, Dark = γ·t, RN = δ (const):
+    α²t² − SNR²(α+β+γ)t − SNR²δ = 0
+*/
+function calcExp(p, frames, SNR, mag) {
+  const Readout = p.rn*frames;
+  const x = Math.pow(10, -0.4*(mag-p.m0));
+  const K    = p.ref*p.Aarea*p.Q;          // A0 = K·time
+  const Ksky = Math.pow(10,-0.4*(p.skymag-p.m0))*p.ref*p.psfarea*p.Aarea*p.Q;
+  const alpha = x*K;
+  const beta  = Ksky;
+  const gamma = p.dc*p.npix;
+  const delta = Readout*Readout*p.npix;
+
+  const At = alpha*alpha;
+  const Bt = -SNR*SNR*(alpha+beta+gamma);
+  const Ct = -SNR*SNR*delta;
+  const disc = Bt*Bt - 4*At*Ct;
+  if (disc < 0) return null;
+
+  const t = (-Bt + Math.sqrt(disc))/(2*At);
+  if (t <= 0 || !isFinite(t)) return null;
+  const singletime = t/frames;
+
+  const Source = alpha*t, Sky = beta*t, Dark = gamma*t, RN = delta;
+  return {value:singletime, d:{time:t,Source,Sky,Dark,RN,Readout}};
+}
+
+/* ── Main calculate ── */
+function calculate() {
+  const p = commonParams();
+  if (!p) return showError();
+  let res;
+
+  if (currentMode === 'mag') {
+    const st=v('singletime'), fr=v('frames'), snr=v('snr');
+    if ([st,fr,snr].some(x=>isNaN(x)||x<=0)) return showError();
+    res = calcMag(p, st, fr, snr);
+    if (res) lastCalc.mag = res.value;
+  } else if (currentMode === 'snr') {
+    const st=v('singletime'), fr=v('frames'), mag=v('limitmag');
+    if ([st,fr].some(x=>isNaN(x)||x<=0) || isNaN(mag)) return showError();
+    res = calcSNR(p, st, fr, mag);
+    if (res) lastCalc.snr = res.value;
+  } else {
+    const fr=v('frames'), snr=v('snr'), mag=v('limitmag');
+    if ([fr,snr].some(x=>isNaN(x)||x<=0) || isNaN(mag)) return showError();
+    res = calcExp(p, fr, snr, mag);
+    if (res) lastCalc.exp = res.value;
+  }
+
+  if (!res) return showError();
+  showResult(res, p);
+}
+
+function showError() {
+  document.getElementById('result-value').textContent = '--';
+  document.getElementById('result-error').style.display = 'block';
+  document.getElementById('diag-card').style.display = 'none';
+}
+
+function showResult(res, p) {
+  const dec = modeInfo[currentMode].dec;
+  document.getElementById('result-value').textContent = res.value.toFixed(dec);
+  document.getElementById('result-error').style.display = 'none';
+  document.getElementById('diag-card').style.display = 'block';
+
+  const d = res.d;
+  const totalVar = d.Source + d.Sky + d.Dark + d.RN;
+
+  // Noise budget bar
+  const pcts = totalVar > 0
+    ? [d.Source/totalVar, d.Sky/totalVar, d.Dark/totalVar, d.RN/totalVar].map(x=>x*100)
+    : [0,0,0,0];
+  const labels = ['Source shot','Sky','Dark','Read noise'];
+  const cls = ['nb-src','nb-sky','nb-dark','nb-read'];
+  const lcls = ['nl-src','nl-sky','nl-dark','nl-read'];
+
+  document.getElementById('noise-bar').innerHTML =
+    pcts.map((w,i)=>`<div class="${cls[i]}" style="width:${w}%" title="${labels[i]}: ${w.toFixed(1)}%"></div>`).join('');
+  document.getElementById('noise-legend').innerHTML =
+    pcts.map((w,i)=>`<span class="${lcls[i]}">${labels[i]} ${w.toFixed(0)}%</span>`).join('');
+
+  // Diagnostics
+  const fmt = (n,d)=> n>=1e5 ? n.toExponential(1) : n>=100 ? Math.round(n).toLocaleString() : n.toFixed(d||1);
+  const items = [
+    {v:fmt(d.time,1)+' s',       l:'Total Exposure'},
+    {v:fmt(p.pixscale,2)+' \u2033/px', l:'Pixel Scale'},
+    {v:fmt(p.psfpix,1)+' px',    l:'PSF FWHM'},
+    {v:fmt(p.npix,1)+' px',      l:'PSF N pixels'},
+    {v:p.Q.toFixed(3),           l:'Effective Q'},
+    {v:fmt(d.Source,0)+' e\u207b',l:'Source Signal'},
+    {v:fmt(d.Sky,0)+' e\u207b',  l:'Sky Signal'},
+    {v:fmt(d.Dark,1)+' e\u207b', l:'Dark Signal'},
+    {v:fmt(d.RN,0)+' e\u207b\u00b2', l:'Read Noise Var'},
+    {v:fmt(Math.sqrt(totalVar),1)+' e\u207b', l:'Total Noise'},
+    {v:fmt(p.Aarea,4)+' m\u00b2',l:'Aperture Area'},
+    {v:fmt(p.psfarea,1)+' \u2033\u00b2',l:'PSF Sky Area'},
+  ];
+  document.getElementById('details-grid').innerHTML =
+    items.map(i=>`<div class="detail-item"><div class="val">${i.v}</div><div class="lbl">${i.l}</div></div>`).join('');
+}
+
+// Live recalculate on any input change
+document.querySelectorAll('input[type="number"]').forEach(el =>
+  el.addEventListener('input', calculate));
+
+// Init
+setMode('mag');
+</script>
+</body>
+</html>
