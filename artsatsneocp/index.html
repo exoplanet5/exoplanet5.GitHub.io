@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEOCP Artificial Satellite Catalog</title>
+  <style>
+    :root {
+      --text: #2c2c2c;
+      --muted: #666;
+      --link: #1a1a1a;
+      --link-hover: #555;
+      --border: #ddd;
+      --bg: #fafafa;
+      --table-header: #f0f0f0;
+      --row-hover: #f5f5f0;
+      --accent: #4a6741;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 80px 24px 80px;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      margin-bottom: 0.3em;
+    }
+
+    .tagline {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 1.2em;
+    }
+
+    .stats {
+      display: flex;
+      gap: 2em;
+      margin-bottom: 2em;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .stats span {
+      display: inline-block;
+    }
+
+    .stats .num {
+      color: var(--text);
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-right: 0.2em;
+    }
+
+    .section h2 {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 0.8em;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    thead th {
+      background: var(--table-header);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      padding: 8px 10px;
+      text-align: left;
+      border-bottom: 1.5px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    tbody td {
+      padding: 6px 10px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      white-space: nowrap;
+    }
+
+    tbody td:nth-child(5) {
+      white-space: normal;
+      font-size: 0.82rem;
+      max-width: 340px;
+    }
+
+    tbody tr:hover {
+      background: var(--row-hover);
+    }
+
+    tr.date-row {
+      background: none;
+    }
+
+    tr.date-row td {
+      padding: 16px 10px 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      border-bottom: 1.5px solid var(--accent);
+    }
+
+    tr.date-row:hover {
+      background: none;
+    }
+
+    a {
+      color: var(--link);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+      transition: border-color 0.2s;
+    }
+
+    a:hover {
+      border-color: var(--link-hover);
+    }
+
+    .ident-known {
+      font-weight: 600;
+    }
+
+    .ident-unknown {
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .separator {
+      width: 32px;
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 2.4em 0;
+    }
+
+    footer {
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-top: 1em;
+    }
+
+    .filter-bar {
+      margin-bottom: 1.2em;
+      display: flex;
+      gap: 0.8em;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      background: none;
+      border: 1px solid var(--border);
+      font-family: inherit;
+      font-size: 0.78rem;
+      padding: 3px 10px;
+      cursor: pointer;
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+      color: var(--text);
+      border-color: var(--text);
+    }
+
+    @media (max-width: 768px) {
+      main { padding: 40px 12px 60px; }
+      tbody td { font-size: 0.8rem; padding: 5px 6px; }
+      thead th { padding: 6px; font-size: 0.7rem; }
+      tbody td:nth-child(5) { max-width: 180px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>NEOCP Artificial Satellite Catalog</h1>
+    <p class="tagline">Tracking geocentric objects from the MPC Near-Earth Object Confirmation Page</p>
+
+    <div class="stats">
+      <span><span class="num">102</span> objects</span>
+      <span><span class="num">62</span> identified</span>
+      <span><span class="num">40</span> unidentified</span>
+    </div>
+
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterTable('all')">All</button>
+      <button class="filter-btn" onclick="filterTable('identified')">Identified</button>
+      <button class="filter-btn" onclick="filterTable('unidentified')">Unidentified</button>
+    </div>
+
+    <div class="section">
+      <table id="catalog-table">
+        <thead>
+          <tr>
+            <th>Designation</th>
+            <th>Identification</th>
+            <th>Orbit</th>
+            <th>H</th>
+            <th>Note</th>
+          </tr>
+        </thead>
+        <tbody>
+      <tr class="date-row"><td colspan="6">2026.1</td></tr>
+      <tr><td><a href="https://projectpluto.com/temp/jwst.htm" target="_blank" rel="noopener">A11xjBC</a></td><td><span class="ident-known">JWST</span></td><td></td><td>25</td><td>L2</td></tr>
+      <tr><td>A11xjKM</td><td><span class="ident-known">JWST</span></td><td></td><td></td><td></td></tr>
+      <tr><td>A11xbbR</td><td><span class="ident-known">JWST</span></td><td></td><td></td><td></td></tr>
+      <tr><td>A11x7R4</td><td><span class="ident-known">JWST</span></td><td></td><td></td><td></td></tr>
+      <tr><td>A11x7R9</td><td><span class="ident-known">JWST</span></td><td></td><td></td><td></td></tr>
+      <tr><td>A11xmhw</td><td><span class="ident-known">JWST</span></td><td></td><td></td><td></td></tr>
+      <tr><td>P22kell</td><td><span class="ident-known">JWST</span></td><td></td><td></td><td></td></tr>
+      <tr><td>A11xmZI</td><td><span class="ident-known">JWST</span></td><td></td><td></td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/P22jXrK.htm" target="_blank" rel="noopener">P22jXrK</a></td><td><span class="ident-known">Euclid</span></td><td></td><td>30</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/CE288W2.htm" target="_blank" rel="noopener">CE288W2</a></td><td><span class="ident-known">Spektr-R</span></td><td>i =81, Ω = 316, P = 8.6 day</td><td>27</td><td>i =81.6, Ω = 315.7, P = 8.97 day, H ~ 26.8  Cislunar</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/ST26A02.htm" target="_blank" rel="noopener">ST26A02</a></td><td><span class="ident-known">Spektr-R</span></td><td>i =84, Ω = 316, P = 9.0 day</td><td></td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/A11x8BK.htm" target="_blank" rel="noopener">A11x8BK</a></td><td><span class="ident-known">Spektr-R</span></td><td></td><td></td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/A11x9z4.htm" target="_blank" rel="noopener">A11x9z4</a></td><td><span class="ident-known">Spektr-R</span></td><td></td><td></td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/A11x8BM.htm" target="_blank" rel="noopener">A11x8BM</a></td><td><span class="ident-known">Spektr-R</span></td><td></td><td></td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C45LDC1.htm" target="_blank" rel="noopener">C45LDC1</a></td><td><span class="ident-known">Tiandu-1</span></td><td>i =56, Ω = 41, P = 14 day</td><td>29</td><td>i=54.05, Ω=50.00, H ~ 30.68. C45LDC1 = C45PQ51 = Tiandu-1</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/ST26A10.htm" target="_blank" rel="noopener">ST26A10</a></td><td><span class="ident-known">1969-046 deb</span></td><td>i =17, Ω = 38, P = 2.1 day</td><td>34</td><td>i=16.89, Ω=37.53, P=2.16 day, H ~ 34. C45GF81 = CCUAFG2 = 1969-046 fragment</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/ST26A33.htm" target="_blank" rel="noopener">ST26A33</a></td><td><span class="ident-unknown">?</span></td><td>i =46, Ω = 69, P = 1.4 day</td><td>35</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/A11xgv8.htm" target="_blank" rel="noopener">A11xgv8</a></td><td><span class="ident-unknown">?</span></td><td>i =70, Ω = 55, P = 4.5 day</td><td>26</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/A11xbc9.htm" target="_blank" rel="noopener">A11xbc9</a></td><td><span class="ident-known">Multijunk</span></td><td>i =17, Ω = 15, P = 2.9 day</td><td>33</td><td>C1AUGE1 = ZTF0Edd = &#x27;Multijunk&#x27;</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/A11xbcg.htm" target="_blank" rel="noopener">A11xbcg</a></td><td><span class="ident-known">Spektr-RG</span></td><td></td><td>28</td><td>L2</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/A11xjKv.htm" target="_blank" rel="noopener">A11xjKv</a></td><td><span class="ident-known">Spektr-RG</span></td><td></td><td>19</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/CE23EA2.htm" target="_blank" rel="noopener">CE23EA2</a></td><td><span class="ident-known">Spektr-RG</span></td><td></td><td>19</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/A11xpxv.htm" target="_blank" rel="noopener">A11xpxv</a></td><td><span class="ident-known">JWST</span></td><td></td><td></td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/A11xpxu.htm" target="_blank" rel="noopener">A11xpxu</a></td><td><span class="ident-known">JWST</span></td><td></td><td></td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/CE2VRF2.htm" target="_blank" rel="noopener">CE2VRF2</a></td><td><span class="ident-known">1969-046 deb</span></td><td>i =17, Ω = 38, P = 2.2 day</td><td>34</td><td>C45GF81 = CCUAFG2 = 1969-046 fragment</td></tr>
+      <tr><td>A11xpy0</td><td><span class="ident-known">Euclid</span></td><td></td><td></td><td>L2</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/A11xpxR.htm" target="_blank" rel="noopener">A11xpxR</a></td><td><span class="ident-known">Spektr-R</span></td><td>i =82, Ω = 315, P = 9.0 day</td><td>27</td><td>Cislunar</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/A11xtlq.htm" target="_blank" rel="noopener">A11xtlq</a></td><td><span class="ident-known">Spektr-R</span></td><td></td><td></td><td>Cislunar</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/A11xtrp.htm" target="_blank" rel="noopener">A11xtrp</a></td><td><span class="ident-known">Spektr-R</span></td><td></td><td></td><td>Cislunar</td></tr>
+      <tr><td>A11xtGV</td><td><span class="ident-known">Spektr-R</span></td><td></td><td></td><td>Cislunar</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/A11xtQC.htm" target="_blank" rel="noopener">A11xtQC</a></td><td><span class="ident-known">Spektr-RG</span></td><td></td><td></td><td>L2</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/TF26AA5.htm" target="_blank" rel="noopener">TF26AA5</a></td><td><span class="ident-known">1969-046 deb</span></td><td>i =17, Ω = 39, P = 2.2 day</td><td>34</td><td>i=17.08, Ω=38.58, P=2.17 day, H ~ 34. C45GF81 = CCUAFG2 = 1969-046 fragment</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/ST26A50.htm" target="_blank" rel="noopener">ST26A50</a></td><td><span class="ident-known">1969-046 deb</span></td><td>i =17, Ω = 39, P = 2.2 day</td><td>34</td><td>i=17.08, Ω=38.58, P=2.17 day, H ~ 34. C45GF81 = CCUAFG2 = 1969-046 fragment</td></tr>
+      <tr><td><a href="http://62.234.26.56/allsky/ZTF10Ai.html" target="_blank" rel="noopener">ZTF10Ai</a></td><td><span class="ident-unknown">?</span></td><td>i =50, Ω = 133, P = 3.3 day</td><td>30</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/A11xxSR.htm" target="_blank" rel="noopener">A11xxSR</a></td><td><span class="ident-unknown">?</span></td><td></td><td></td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/CE44PF2.htm" target="_blank" rel="noopener">CE44PF2</a></td><td><span class="ident-known">Spektr-R</span></td><td>i =82, Ω = 315, P = 8.9 day</td><td>27</td><td>Cislunar</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/ST26A84.htm" target="_blank" rel="noopener">ST26A84</a></td><td><span class="ident-unknown">?</span></td><td>i =47, Ω = 121, P = 3.3 day</td><td>33</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/ST26A85.htm" target="_blank" rel="noopener">ST26A85</a></td><td><span class="ident-unknown">?</span></td><td>i =48, Ω = 22, P = 1.9 day</td><td>34</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C45PQ51.htm" target="_blank" rel="noopener">C45PQ51</a></td><td><span class="ident-known">Tiandu-1</span></td><td>i =54, Ω = 50, P = 12.2 day</td><td>29</td><td>i=54.05, Ω=50.00, H ~ 30.68. C45LDC1 = C45PQ51 = Tiandu-1</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C45NTE1.htm" target="_blank" rel="noopener">C45NTE1</a></td><td><span class="ident-known">Spektr-RG</span></td><td></td><td>30</td><td>L2</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/ZTF10An.htm" target="_blank" rel="noopener">ZTF10An</a></td><td><span class="ident-unknown">?</span></td><td>i =51, Ω = 131, P = 2.4 day</td><td>30</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/ST26A97.htm" target="_blank" rel="noopener">ST26A97</a></td><td><span class="ident-unknown">?</span></td><td>i =18, Ω = 88, P = 12 day</td><td>30</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/ST26A95.htm" target="_blank" rel="noopener">ST26A95</a></td><td><span class="ident-known">Multijunk</span></td><td>i =17, Ω = 16, P = 2.9 day</td><td>33</td><td>C1AUGE1 = ZTF0Edd = &#x27;Multijunk&#x27;</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/ST26AA3.htm" target="_blank" rel="noopener">ST26AA3</a></td><td><span class="ident-unknown">?</span></td><td>i =21, Ω = 27, P = 5.5 day</td><td>34</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/ST26AB6.htm" target="_blank" rel="noopener">ST26AB6</a></td><td><span class="ident-unknown">?</span></td><td>i =46, Ω = 119, P = 2.7 day</td><td>33</td><td></td></tr>
+      <tr class="date-row"><td colspan="6">2026.2</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/ZTF10B1.htm" target="_blank" rel="noopener">ZTF10B1</a></td><td><span class="ident-known">Chang&#x27;e 6</span></td><td>i =84, Ω = 348, P = 35 day</td><td>29</td><td>Cislunar. ZTF recovery since early Jan</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C45RW61.htm" target="_blank" rel="noopener">C45RW61</a></td><td><span class="ident-known">C45RW61</span></td><td>i =31, Ω = 47, P = 4.6 day</td><td>33</td><td>i=31.36, Ω=46.63, P=4.51 day, H ~ 32. C45RW61 = C45ULG1</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/ST26B07.htm" target="_blank" rel="noopener">ST26B07</a></td><td><span class="ident-known">Multijunk</span></td><td>i =17, Ω = 16, P = 2.9 day</td><td>33</td><td>C1AUGE1 = ZTF0Edd = &#x27;Multijunk&#x27;</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C45TAW1.htm" target="_blank" rel="noopener">C45TAW1</a></td><td><span class="ident-known">Multijunk</span></td><td>i =17, Ω = 16, P = 2.9 day</td><td>33</td><td>C1AUGE1 = ZTF0Edd = &#x27;Multijunk&#x27;</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C45TCY1.htm" target="_blank" rel="noopener">C45TCY1</a></td><td><span class="ident-known">C45TCY1</span></td><td>i =35, Ω = 124, P = 1.2 day</td><td>32</td><td>C45TCY1 = ST26B45</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/ST26B21.htm" target="_blank" rel="noopener">ST26B21</a></td><td><span class="ident-known">ST26B21</span></td><td>i =31, Ω = 341, P = 3.0 day</td><td>33</td><td>i=31.48, Ω=341.01, P=2.96 day, H ~ 33. ST26B21 = ST26B30</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C45UDK1.htm" target="_blank" rel="noopener">C45UDK1</a></td><td><span class="ident-unknown">?</span></td><td>i =34, Ω = 8, P = 1.0 day</td><td>34</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C45U9G1.htm" target="_blank" rel="noopener">C45U9G1</a></td><td><span class="ident-known">Multijunk</span></td><td>i =17, Ω = 16, P = 2.9 day</td><td>33</td><td>C1AUGE1 = ZTF0Edd = &#x27;Multijunk&#x27;</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/ST26B30.htm" target="_blank" rel="noopener">ST26B30</a></td><td><span class="ident-known">ST26B21</span></td><td>i =31, Ω = 341, P = 2.9 day</td><td>34</td><td>i=31.48, Ω=341.01, P=2.96 day, H ~ 33. ST26B21 = ST26B30</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/DNA0005.htm" target="_blank" rel="noopener">DNA0005</a></td><td><span class="ident-unknown">?</span></td><td></td><td></td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/ST26B45.htm" target="_blank" rel="noopener">ST26B45</a></td><td><span class="ident-known">C45TCY1</span></td><td>i =35, Ω = 124, P = 1.2 day</td><td>33</td><td>C45TCY1 = ST26B45</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C45ULG1.htm" target="_blank" rel="noopener">C45ULG1</a></td><td><span class="ident-known">C45RW61</span></td><td>i =31, Ω = 47, P = 4.6 day</td><td>32</td><td>i=31.36, Ω=46.63, P=4.51 day, H ~ 32. C45RW61 = C45ULG1</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C45VE01.htm" target="_blank" rel="noopener">C45VE01</a></td><td><span class="ident-known">Spektr-RG</span></td><td></td><td>28</td><td>L2</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C45VEU1.htm" target="_blank" rel="noopener">C45VEU1</a></td><td><span class="ident-known">Multijunk</span></td><td>i =17, Ω = 15, P = 2.9 day</td><td>33</td><td>C1AUGE1 = ZTF0Edd = &#x27;Multijunk&#x27;</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C45VHJ1.htm" target="_blank" rel="noopener">C45VHJ1</a></td><td><span class="ident-known">C45VHJ1</span></td><td>i =18, Ω = 63, P = 1.3 day</td><td>34</td><td>i=17.5, Ω=63.4, P=1.34 day, H ~ 33.8. C45VHJ1 = C45WGK1</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/A11yweJ.htm" target="_blank" rel="noopener">A11yweJ</a></td><td><span class="ident-known">Spektr-RG</span></td><td></td><td>28</td><td>L2</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/A11yweM.htm" target="_blank" rel="noopener">A11yweM</a></td><td><span class="ident-unknown">?</span></td><td></td><td>29</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C45W3X1.htm" target="_blank" rel="noopener">C45W3X1</a></td><td><span class="ident-unknown">?</span></td><td></td><td></td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C45WE31.htm" target="_blank" rel="noopener">C45WE31</a></td><td><span class="ident-known">C45RW61</span></td><td>i =32, Ω = 47, P = 5.1 day</td><td>30</td><td>i=31.36, Ω=46.63, P=4.51 day, H ~ 32. C45RW61 = C45ULG1 = C45WE31</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C45WGK1.htm" target="_blank" rel="noopener">C45WGK1</a></td><td><span class="ident-known">C45VHJ1</span></td><td>i =18, Ω = 60, P = 1.4 day</td><td>34</td><td>i=17.5, Ω=63.4, P=1.34 day, H ~ 33.8. C45VHJ1 = C45WGK1</td></tr>
+      <tr><td>ZTF10Bi</td><td><span class="ident-unknown">?</span></td><td></td><td></td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C45WPA1.htm" target="_blank" rel="noopener">C45WPA1</a></td><td><span class="ident-known">Multijunk</span></td><td>i =17, Ω = 15, P = 2.4 day</td><td>33</td><td>C1AUGE1 = ZTF0Edd = &#x27;Multijunk&#x27;</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C45X7N1.htm" target="_blank" rel="noopener">C45X7N1</a></td><td><span class="ident-unknown">?</span></td><td>i =25, Ω = 77, P = 1.1 day</td><td>33</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/A11yJ1y.htm" target="_blank" rel="noopener">A11yJ1y</a></td><td><span class="ident-known">Spektr-RG</span></td><td></td><td>28</td><td>L2</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/A11yM8N.htm" target="_blank" rel="noopener">A11yM8N</a></td><td><span class="ident-known">Chang&#x27;e 6</span></td><td>i =84, Ω = 348, P = 34 day</td><td>29</td><td>Cislunar. ATLAS recovery since early Feb</td></tr>
+      <tr class="date-row"><td colspan="6">2026.3</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/A11yQ1b.htm" target="_blank" rel="noopener">A11yQ1b</a></td><td><span class="ident-known">Spektr-RG</span></td><td></td><td>28</td><td>L2</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/ST26C03.htm" target="_blank" rel="noopener">ST26C03</a></td><td><span class="ident-known">Multijunk</span></td><td>i =18, Ω = 12, P = 2.9 day</td><td>33</td><td>C1AUGE1 = ZTF0Edd = &#x27;Multijunk&#x27;</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C45ZGH1.htm" target="_blank" rel="noopener">C45ZGH1</a></td><td><span class="ident-unknown">?</span></td><td>i =40, Ω = 48, P = 1.2 day</td><td>33</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C45ZEM1.htm" target="_blank" rel="noopener">C45ZEM1</a></td><td><span class="ident-unknown">?</span></td><td>i =18, Ω = 56, P = 1.3 day</td><td>34</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C45ZJD1.htm" target="_blank" rel="noopener">C45ZJD1</a></td><td><span class="ident-known">C45ZJD1</span></td><td>i =66, Ω = 75, P = 4.5 day</td><td>32</td><td>i=66.31, Ω=74.50, P=4.48 day, H ~ 32.05, AMR=0.17 m²/kg. C45ZJD1 = C461WL1 = C463MD1</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/ST26C26.htm" target="_blank" rel="noopener">ST26C26</a></td><td><span class="ident-unknown">?</span></td><td>i =36, Ω = 45, P = 1.6 day</td><td>34</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/ST26C20.htm" target="_blank" rel="noopener">ST26C20</a></td><td><span class="ident-unknown">?</span></td><td>i =30, Ω = 15, P = 4.7 day</td><td>34</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C460EE1.htm" target="_blank" rel="noopener">C460EE1</a></td><td><span class="ident-unknown">?</span></td><td>i =22, Ω = 30, P = 1.2 day</td><td>34</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/ZTF10CH.htm" target="_blank" rel="noopener">ZTF10CH</a></td><td><span class="ident-known">Multijunk</span></td><td>i =18, Ω = 11, P = 3.0 day</td><td>33</td><td>C1AUGE1 = ZTF0Edd = &#x27;Multijunk&#x27;</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C45ZWJ1.htm" target="_blank" rel="noopener">C45ZWJ1</a></td><td><span class="ident-unknown">?</span></td><td>i =35, Ω = 47, P = 1.2 day</td><td>34</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/ZTF10CI.htm" target="_blank" rel="noopener">ZTF10CI</a></td><td><span class="ident-unknown">?</span></td><td>i =7, Ω = 179, P = 1.1 day</td><td>32</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/ST26C42.htm" target="_blank" rel="noopener">ST26C42</a></td><td><span class="ident-unknown">?</span></td><td>i =26, Ω = 62, P = 1.3 day</td><td>35</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C461AC1.htm" target="_blank" rel="noopener">C461AC1</a></td><td><span class="ident-known">Multijunk</span></td><td>i =19, Ω = 10, P = 2.9 day</td><td>32</td><td>C1AUGE1 = ZTF0Edd = &#x27;Multijunk&#x27;</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C461G41.htm" target="_blank" rel="noopener">C461G41</a></td><td><span class="ident-unknown">?</span></td><td>i =38, Ω = 348, P = 1.4 day</td><td>34</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C461ED1.htm" target="_blank" rel="noopener">C461ED1</a></td><td><span class="ident-unknown">?</span></td><td>i =38, Ω = 42, P = 1.8 day</td><td>33</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/gb00828.htm" target="_blank" rel="noopener">gb00828</a></td><td><span class="ident-unknown">?</span></td><td>i =25, Ω = 63, P = 1.1 day</td><td>34</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/ST26C63.htm" target="_blank" rel="noopener">ST26C63</a></td><td><span class="ident-unknown">?</span></td><td>i =28, Ω = 20, P = 4.9 day</td><td>34</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C461VP1.htm" target="_blank" rel="noopener">C461VP1</a></td><td><span class="ident-unknown">?</span></td><td>i =48, Ω = 121, P = 4.5 day</td><td>33</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C461WL1.htm" target="_blank" rel="noopener">C461WL1</a></td><td><span class="ident-known">C45ZJD1</span></td><td>i =66, Ω = 75, P = 4.5 day</td><td>32</td><td>i=66.31, Ω=74.50, P=4.48 day, H ~ 32.05, AMR=0.17 m²/kg. C45ZJD1 = C461WL1 = C463MD1</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C461W11.htm" target="_blank" rel="noopener">C461W11</a></td><td><span class="ident-unknown">?</span></td><td>i =26, Ω = 60, P = 1.2 day</td><td>33</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C461U31.htm" target="_blank" rel="noopener">C461U31</a></td><td><span class="ident-unknown">?</span></td><td>i =41, Ω = 7, P = 5.1 day</td><td>29</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/gb00830.htm" target="_blank" rel="noopener">gb00830</a></td><td><span class="ident-unknown">?</span></td><td>i =25, Ω = 57, P = 1.0 day</td><td>34</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C462CQ1.htm" target="_blank" rel="noopener">C462CQ1</a></td><td><span class="ident-unknown">?</span></td><td>i =27, Ω = 59, P = 1.3 day</td><td>33</td><td></td></tr>
+      <tr><td>CEEHLA2</td><td><span class="ident-unknown">?</span></td><td></td><td></td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C462CX1.htm" target="_blank" rel="noopener">C462CX1</a></td><td><span class="ident-unknown">?</span></td><td></td><td></td><td></td></tr>
+      <tr><td>C462D61</td><td><span class="ident-unknown">?</span></td><td></td><td></td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C4639X1.htm" target="_blank" rel="noopener">C4639X1</a></td><td><span class="ident-unknown">?</span></td><td>i =30, Ω = 12, P = 1.1 day</td><td>32</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C4638H1.htm" target="_blank" rel="noopener">C4638H1</a></td><td><span class="ident-known">Multijunk</span></td><td>i =20, Ω = 10, P = 3.0 day</td><td>34</td><td>C1AUGE1 = ZTF0Edd = &#x27;Multijunk&#x27;</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/ZTF10Cg.htm" target="_blank" rel="noopener">ZTF10Cg</a></td><td><span class="ident-unknown">?</span></td><td>i =19, Ω = 49, P = 1.3 day</td><td>34</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/ZTF10Cq.htm" target="_blank" rel="noopener">ZTF10Cq</a></td><td><span class="ident-unknown">?</span></td><td>i =27, Ω = 45, P = 1.2 day</td><td>32</td><td></td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C463MD1.htm" target="_blank" rel="noopener">C463MD1</a></td><td><span class="ident-known">C45ZJD1</span></td><td>i =66, Ω = 74, P = 4.5 day</td><td>32</td><td>i=66.31, Ω=74.50, P=4.48 day, H ~ 32.05, AMR=0.17 m²/kg. C45ZJD1 = C461WL1 = C463MD1</td></tr>
+      <tr><td><a href="https://www.projectpluto.com/neocp2/mpecs/C463TX1.htm" target="_blank" rel="noopener">C463TX1</a></td><td><span class="ident-unknown">?</span></td><td>i =28, Ω = 55, P = 1.3 day</td><td>33</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="separator">
+
+    <footer>
+      Updated 2026-03-25 10:05 &middot;
+      <a href="https://github.com/exoplanet5/neocpsat" target="_blank" rel="noopener">Source</a>
+    </footer>
+
+    <script>
+      function filterTable(mode) {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        const rows = document.querySelectorAll('#catalog-table tbody tr');
+        rows.forEach(row => {
+          if (row.classList.contains('date-row')) {
+            row.style.display = '';
+            return;
+          }
+          const ident = row.querySelector('td:nth-child(2)');
+          if (!ident) return;
+          const isKnown = ident.querySelector('.ident-known') !== null;
+          if (mode === 'all') {
+            row.style.display = '';
+          } else if (mode === 'identified') {
+            row.style.display = isKnown ? '' : 'none';
+          } else {
+            row.style.display = isKnown ? 'none' : '';
+          }
+        });
+      }
+    </script>
+  </main>
+</body>
+</html>
