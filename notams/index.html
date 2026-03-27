@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Space Launch NOTAM Map</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root {
+  --bg: rgba(255,255,255,0.97);
+  --border: #ddd;
+  --accent: #1976d2;
+  --text: #333;
+  --muted: #666;
+  --dim: #999;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:#f5f5f5; color:var(--text); }
+
+#map { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; }
+
+/* ── Panel ─────────────────────────────────────────────── */
+#panel {
+  position:fixed; top:0; right:0; width:370px; height:100vh;
+  background:var(--bg); z-index:1000; overflow-y:auto;
+  border-left:1px solid var(--border); transition:transform .3s ease;
+  scrollbar-width:thin; scrollbar-color:#ccc transparent;
+}
+#panel::-webkit-scrollbar { width:6px; }
+#panel::-webkit-scrollbar-thumb { background:#ccc; border-radius:3px; }
+#panel.collapsed { transform:translateX(370px); }
+
+#panel-toggle {
+  position:fixed; top:10px; right:380px; z-index:1001;
+  background:rgba(255,255,255,0.95); border:1px solid #bbb; color:var(--text);
+  padding:8px 14px; cursor:pointer; border-radius:6px; font-size:14px;
+  transition:right .3s ease; box-shadow:0 1px 4px rgba(0,0,0,.1);
+}
+#panel-toggle.shifted { right:10px; }
+
+/* ── Header ────────────────────────────────────────────── */
+.panel-header {
+  padding:16px; text-align:center; border-bottom:1px solid var(--border);
+  background:rgba(245,245,250,0.9);
+}
+.panel-header h2 { font-size:16px; font-weight:700; letter-spacing:1px; color:#1a237e; }
+.panel-header .sub { font-size:11px; color:var(--dim); margin-top:2px; }
+
+/* ── Top tabs ──────────────────────────────────────────── */
+.top-tabs { display:flex; }
+.top-tab {
+  flex:1; padding:14px; text-align:center; cursor:pointer; font-weight:600;
+  font-size:15px; border:none; background:transparent; color:var(--muted);
+  border-bottom:3px solid transparent; transition:all .2s;
+}
+.top-tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+.top-tab:hover { color:#333; }
+
+/* ── Sections ──────────────────────────────────────────── */
+.section { padding:12px 16px; border-bottom:1px solid var(--border); }
+.section-title {
+  font-size:12px; font-weight:600; text-transform:uppercase;
+  letter-spacing:.8px; color:var(--muted); margin-bottom:8px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+
+/* ── Tags ──────────────────────────────────────────────── */
+.tag-row { display:flex; flex-wrap:wrap; gap:5px; }
+.tag-label {
+  width:100%; font-size:11px; color:var(--dim); margin-bottom:3px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.sel-all {
+  font-size:10px; color:var(--accent); cursor:pointer; background:none;
+  border:none; padding:2px 6px; border-radius:3px;
+}
+.sel-all:hover { background:rgba(25,118,210,.08); }
+
+.tag {
+  padding:4px 10px; border-radius:14px; font-size:12px; cursor:pointer;
+  border:1px solid #ccc; background:#fff; color:#666;
+  transition:all .15s; user-select:none; white-space:nowrap;
+}
+.tag.active { background:var(--accent); color:#fff; border-color:var(--accent); font-weight:500; }
+.tag:hover:not(.active) { border-color:#999; color:#333; }
+
+/* ── Site toggles ──────────────────────────────────────── */
+.site-item {
+  display:flex; align-items:center; gap:8px; padding:5px 0; cursor:pointer; font-size:13px;
+}
+.site-item input[type=checkbox] { display:none; }
+.site-chk {
+  width:16px; height:16px; border:1.5px solid #bbb; border-radius:3px;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  transition:all .15s;
+}
+.site-item input:checked ~ .site-chk { background:var(--accent); border-color:var(--accent); }
+.site-item input:checked ~ .site-chk::after { content:'\2713'; font-size:11px; color:#fff; }
+.site-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+/* ── Stats bar ─────────────────────────────────────────── */
+#stats { font-size:11px; color:var(--dim); padding:10px 16px; border-top:1px solid var(--border); }
+
+/* ── Site marker on map ────────────────────────────────── */
+.site-marker {
+  display:flex; align-items:center; justify-content:center;
+  width:22px; height:22px; border-radius:50%;
+  border:2px solid #fff; font-size:9px; font-weight:bold;
+  color:#fff; text-shadow:0 0 2px rgba(0,0,0,.6);
+  box-shadow:0 2px 6px rgba(0,0,0,.3);
+}
+
+/* ── Leaflet tooltip ───────────────────────────────────── */
+.leaflet-tooltip {
+  background:rgba(255,255,255,.95) !important; color:#333 !important;
+  border:1px solid #ccc !important; border-radius:6px !important;
+  font-size:12px !important; line-height:1.4 !important;
+  padding:6px 10px !important; max-width:320px !important;
+  box-shadow:0 2px 8px rgba(0,0,0,.12) !important;
+}
+.leaflet-tooltip b { color:var(--accent); }
+
+/* ── Info popup panel ──────────────────────────────────── */
+#info-popup {
+  position:fixed; bottom:20px; left:20px; width:480px; max-height:50vh;
+  background:rgba(255,255,255,.97); border:1px solid #ccc;
+  border-radius:8px; z-index:1001; display:none; overflow:hidden;
+  box-shadow:0 4px 20px rgba(0,0,0,.15);
+}
+#info-header {
+  padding:12px 16px; background:#f0f4f8; border-bottom:1px solid #ddd;
+  display:flex; justify-content:space-between; align-items:flex-start;
+}
+#info-header h3 { font-size:14px; color:#1a237e; flex:1; margin-right:8px; word-break:break-word; }
+#info-close {
+  background:none; border:none; font-size:18px; cursor:pointer; color:#999;
+  padding:0 4px; line-height:1;
+}
+#info-close:hover { color:#333; }
+#info-meta { padding:8px 16px; font-size:12px; color:#555; border-bottom:1px solid #eee; }
+#info-meta span { display:inline-block; margin-right:14px; }
+#info-meta b { color:#333; }
+#info-desc {
+  padding:12px 16px; font-size:12px; color:#444; line-height:1.5;
+  overflow-y:auto; max-height:30vh; white-space:pre-wrap; font-family:monospace;
+}
+#credit {
+  position:fixed; bottom:6px; left:50%; transform:translateX(-50%); z-index:500;
+  font-size:11px; color:#999; pointer-events:none;
+  text-shadow:0 0 3px rgba(255,255,255,.8);
+}
+</style>
+</head>
+<body>
+
+<div id="map"></div>
+<div id="credit">Data Collection: Mickey | FAA</div>
+<button id="panel-toggle" onclick="togglePanel()">&#9776; Filters</button>
+
+<div id="panel">
+  <div class="panel-header">
+    <h2>NOTAM ZONE MAP</h2>
+    <div class="sub">Space Launch &amp; Reentry Danger Areas</div>
+  </div>
+
+  <div class="top-tabs">
+    <button class="top-tab active" data-country="china" onclick="switchCountry('china')">China</button>
+    <button class="top-tab" data-country="foreign" onclick="switchCountry('foreign')">Foreign</button>
+  </div>
+
+  <div class="section" id="sites-section">
+    <div class="section-title">Launch Sites</div>
+    <div id="sites-container"></div>
+  </div>
+
+  <div class="section">
+    <div class="tag-label"><span>Year</span><button class="sel-all" onclick="togAll('year')">Select All</button></div>
+    <div class="tag-row" id="year-tags"></div>
+  </div>
+
+  <div class="section">
+    <div class="tag-label"><span>Launch Site</span><button class="sel-all" onclick="togAll('siteF')">Select All</button></div>
+    <div class="tag-row" id="siteF-tags"></div>
+  </div>
+
+  <div class="section">
+    <div class="tag-label"><span>Launch Vehicle</span><button class="sel-all" onclick="togAll('vehicle')">Select All</button></div>
+    <div class="tag-row" id="vehicle-tags"></div>
+  </div>
+
+  <div class="section">
+    <div class="tag-label"><span>Type</span><button class="sel-all" onclick="togAll('type')">Select All</button></div>
+    <div class="tag-row" id="type-tags"></div>
+  </div>
+
+  <div id="stats"></div>
+</div>
+
+<!-- Info popup for zone description -->
+<div id="info-popup">
+  <div id="info-header">
+    <h3 id="info-title"></h3>
+    <button id="info-close" onclick="closeInfo()">&times;</button>
+  </div>
+  <div id="info-meta"></div>
+  <div id="info-desc"></div>
+</div>
+
+<script>
+/* ━━ State ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+let D = null, map;
+let curCountry = 'china';
+let siteMarkers = {};
+let fLayers = [];
+
+const A = {
+  sites: new Set(),
+  year: new Set(),
+  siteF: new Set(),
+  vehicle: new Set(),
+  type: new Set(),
+};
+
+/* ━━ Map ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function initMap() {
+  map = L.map('map', { center:[30,110], zoom:4, zoomControl:true });
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+    subdomains:'abcd', maxZoom:19
+  }).addTo(map);
+}
+
+/* ━━ Data ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+async function loadData() {
+  try {
+    const r = await fetch('notam_data.json');
+    if (r.ok) { D = await r.json(); } else throw 0;
+  } catch(e) {
+    if (typeof INLINE_DATA !== 'undefined') D = INLINE_DATA;
+    else { document.getElementById('stats').textContent = 'Error: notam_data.json not found'; return; }
+  }
+  buildUI(); renderSites(); updateMap();
+}
+
+/* ━━ UI ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function getSites() { return curCountry==='china' ? D.chinaSites : D.foreignSites; }
+
+function buildUI() {
+  buildSiteToggles();
+  const feats = D.features.filter(f=>f.country===curCountry);
+
+  const yrs = new Set(); feats.forEach(f=>{if(f.year)yrs.add(f.year)});
+  const yl = [...yrs].sort();
+  const yg = [];
+  yl.filter(y=>y>=2022).sort((a,b)=>b-a).forEach(y=>yg.push({l:''+y,v:''+y}));
+  if (yl.some(y=>y<2022)) yg.push({l:'Before 2022',v:'pre2022'});
+  mkTags('year-tags', yg, A.year, 'year');
+
+  const ss = new Set(); feats.forEach(f=>{if(f.site)ss.add(f.site)});
+  mkTags('siteF-tags', [...ss].sort().map(s=>{
+    const si=D.chinaSites[s]||D.foreignSites[s]; return {l:si?si.name:s,v:s};
+  }), A.siteF, 'siteF');
+
+  const vs = new Set(); feats.forEach(f=>{if(f.vehicle)vs.add(f.vehicle)});
+  mkTags('vehicle-tags', [...vs].sort().map(v=>({l:v,v:v})), A.vehicle, 'vehicle');
+
+  const ts = new Set(); feats.forEach(f=>{if(f.eventType)ts.add(f.eventType)});
+  mkTags('type-tags', [...ts].sort().map(t=>({l:t[0].toUpperCase()+t.slice(1),v:t})), A.type, 'type');
+}
+
+function buildSiteToggles() {
+  const c = document.getElementById('sites-container'); c.innerHTML='';
+  const sites = getSites();
+  Object.keys(sites).sort((a,b)=>sites[a].name.localeCompare(sites[b].name)).forEach(k=>{
+    const s=sites[k];
+    const lb=document.createElement('label'); lb.className='site-item';
+    const inp=document.createElement('input'); inp.type='checkbox'; inp.checked=A.sites.has(k);
+    inp.onchange=()=>{inp.checked?A.sites.add(k):A.sites.delete(k);renderSites();};
+    const chk=document.createElement('span'); chk.className='site-chk';
+    const dot=document.createElement('span'); dot.className='site-dot'; dot.style.background=s.color;
+    let dn = s.fullName||s.name;
+    dn = dn.replace(/\s*(Satellite Launch Center|Launch Area|Space Centre|launching station|Satellite Launching Ground|Missile Test Range|Test Range|Cosmodrome|Space Launch Site|Space Center|Satellite Launching Station)\s*$/i,'');
+    lb.append(inp,chk,dot,document.createTextNode(dn));
+    c.appendChild(lb);
+  });
+}
+
+function mkTags(cid, items, aset, cat) {
+  const c=document.getElementById(cid); c.innerHTML='';
+  items.forEach(it=>{
+    const b=document.createElement('button');
+    b.className='tag'+(aset.has(it.v)?' active':'');
+    b.textContent=it.l; b.dataset.v=it.v; b.dataset.cat=cat;
+    b.onclick=()=>{
+      if(aset.has(it.v)){aset.delete(it.v);b.classList.remove('active');}
+      else{aset.add(it.v);b.classList.add('active');}
+      updateMap();
+    };
+    c.appendChild(b);
+  });
+}
+
+function togAll(cat) {
+  const cid=cat+'-tags', aset=A[cat];
+  const btns=document.getElementById(cid).querySelectorAll('.tag');
+  const all=[...btns].every(b=>b.classList.contains('active'));
+  btns.forEach(b=>{
+    if(all){aset.delete(b.dataset.v);b.classList.remove('active');}
+    else{aset.add(b.dataset.v);b.classList.add('active');}
+  });
+  updateMap();
+}
+
+/* ━━ Site markers ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function renderSites() {
+  Object.values(siteMarkers).forEach(m=>map.removeLayer(m));
+  siteMarkers={};
+  const sites=getSites();
+  for (const [k,s] of Object.entries(sites)) {
+    if (!A.sites.has(k)) continue;
+    const ic=L.divIcon({
+      className:'', iconSize:[22,22], iconAnchor:[11,11],
+      html:`<div class="site-marker" style="background:${s.color}">${s.name[0]}</div>`
+    });
+    const m=L.marker([s.lat,s.lng],{icon:ic,zIndexOffset:1000});
+    m.bindTooltip(`<b>${esc(s.fullName||s.name)}</b>`,{direction:'top',offset:[0,-14]});
+    m.addTo(map); siteMarkers[k]=m;
+  }
+}
+
+/* ━━ Filtering ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function match(f) {
+  if (f.country!==curCountry) return false;
+  if (!(A.year.size||A.siteF.size||A.vehicle.size||A.type.size)) return false;
+  if (A.year.size) {
+    let ym=false;
+    if(f.year){if(f.year<2022&&A.year.has('pre2022'))ym=true; if(A.year.has(''+f.year))ym=true;}
+    if(!ym) return false;
+  }
+  if (A.siteF.size&&(!f.site||!A.siteF.has(f.site))) return false;
+  if (A.vehicle.size&&(!f.vehicle||!A.vehicle.has(f.vehicle))) return false;
+  if (A.type.size&&(!f.eventType||!A.type.has(f.eventType))) return false;
+  return true;
+}
+
+/* ━━ Render zones ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function updateMap() {
+  fLayers.forEach(({layer})=>map.removeLayer(layer));
+  fLayers=[];
+  let n=0;
+  const tot=D.features.filter(f=>f.country===curCountry).length;
+
+  D.features.forEach(f=>{
+    if (!match(f)) return;
+    n++;
+    const ly = L.polygon(f.coords, {
+      fillColor: f.style.fillColor||'#757575',
+      fillOpacity: f.style.fillOpacity||0.3,
+      color: f.style.strokeColor||'#757575',
+      weight: f.style.strokeWidth||1.0,
+      opacity: 0.8,
+    });
+
+    // Tooltip on hover
+    const p=[];
+    if(f.name) p.push(`<b>${esc(f.name)}</b>`);
+    if(f.vehicle) p.push('Vehicle: '+f.vehicle+(f.upperStage?' / '+f.upperStage:''));
+    if(f.site){const si=D.chinaSites[f.site]||D.foreignSites[f.site]; p.push('Site: '+(si?si.name:f.site));}
+    if(f.date) p.push('Date: '+f.date); else if(f.year) p.push('Year: '+f.year);
+    p.push('Type: '+f.eventType);
+    ly.bindTooltip(p.join('<br>'),{sticky:true,direction:'top'});
+
+    // Click to show description popup
+    ly.on('click', ()=>showInfo(f));
+
+    ly.addTo(map); fLayers.push({layer:ly,feature:f});
+  });
+  document.getElementById('stats').textContent=`Showing ${n} of ${tot} zones`;
+}
+
+/* ━━ Info popup ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function showInfo(f) {
+  const popup = document.getElementById('info-popup');
+  document.getElementById('info-title').textContent = f.name||'Zone';
+
+  const meta=[];
+  if(f.vehicle) meta.push(`<span><b>Vehicle:</b> ${esc(f.vehicle)}${f.upperStage?' / '+esc(f.upperStage):''}</span>`);
+  if(f.site){const si=D.chinaSites[f.site]||D.foreignSites[f.site]; meta.push(`<span><b>Site:</b> ${esc(si?si.name:f.site)}</span>`);}
+  if(f.date) meta.push(`<span><b>Date:</b> ${f.date}</span>`);
+  else if(f.year) meta.push(`<span><b>Year:</b> ${f.year}</span>`);
+  meta.push(`<span><b>Type:</b> ${f.eventType}</span>`);
+  document.getElementById('info-meta').innerHTML = meta.join('');
+
+  const desc = f.description || 'No NOTAM description available.';
+  document.getElementById('info-desc').textContent = desc;
+
+  popup.style.display='block';
+}
+
+function closeInfo() {
+  document.getElementById('info-popup').style.display='none';
+}
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+/* ━━ Country switch ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function switchCountry(c) {
+  curCountry=c; closeInfo();
+  document.querySelectorAll('.top-tab').forEach(t=>t.classList.toggle('active',t.dataset.country===c));
+  A.year.clear(); A.siteF.clear(); A.vehicle.clear(); A.type.clear();
+  A.sites.clear();
+  Object.keys(getSites()).forEach(k=>A.sites.add(k));
+  buildUI(); renderSites(); updateMap();
+  map.setView(c==='china'?[30,110]:[20,0], c==='china'?4:2);
+}
+
+/* ━━ Panel toggle ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function togglePanel() {
+  document.getElementById('panel').classList.toggle('collapsed');
+  document.getElementById('panel-toggle').classList.toggle('shifted');
+  setTimeout(()=>map.invalidateSize(),350);
+}
+
+/* ━━ Init ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+initMap();
+['JSLC','TSLC','XSLC','WSLC','YSLA','SSLA','RSLA'].forEach(k=>A.sites.add(k));
+loadData();
+</script>
+</body>
+</html>
