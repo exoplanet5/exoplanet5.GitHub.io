@@ -86,6 +86,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .tag:hover:not(.active) { border-color:#999; color:#333; }
 
 /* ── Site toggles ──────────────────────────────────────── */
+#sites-container { display:grid; grid-template-columns:1fr 1fr; gap:0 12px; }
 .site-item {
   display:flex; align-items:center; gap:8px; padding:5px 0; cursor:pointer; font-size:13px;
 }
@@ -180,6 +181,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   </div>
 
   <div class="section">
+    <div class="tag-label"><span>Type</span><button class="sel-all" onclick="togAll('type')">Select All</button></div>
+    <div class="tag-row" id="type-tags"></div>
+  </div>
+
+  <div class="section">
     <div class="tag-label"><span>Launch Site</span><button class="sel-all" onclick="togAll('siteF')">Select All</button></div>
     <div class="tag-row" id="siteF-tags"></div>
   </div>
@@ -189,10 +195,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     <div class="tag-row" id="vehicle-tags"></div>
   </div>
 
-  <div class="section">
-    <div class="tag-label"><span>Type</span><button class="sel-all" onclick="togAll('type')">Select All</button></div>
-    <div class="tag-row" id="type-tags"></div>
-  </div>
 
   <div id="stats"></div>
 </div>
@@ -258,8 +260,9 @@ function buildUI() {
   mkTags('year-tags', yg, A.year, 'year');
 
   const ss = new Set(); feats.forEach(f=>{if(f.site)ss.add(f.site)});
+  const tagRename={'Yellow Sea':'Sea Launch'};
   mkTags('siteF-tags', [...ss].sort().map(s=>{
-    const si=D.chinaSites[s]||D.foreignSites[s]; return {l:si?si.name:s,v:s};
+    const si=D.chinaSites[s]||D.foreignSites[s]; let nm=si?si.name:s; return {l:tagRename[nm]||nm,v:s};
   }), A.siteF, 'siteF');
 
   const vs = new Set(); feats.forEach(f=>{if(f.vehicle)vs.add(f.vehicle)});
