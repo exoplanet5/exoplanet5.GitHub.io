@@ -259,8 +259,10 @@ function buildUI() {
   if (yl.some(y=>y<2022)) yg.push({l:'Before 2022',v:'pre2022'});
   mkTags('year-tags', yg, A.year, 'year');
 
-  const ss = new Set(); feats.forEach(f=>{if(f.site)ss.add(f.site)});
+  const seaSites=new Set(['YSLA','SSLA','RSLA']);
+  const ss = new Set(); feats.forEach(f=>{if(f.site)ss.add(seaSites.has(f.site)?'SeaLaunch':f.site)});
   mkTags('siteF-tags', [...ss].sort().map(s=>{
+    if(s==='SeaLaunch') return {l:'Sea Launch',v:'SeaLaunch'};
     const si=D.chinaSites[s]||D.foreignSites[s]; return {l:si?si.name:s,v:s};
   }), A.siteF, 'siteF');
 
@@ -282,7 +284,7 @@ function buildSiteToggles() {
     const chk=document.createElement('span'); chk.className='site-chk';
     const dot=document.createElement('span'); dot.className='site-dot'; dot.style.background=s.color;
     let dn = s.fullName||s.name;
-    dn = dn.replace(/\s*(Satellite Launch Center|Launch Area|Space Centre|launching station|Satellite Launching Ground|Missile Test Range|Test Range|Cosmodrome|Space Launch Site|Space Center|Satellite Launching Station)\s*$/i,'');
+    dn = dn.replace(/\s*(Satellite Launch Center|Launch Area|Space Centre|launching station|Satellite Launching Ground|Missile Test Range|Test Range|Cosmodrome|Space Launch Site|Space Center|Satellite Launching Station|Sea Launch)\s*$/i,'');
     lb.append(inp,chk,dot,document.createTextNode(dn));
     c.appendChild(lb);
   });
@@ -340,7 +342,12 @@ function match(f) {
     if(f.year){if(f.year<2022&&A.year.has('pre2022'))ym=true; if(A.year.has(''+f.year))ym=true;}
     if(!ym) return false;
   }
-  if (A.siteF.size&&(!f.site||!A.siteF.has(f.site))) return false;
+  if (A.siteF.size){
+    if(!f.site) return false;
+    let sm=A.siteF.has(f.site);
+    if(!sm&&A.siteF.has('SeaLaunch')&&['YSLA','SSLA','RSLA'].includes(f.site)) sm=true;
+    if(!sm) return false;
+  }
   if (A.vehicle.size&&(!f.vehicle||!A.vehicle.has(f.vehicle))) return false;
   if (A.type.size&&(!f.eventType||!A.type.has(f.eventType))) return false;
   return true;
