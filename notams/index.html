@@ -260,9 +260,8 @@ function buildUI() {
   mkTags('year-tags', yg, A.year, 'year');
 
   const ss = new Set(); feats.forEach(f=>{if(f.site)ss.add(f.site)});
-  const tagRename={'Yellow Sea':'Sea Launch'};
   mkTags('siteF-tags', [...ss].sort().map(s=>{
-    const si=D.chinaSites[s]||D.foreignSites[s]; let nm=si?si.name:s; return {l:tagRename[nm]||nm,v:s};
+    const si=D.chinaSites[s]||D.foreignSites[s]; return {l:si?si.name:s,v:s};
   }), A.siteF, 'siteF');
 
   const vs = new Set(); feats.forEach(f=>{if(f.vehicle)vs.add(f.vehicle)});
