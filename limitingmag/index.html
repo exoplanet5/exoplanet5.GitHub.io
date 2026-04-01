@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CCD Limiting Magnitude Calculator</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.getElementById('formula-block'),{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});"></script>
 <style>
 :root {
   --bg: #0b0f15;
@@ -47,18 +51,28 @@ body[data-mode="exp"] .result-card::before{background:var(--accent-exp)}
 body[data-mode="exp"] .result-value{color:var(--accent-exp)}
 .result-value{font-size:3.2rem;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums;transition:color 0.2s}
 .result-label{font-size:0.95rem;color:var(--muted);margin-top:0.3rem}
+.result-sub{font-size:0.78rem;color:var(--muted);margin-top:0.15rem;opacity:0.7}
 .result-error{font-size:0.9rem;color:#f85149;margin-top:0.4rem;display:none}
 
 .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.8rem}
 @media(max-width:700px){.grid{grid-template-columns:1fr 1fr}}
 @media(max-width:450px){.grid{grid-template-columns:1fr}}
 .field{display:flex;flex-direction:column}
+.field-full{grid-column:1/-1}
 .field label{font-size:0.8rem;color:var(--muted);margin-bottom:0.2rem}
 .field .unit{font-size:0.72rem;opacity:0.7}
-.field input{background:var(--input-bg);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:0.5rem 0.6rem;font-size:0.95rem;outline:none;transition:border-color 0.2s;width:100%}
-.field input:focus{border-color:var(--accent-mag)}
-body[data-mode="snr"] .field input:focus{border-color:var(--accent-snr)}
-body[data-mode="exp"] .field input:focus{border-color:var(--accent-exp)}
+.field input,.field select{background:var(--input-bg);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:0.5rem 0.6rem;font-size:0.95rem;outline:none;transition:border-color 0.2s, background 0.3s;width:100%}
+.field input:focus,.field select:focus{border-color:var(--accent-mag)}
+body[data-mode="snr"] .field input:focus,body[data-mode="snr"] .field select:focus{border-color:var(--accent-snr)}
+body[data-mode="exp"] .field input:focus,body[data-mode="exp"] .field select:focus{border-color:var(--accent-exp)}
+.field select{cursor:pointer}
+.field select option{background:var(--card);color:var(--text)}
+.field select optgroup{color:var(--muted);font-style:normal}
+
+.band-info{font-size:0.73rem;color:var(--muted);margin-top:0.3rem;padding:0.35rem 0.6rem;background:var(--bg);border-radius:4px;font-family:'SF Mono',Consolas,monospace}
+
+@keyframes flash{0%{background:rgba(88,166,255,0.15)}100%{background:var(--input-bg)}}
+.field input.flash{animation:flash 0.8s}
 
 .mode-field{display:none}
 .mode-field.visible{display:flex}
@@ -84,9 +98,12 @@ body[data-mode="exp"] .field input:focus{border-color:var(--accent-exp)}
 .detail-item .val{font-size:0.95rem;font-weight:600;font-variant-numeric:tabular-nums}
 .detail-item .lbl{font-size:0.7rem;color:var(--muted);margin-top:0.1rem}
 
-.formula{font-size:0.78rem;color:var(--muted);font-family:'SF Mono',Consolas,monospace;line-height:1.8;padding:0.5rem;background:var(--bg);border-radius:6px}
+.formula-block{padding:0.8rem;background:var(--bg);border-radius:6px;overflow-x:auto}
+.formula-block .katex{color:var(--text);font-size:1.0rem}
+.formula-block .katex-display{margin:0.5em 0}
 
 footer{text-align:center;color:var(--muted);font-size:0.75rem;margin-top:1.5rem}
+footer a{color:var(--accent-mag);text-decoration:none}
 </style>
 </head>
 <body data-mode="mag">
@@ -104,7 +121,8 @@ footer{text-align:center;color:var(--muted);font-size:0.75rem;margin-top:1.5rem}
 
   <div class="card result-card">
     <div class="result-value" id="result-value">--</div>
-    <div class="result-label" id="result-label">Limiting Magnitude (mag)</div>
+    <div class="result-label" id="result-label">Limiting Magnitude</div>
+    <div class="result-sub" id="result-sub"></div>
     <div class="result-error" id="result-error">No valid solution for these parameters</div>
   </div>
 
@@ -134,9 +152,46 @@ footer{text-align:center;color:var(--muted);font-size:0.75rem;margin-top:1.5rem}
   <div class="card">
     <h2>Sky &amp; Telescope</h2>
     <div class="grid">
+      <div class="field field-full">
+        <label>Telescope Preset</label>
+        <select id="tel-preset" onchange="onTelPreset()">
+          <option value="">Custom</option>
+          <optgroup label="Survey Telescopes">
+            <option value="MUST">MUST 6.5 m f/3.70</option>
+            <option value="Rubin">Rubin/LSST 8.4 m f/1.23</option>
+            <option value="WFST">WFST 2.5 m f/2.48</option>
+            <option value="Mayall_DESI">Mayall/DESI 3.8 m f/3.86</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="field field-full">
+        <label>Photometric Band</label>
+        <select id="band" onchange="onBandChange()">
+          <optgroup label="Johnson-Cousins (Vega)">
+            <option value="Johnson_U">U  (3663 &Aring;, &Delta;&lambda; 650 &Aring;)</option>
+            <option value="Johnson_B">B  (4361 &Aring;, &Delta;&lambda; 890 &Aring;)</option>
+            <option value="Johnson_V" selected>V  (5448 &Aring;, &Delta;&lambda; 840 &Aring;)</option>
+            <option value="Cousins_Rc">Rc (6407 &Aring;, &Delta;&lambda; 1580 &Aring;)</option>
+            <option value="Cousins_Ic">Ic (7980 &Aring;, &Delta;&lambda; 1540 &Aring;)</option>
+          </optgroup>
+          <optgroup label="SDSS (AB)">
+            <option value="SDSS_u">u' (3596 &Aring;, &Delta;&lambda; 570 &Aring;)</option>
+            <option value="SDSS_g">g' (4639 &Aring;, &Delta;&lambda; 1280 &Aring;)</option>
+            <option value="SDSS_r">r' (6122 &Aring;, &Delta;&lambda; 1150 &Aring;)</option>
+            <option value="SDSS_i">i' (7439 &Aring;, &Delta;&lambda; 1230 &Aring;)</option>
+            <option value="SDSS_z">z' (8896 &Aring;, &Delta;&lambda; 1070 &Aring;)</option>
+          </optgroup>
+          <optgroup label="Gaia (Vega)">
+            <option value="Gaia_G">G   (6230 &Aring;, &Delta;&lambda; 4400 &Aring;)</option>
+            <option value="Gaia_GBP">GBP (5110 &Aring;, &Delta;&lambda; 2530 &Aring;)</option>
+            <option value="Gaia_GRP">GRP (7770 &Aring;, &Delta;&lambda; 2960 &Aring;)</option>
+          </optgroup>
+        </select>
+        <div class="band-info" id="band-info"></div>
+      </div>
       <div class="field">
         <label>Sky Brightness <span class="unit">(mag/arcsec&sup2;)</span></label>
-        <input type="number" id="skymag" value="20.0" step="any">
+        <input type="number" id="skymag" value="21.8" step="any">
       </div>
       <div class="field">
         <label>Aperture <span class="unit">(m)</span></label>
@@ -155,8 +210,8 @@ footer{text-align:center;color:var(--muted);font-size:0.75rem;margin-top:1.5rem}
         <input type="number" id="elev" value="40" step="any" min="5" max="90">
       </div>
       <div class="field">
-        <label>Throughput <span class="unit">(QE &times; Trans)</span></label>
-        <input type="number" id="qbase" value="0.8" step="any" min="0.01" max="1">
+        <label>Throughput <span class="unit">(optics &times; filter)</span></label>
+        <input type="number" id="trans" value="0.50" step="any" min="0.01" max="1">
       </div>
     </div>
   </div>
@@ -164,6 +219,25 @@ footer{text-align:center;color:var(--muted);font-size:0.75rem;margin-top:1.5rem}
   <div class="card">
     <h2>Camera</h2>
     <div class="grid">
+      <div class="field field-full">
+        <label>Camera Preset</label>
+        <select id="cam-preset" onchange="onCamPreset()">
+          <option value="">Custom</option>
+          <optgroup label="CCD">
+            <option value="e2v_250_82">e2v CCD250-82 (WFST)</option>
+            <option value="e2v_230_42">e2v CCD230-42 (Rubin)</option>
+          </optgroup>
+          <optgroup label="CMOS">
+            <option value="IMX455" selected>Sony IMX 455</option>
+            <option value="GSENSE1517BSI">GSENSE 1517BSI</option>
+            <option value="GSENSE1081BSI">GSENSE 1081BSI</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="field">
+        <label>Quantum Efficiency</label>
+        <input type="number" id="qe" value="0.80" step="any" min="0.01" max="1">
+      </div>
       <div class="field">
         <label>Pixel Size <span class="unit">(&micro;m)</span></label>
         <input type="number" id="campix" value="3.76" step="any" min="0.1">
@@ -188,18 +262,106 @@ footer{text-align:center;color:var(--muted);font-size:0.75rem;margin-top:1.5rem}
 
   <div class="card">
     <h2>Formula</h2>
-    <div class="formula">
-      SNR = Source / &radic;(Source + Sky + Dark + RN)<br>
-      Source&sup2; &minus; SNR&sup2;&middot;Source &minus; SNR&sup2;&middot;(Sky+Dark+RN) = 0<br>
-      Source = 10<sup>&minus;0.4m</sup>&middot;F<sub>0</sub>&middot;A&middot;t&middot;Q
-      &ensp;|&ensp; F<sub>0</sub> &asymp; 10<sup>10</sup> ph/m&sup2;/s (V-band)
+    <div class="formula-block" id="formula-block">
+      $$\mathrm{SNR} = \frac{S_{\star}}{\sqrt{S_{\star} + S_{\mathrm{sky}} + S_{\mathrm{dark}} + S_{\mathrm{RN}}}}$$
+
+      $$S_{\star} = 10^{-0.4\,m}\;\cdot F_0 \cdot A \cdot t \cdot Q_{\mathrm{eff}}$$
+
+      $$Q_{\mathrm{eff}} = \eta_{\mathrm{QE}}\;\cdot\;T_{\mathrm{optics}}\;\cdot\;T_{\mathrm{atm}}$$
+
+      $$T_{\mathrm{atm}} = 10^{-0.4\,k\,X}\,,\qquad X = \sec z = \frac{1}{\cos(90°-\mathrm{elev})}$$
+
+      $$S_{\mathrm{sky}} = 10^{-0.4\,\mu_{\mathrm{sky}}}\;\cdot F_0 \cdot \Omega_{\mathrm{PSF}} \cdot A \cdot t \cdot Q_{\mathrm{eff}}$$
+
+      $$S_{\mathrm{dark}} = I_{\mathrm{dark}}\;\cdot\;t\;\cdot\;N_{\mathrm{pix}}\,,\qquad S_{\mathrm{RN}} = \sigma_{\mathrm{read}}^{2}\;\cdot\;N_{\mathrm{frames}}\;\cdot\;N_{\mathrm{pix}}$$
+
+      $$N_{\mathrm{pix}} = \frac{\pi}{4}\!\left(\frac{\theta_{\mathrm{FWHM}}}{\Delta\theta}\right)^{2}\!,\qquad \Delta\theta = \frac{d_{\mathrm{pix}}}{D\cdot f/N}\;\cdot\;\frac{648000}{\pi}\;\;[\mathrm{arcsec/pix}]$$
     </div>
   </div>
 
-  <footer>CCD Limiting Magnitude Calculator</footer>
+  <footer>
+    CCD Limiting Magnitude Calculator &mdash;
+    <a href="https://github.com/exoplanet5/exoplanet5.github.io" target="_blank">Source</a>
+  </footer>
 </div>
 
 <script>
+/* ================================================================
+   Photometric band data
+   F0 = zero-point photon flux (ph/m^2/s) for mag=0 star above atmosphere
+   Computed as: F0 = f_lambda * dlam * lam / hc * 1e4
+     hc = 1.989e-8 erg*Angstrom
+   Johnson-Cousins: Vega fluxes from Bessell (1979), Bessell et al. (1998)
+   SDSS: AB system, f_nu = 3631 Jy => F0 = 5.476e10 * dlam / lam
+   Gaia: Vega system, mean fluxes from Jordi et al. (2010), Riello et al. (2021)
+   Extinction k: typical for good mountain site (~2000m)
+   Sky: dark-sky zenith brightness (Walker 1987, Benn & Ellison 1998)
+   ================================================================ */
+const BANDS = {
+  // ── Johnson-Cousins (Vega system) ──
+  // f_lambda in erg/cm^2/s/Angstrom from Bessell (1998)
+  Johnson_U:  {name:'Johnson U',  sys:'Vega', lam:3663, dlam:650,  flam:4.175e-9, F0:5.00e9,  k:0.55, sky:22.0},
+  Johnson_B:  {name:'Johnson B',  sys:'Vega', lam:4361, dlam:890,  flam:6.320e-9, F0:1.23e10, k:0.25, sky:22.7},
+  Johnson_V:  {name:'Johnson V',  sys:'Vega', lam:5448, dlam:840,  flam:3.631e-9, F0:8.35e9,  k:0.15, sky:21.8},
+  Cousins_Rc: {name:'Cousins Rc', sys:'Vega', lam:6407, dlam:1580, flam:2.177e-9, F0:1.11e10, k:0.09, sky:20.9},
+  Cousins_Ic: {name:'Cousins Ic', sys:'Vega', lam:7980, dlam:1540, flam:1.126e-9, F0:6.96e9,  k:0.04, sky:19.9},
+  // ── SDSS (AB system) ──
+  // f_nu = 3631 Jy => F0 = 5.476e10 * dlam / lam
+  // Wavelengths from Fukugita et al. (1996); k from Padmanabhan et al. (2008)
+  SDSS_u:  {name:"SDSS u'", sys:'AB', lam:3596, dlam:570,  flam:null, F0:8.68e9,  k:0.50, sky:22.1},
+  SDSS_g:  {name:"SDSS g'", sys:'AB', lam:4639, dlam:1280, flam:null, F0:1.51e10, k:0.19, sky:22.2},
+  SDSS_r:  {name:"SDSS r'", sys:'AB', lam:6122, dlam:1150, flam:null, F0:1.03e10, k:0.10, sky:21.1},
+  SDSS_i:  {name:"SDSS i'", sys:'AB', lam:7439, dlam:1230, flam:null, F0:9.06e9,  k:0.06, sky:20.3},
+  SDSS_z:  {name:"SDSS z'", sys:'AB', lam:8896, dlam:1070, flam:null, F0:6.59e9,  k:0.04, sky:19.1},
+  // ── Gaia (Vega system) ──
+  // Wide passbands; mean Vega flux estimated from Jordi et al. (2010), Riello et al. (2021)
+  // Ground-based k estimated from effective wavelength
+  Gaia_G:   {name:'Gaia G',   sys:'Vega', lam:6230, dlam:4400, flam:2.50e-9, F0:3.45e10, k:0.13, sky:21.4},
+  Gaia_GBP: {name:'Gaia GBP', sys:'Vega', lam:5110, dlam:2530, flam:4.00e-9, F0:2.60e10, k:0.22, sky:22.0},
+  Gaia_GRP: {name:'Gaia GRP', sys:'Vega', lam:7770, dlam:2960, flam:1.30e-9, F0:1.50e10, k:0.06, sky:20.3},
+};
+
+/* ── Telescope presets ── */
+const TEL_PRESETS = {
+  MUST:       {name:'MUST 6.5m',       aperture:6.5,   fn:3.70, seeing:1.0, elev:60, trans:0.50},
+  Rubin:      {name:'Rubin/LSST 8.4m', aperture:8.4,   fn:1.234, seeing:1.0, elev:60, trans:0.50},
+  WFST:       {name:'WFST 2.5m',       aperture:2.5,   fn:2.48, seeing:1.0, elev:60, trans:0.50},
+  Mayall_DESI:{name:'Mayall/DESI 3.8m', aperture:3.797, fn:3.86, seeing:1.5, elev:60, trans:0.50},
+};
+
+/* ── Camera presets ── */
+const CAM_PRESETS = {
+  e2v_250_82:    {name:'e2v CCD250-82',   qe:0.92, campix:10.0, dc:0.002, rn:6},
+  e2v_230_42:    {name:'e2v CCD230-42',   qe:0.93, campix:10.0, dc:0.002, rn:7},
+  IMX455:        {name:'Sony IMX 455',     qe:0.91, campix:3.76, dc:0.003, rn:1.2},
+  GSENSE1517BSI: {name:'GSENSE 1517BSI',  qe:0.90, campix:9.0,  dc:0.1,   rn:2.0},
+  GSENSE1081BSI: {name:'GSENSE 1081BSI',  qe:0.90, campix:4.25, dc:0.1,   rn:1.5},
+};
+
+function onTelPreset() {
+  const key = document.getElementById('tel-preset').value;
+  if (!key) return;
+  const t = TEL_PRESETS[key];
+  document.getElementById('aperture').value = t.aperture;
+  document.getElementById('fn').value = t.fn;
+  document.getElementById('seeing').value = t.seeing;
+  document.getElementById('elev').value = t.elev;
+  document.getElementById('trans').value = t.trans;
+  calculate();
+}
+
+function onCamPreset() {
+  const key = document.getElementById('cam-preset').value;
+  if (!key) return;
+  const c = CAM_PRESETS[key];
+  document.getElementById('qe').value = c.qe;
+  document.getElementById('campix').value = c.campix;
+  document.getElementById('dc').value = c.dc;
+  document.getElementById('readnoise').value = c.rn;
+  calculate();
+}
+
+/* ── Mode state ── */
 let currentMode = 'mag';
 let lastCalc = {};
 
@@ -209,14 +371,13 @@ const modeInputs = {
   exp: ['frames','snr','limitmag']
 };
 const modeInfo = {
-  mag: {label:'Limiting Magnitude (mag)', hint:'Input exposure, frames, and SNR below', dec:2},
-  snr: {label:'Signal-to-Noise Ratio (\u03c3)',  hint:'Input exposure, frames, and target magnitude below', dec:1},
-  exp: {label:'Single Exposure Time (seconds)',   hint:'Input frames, SNR, and target magnitude below', dec:2}
+  mag: {label:'Limiting Magnitude', hint:'Input exposure, frames, and SNR below', dec:2},
+  snr: {label:'Signal-to-Noise Ratio (\u03c3)', hint:'Input exposure, frames, and target magnitude below', dec:1},
+  exp: {label:'Single Exposure Time (seconds)',  hint:'Input frames, SNR, and target magnitude below', dec:2}
 };
 const allFields = ['singletime','frames','snr','limitmag'];
 
 function setMode(mode) {
-  // Carry result forward as input for new mode
   if (lastCalc.mag != null && mode !== 'mag')
     document.getElementById('limitmag').value = lastCalc.mag.toFixed(2);
   if (lastCalc.snr != null && mode !== 'snr')
@@ -226,100 +387,130 @@ function setMode(mode) {
 
   currentMode = mode;
   document.body.dataset.mode = mode;
-
   document.querySelectorAll('.mode-tab').forEach(t =>
     t.classList.toggle('active', t.dataset.mode === mode));
-
   allFields.forEach(f =>
     document.getElementById('field-'+f).classList.toggle('visible', modeInputs[mode].includes(f)));
-
-  document.getElementById('result-label').textContent = modeInfo[mode].label;
   document.getElementById('mode-hint').textContent = modeInfo[mode].hint;
   calculate();
 }
 
-function v(id) { return parseFloat(document.getElementById(id).value); }
+/* ── Band change handler ── */
+function onBandChange() {
+  const b = BANDS[document.getElementById('band').value];
+  const el = document.getElementById('skymag');
+  el.value = b.sky;
+  el.classList.remove('flash');
+  void el.offsetWidth;
+  el.classList.add('flash');
+  updateBandInfo();
+  calculate();
+}
+
+function updateBandInfo() {
+  const b = BANDS[document.getElementById('band').value];
+  document.getElementById('band-info').textContent =
+    `\u03bb=${b.lam} \u00c5  |  \u0394\u03bb=${b.dlam} \u00c5  |  k=${b.k} mag/airmass  |  F\u2080=${b.F0.toExponential(2)} ph/m\u00b2/s  |  ${b.sys} system`;
+}
+
+/* ── Read inputs ── */
+function val(id) { return parseFloat(document.getElementById(id).value); }
+
+function getBand() { return BANDS[document.getElementById('band').value]; }
 
 function commonParams() {
-  const skymag=v('skymag'), aperture=v('aperture'), fn=v('fn'), seeing=v('seeing'),
-        elev=v('elev'), qbase=v('qbase'), campix=v('campix'), dc=v('dc'), rn=v('readnoise');
-  if ([skymag,aperture,fn,seeing,elev,qbase,campix,dc,rn].some(isNaN)) return null;
+  const band = getBand();
+  const skymag=val('skymag'), aperture=val('aperture'), fn=val('fn'), seeing=val('seeing'),
+        elev=val('elev'), trans=val('trans'), qe=val('qe'),
+        campix=val('campix'), dc=val('dc'), rn=val('readnoise');
+  if ([skymag,aperture,fn,seeing,elev,trans,qe,campix,dc,rn].some(isNaN)) return null;
 
-  const m0=0, ref=1e10;
-  const Q = qbase / (2 / Math.cos((90-elev)*Math.PI/180));
-  const Aarea = Math.PI*aperture*aperture/4;
-  const pixscale = (campix/(1e6*aperture*fn))/Math.PI*648000;
-  const psfpix = seeing/pixscale;
-  const npix = Math.PI*psfpix*psfpix/4;
-  const psfarea = pixscale*pixscale*npix;
-  return {m0,ref,Q,Aarea,pixscale,psfpix,npix,psfarea,skymag,dc,rn,aperture,fn,seeing,elev,qbase,campix};
+  const m0 = 0;
+  const F0 = band.F0;
+  const k  = band.k;
+
+  // Atmospheric extinction: proper physical model
+  const zenith = (90 - elev) * Math.PI / 180;
+  const airmass = 1 / Math.cos(zenith);
+  const Tatm = Math.pow(10, -0.4 * k * airmass);
+
+  // Total effective efficiency = QE * optics throughput * atmospheric transmission
+  const Qeff = qe * trans * Tatm;
+
+  const Aarea = Math.PI * aperture * aperture / 4;
+  const pixscale = (campix / (1e6 * aperture * fn)) / Math.PI * 648000;
+  const psfpix = seeing / pixscale;
+  const npix = Math.PI * psfpix * psfpix / 4;
+  const psfarea = pixscale * pixscale * npix;
+
+  return {m0, F0, k, Qeff, qe, trans, Tatm, airmass,
+          Aarea, pixscale, psfpix, npix, psfarea,
+          skymag, dc, rn, aperture, fn, seeing, elev, campix, band};
 }
 
 /* ── Mode 1: find limiting magnitude ── */
 function calcMag(p, singletime, frames, SNR) {
-  const time = singletime*frames;
-  const Readout = p.rn*frames;
-  const Sky  = Math.pow(10,-0.4*(p.skymag-p.m0))*p.ref*p.psfarea*p.Aarea*time*p.Q;
-  const Dark = p.dc*time*p.npix;
-  const RN   = Readout*Readout*p.npix;
-  const A0   = p.ref*p.Aarea*time*p.Q;
+  const time = singletime * frames;
+  const Sky  = Math.pow(10, -0.4 * (p.skymag - p.m0)) * p.F0 * p.psfarea * p.Aarea * time * p.Qeff;
+  const Dark = p.dc * time * p.npix;
+  // Read noise: variances add across frames, RN = rn^2 * N_frames * N_pix
+  const RN   = p.rn * p.rn * frames * p.npix;
+  const A0   = p.F0 * p.Aarea * time * p.Qeff;
 
-  const a = (A0/SNR)*(A0/SNR), b = -A0, c = -(Sky+Dark+RN);
-  const disc = b*b - 4*a*c;
+  const a = (A0 / SNR) * (A0 / SNR), b = -A0, c = -(Sky + Dark + RN);
+  const disc = b * b - 4 * a * c;
   if (disc < 0) return null;
 
-  const x = (A0 + Math.sqrt(disc))/(2*a);
-  const mag = Math.log10(x)/(-0.4) + p.m0;
-  const Source = x*A0;
-  return {value:mag, d:{time,Source,Sky,Dark,RN,Readout}};
+  const x = (A0 + Math.sqrt(disc)) / (2 * a);
+  const mag = Math.log10(x) / (-0.4) + p.m0;
+  const Source = x * A0;
+  return {value: mag, d: {time, Source, Sky, Dark, RN}};
 }
 
 /* ── Mode 2: find SNR ── */
 function calcSNR(p, singletime, frames, mag) {
-  const time = singletime*frames;
-  const Readout = p.rn*frames;
-  const x = Math.pow(10, -0.4*(mag-p.m0));
-  const A0 = p.ref*p.Aarea*time*p.Q;
-  const Source = x*A0;
-  const Sky  = Math.pow(10,-0.4*(p.skymag-p.m0))*p.ref*p.psfarea*p.Aarea*time*p.Q;
-  const Dark = p.dc*time*p.npix;
-  const RN   = Readout*Readout*p.npix;
+  const time = singletime * frames;
+  const x = Math.pow(10, -0.4 * (mag - p.m0));
+  const A0 = p.F0 * p.Aarea * time * p.Qeff;
+  const Source = x * A0;
+  const Sky  = Math.pow(10, -0.4 * (p.skymag - p.m0)) * p.F0 * p.psfarea * p.Aarea * time * p.Qeff;
+  const Dark = p.dc * time * p.npix;
+  const RN   = p.rn * p.rn * frames * p.npix;
 
-  const denom = Math.sqrt(Source+Sky+Dark+RN);
+  const denom = Math.sqrt(Source + Sky + Dark + RN);
   if (denom <= 0) return null;
-  const snr = Source/denom;
+  const snr = Source / denom;
   if (!isFinite(snr) || snr <= 0) return null;
-  return {value:snr, d:{time,Source,Sky,Dark,RN,Readout}};
+  return {value: snr, d: {time, Source, Sky, Dark, RN}};
 }
 
-/* ── Mode 3: find single exposure time ── */
-/*
-  SNR² = Source² / (Source + Sky + Dark + RN)
-  With Source = α·t, Sky = β·t, Dark = γ·t, RN = δ (const):
-    α²t² − SNR²(α+β+γ)t − SNR²δ = 0
+/* ── Mode 3: find single exposure time ──
+   SNR^2 = Source^2 / (Source + Sky + Dark + RN)
+   With Source=alpha*t, Sky=beta*t, Dark=gamma*t, RN=delta (const):
+     alpha^2*t^2 - SNR^2*(alpha+beta+gamma)*t - SNR^2*delta = 0
 */
 function calcExp(p, frames, SNR, mag) {
-  const Readout = p.rn*frames;
-  const x = Math.pow(10, -0.4*(mag-p.m0));
-  const K    = p.ref*p.Aarea*p.Q;          // A0 = K·time
-  const Ksky = Math.pow(10,-0.4*(p.skymag-p.m0))*p.ref*p.psfarea*p.Aarea*p.Q;
-  const alpha = x*K;
+  const x = Math.pow(10, -0.4 * (mag - p.m0));
+  const K    = p.F0 * p.Aarea * p.Qeff;
+  const Ksky = Math.pow(10, -0.4 * (p.skymag - p.m0)) * p.F0 * p.psfarea * p.Aarea * p.Qeff;
+  const alpha = x * K;
   const beta  = Ksky;
-  const gamma = p.dc*p.npix;
-  const delta = Readout*Readout*p.npix;
+  const gamma = p.dc * p.npix;
+  // delta = rn^2 * N_frames * N_pix (constant w.r.t. time)
+  const delta = p.rn * p.rn * frames * p.npix;
 
-  const At = alpha*alpha;
-  const Bt = -SNR*SNR*(alpha+beta+gamma);
-  const Ct = -SNR*SNR*delta;
-  const disc = Bt*Bt - 4*At*Ct;
+  const At = alpha * alpha;
+  const Bt = -SNR * SNR * (alpha + beta + gamma);
+  const Ct = -SNR * SNR * delta;
+  const disc = Bt * Bt - 4 * At * Ct;
   if (disc < 0) return null;
 
-  const t = (-Bt + Math.sqrt(disc))/(2*At);
+  const t = (-Bt + Math.sqrt(disc)) / (2 * At);
   if (t <= 0 || !isFinite(t)) return null;
-  const singletime = t/frames;
+  const singletime = t / frames;
 
-  const Source = alpha*t, Sky = beta*t, Dark = gamma*t, RN = delta;
-  return {value:singletime, d:{time:t,Source,Sky,Dark,RN,Readout}};
+  const Source = alpha * t, Sky = beta * t, Dark = gamma * t, RN = delta;
+  return {value: singletime, d: {time: t, Source, Sky, Dark, RN}};
 }
 
 /* ── Main calculate ── */
@@ -329,18 +520,18 @@ function calculate() {
   let res;
 
   if (currentMode === 'mag') {
-    const st=v('singletime'), fr=v('frames'), snr=v('snr');
-    if ([st,fr,snr].some(x=>isNaN(x)||x<=0)) return showError();
+    const st = val('singletime'), fr = val('frames'), snr = val('snr');
+    if ([st, fr, snr].some(x => isNaN(x) || x <= 0)) return showError();
     res = calcMag(p, st, fr, snr);
     if (res) lastCalc.mag = res.value;
   } else if (currentMode === 'snr') {
-    const st=v('singletime'), fr=v('frames'), mag=v('limitmag');
-    if ([st,fr].some(x=>isNaN(x)||x<=0) || isNaN(mag)) return showError();
+    const st = val('singletime'), fr = val('frames'), mag = val('limitmag');
+    if ([st, fr].some(x => isNaN(x) || x <= 0) || isNaN(mag)) return showError();
     res = calcSNR(p, st, fr, mag);
     if (res) lastCalc.snr = res.value;
   } else {
-    const fr=v('frames'), snr=v('snr'), mag=v('limitmag');
-    if ([fr,snr].some(x=>isNaN(x)||x<=0) || isNaN(mag)) return showError();
+    const fr = val('frames'), snr = val('snr'), mag = val('limitmag');
+    if ([fr, snr].some(x => isNaN(x) || x <= 0) || isNaN(mag)) return showError();
     res = calcExp(p, fr, snr, mag);
     if (res) lastCalc.exp = res.value;
   }
@@ -352,6 +543,7 @@ function calculate() {
 function showError() {
   document.getElementById('result-value').textContent = '--';
   document.getElementById('result-error').style.display = 'block';
+  document.getElementById('result-sub').textContent = '';
   document.getElementById('diag-card').style.display = 'none';
 }
 
@@ -361,47 +553,68 @@ function showResult(res, p) {
   document.getElementById('result-error').style.display = 'none';
   document.getElementById('diag-card').style.display = 'block';
 
+  // Result label with band context
+  if (currentMode === 'mag') {
+    document.getElementById('result-label').textContent = 'Limiting Magnitude';
+    document.getElementById('result-sub').textContent = `${p.band.name} (${p.band.sys} system)`;
+  } else if (currentMode === 'snr') {
+    document.getElementById('result-label').textContent = 'Signal-to-Noise Ratio (\u03c3)';
+    document.getElementById('result-sub').textContent = `at ${p.band.name} mag ${val('limitmag')}`;
+  } else {
+    document.getElementById('result-label').textContent = 'Single Exposure Time (seconds)';
+    document.getElementById('result-sub').textContent = `for ${p.band.name} mag ${val('limitmag')} at SNR ${val('snr')}`;
+  }
+
   const d = res.d;
   const totalVar = d.Source + d.Sky + d.Dark + d.RN;
 
   // Noise budget bar
   const pcts = totalVar > 0
-    ? [d.Source/totalVar, d.Sky/totalVar, d.Dark/totalVar, d.RN/totalVar].map(x=>x*100)
-    : [0,0,0,0];
-  const labels = ['Source shot','Sky','Dark','Read noise'];
-  const cls = ['nb-src','nb-sky','nb-dark','nb-read'];
-  const lcls = ['nl-src','nl-sky','nl-dark','nl-read'];
+    ? [d.Source / totalVar, d.Sky / totalVar, d.Dark / totalVar, d.RN / totalVar].map(x => x * 100)
+    : [0, 0, 0, 0];
+  const labels = ['Source shot', 'Sky', 'Dark', 'Read noise'];
+  const cls = ['nb-src', 'nb-sky', 'nb-dark', 'nb-read'];
+  const lcls = ['nl-src', 'nl-sky', 'nl-dark', 'nl-read'];
 
   document.getElementById('noise-bar').innerHTML =
-    pcts.map((w,i)=>`<div class="${cls[i]}" style="width:${w}%" title="${labels[i]}: ${w.toFixed(1)}%"></div>`).join('');
+    pcts.map((w, i) => `<div class="${cls[i]}" style="width:${w}%" title="${labels[i]}: ${w.toFixed(1)}%"></div>`).join('');
   document.getElementById('noise-legend').innerHTML =
-    pcts.map((w,i)=>`<span class="${lcls[i]}">${labels[i]} ${w.toFixed(0)}%</span>`).join('');
+    pcts.map((w, i) => `<span class="${lcls[i]}">${labels[i]} ${w.toFixed(0)}%</span>`).join('');
 
   // Diagnostics
-  const fmt = (n,d)=> n>=1e5 ? n.toExponential(1) : n>=100 ? Math.round(n).toLocaleString() : n.toFixed(d||1);
+  const fmt = (n, d) => n >= 1e6 ? n.toExponential(2) : n >= 1e3 ? Math.round(n).toLocaleString() : n.toFixed(d || 1);
   const items = [
-    {v:fmt(d.time,1)+' s',       l:'Total Exposure'},
-    {v:fmt(p.pixscale,2)+' \u2033/px', l:'Pixel Scale'},
-    {v:fmt(p.psfpix,1)+' px',    l:'PSF FWHM'},
-    {v:fmt(p.npix,1)+' px',      l:'PSF N pixels'},
-    {v:p.Q.toFixed(3),           l:'Effective Q'},
-    {v:fmt(d.Source,0)+' e\u207b',l:'Source Signal'},
-    {v:fmt(d.Sky,0)+' e\u207b',  l:'Sky Signal'},
-    {v:fmt(d.Dark,1)+' e\u207b', l:'Dark Signal'},
-    {v:fmt(d.RN,0)+' e\u207b\u00b2', l:'Read Noise Var'},
-    {v:fmt(Math.sqrt(totalVar),1)+' e\u207b', l:'Total Noise'},
-    {v:fmt(p.Aarea,4)+' m\u00b2',l:'Aperture Area'},
-    {v:fmt(p.psfarea,1)+' \u2033\u00b2',l:'PSF Sky Area'},
+    {v: fmt(d.time, 1) + ' s',              l: 'Total Exposure'},
+    {v: p.airmass.toFixed(2),                l: 'Airmass'},
+    {v: (p.Tatm * 100).toFixed(1) + '%',    l: 'Atm Transmission'},
+    {v: p.Qeff.toFixed(3),                   l: 'Effective Q'},
+    {v: fmt(p.pixscale, 2) + ' \u2033/px',  l: 'Pixel Scale'},
+    {v: fmt(p.psfpix, 1) + ' px',           l: 'PSF FWHM'},
+    {v: fmt(d.Source, 0) + ' e\u207b',      l: 'Source Signal'},
+    {v: fmt(d.Sky, 0) + ' e\u207b',         l: 'Sky Signal'},
+    {v: fmt(d.Dark, 1) + ' e\u207b',        l: 'Dark Signal'},
+    {v: fmt(d.RN, 0) + ' e\u207b\u00b2',   l: 'Read Noise Var'},
+    {v: fmt(Math.sqrt(totalVar), 1) + ' e\u207b', l: 'Total Noise'},
+    {v: 'F\u2080=' + p.F0.toExponential(2), l: 'Zero-Point Flux'},
   ];
   document.getElementById('details-grid').innerHTML =
-    items.map(i=>`<div class="detail-item"><div class="val">${i.v}</div><div class="lbl">${i.l}</div></div>`).join('');
+    items.map(i => `<div class="detail-item"><div class="val">${i.v}</div><div class="lbl">${i.l}</div></div>`).join('');
 }
 
 // Live recalculate on any input change
 document.querySelectorAll('input[type="number"]').forEach(el =>
   el.addEventListener('input', calculate));
 
+// Reset preset dropdown to "Custom" when user manually edits a field
+['aperture','fn','seeing','elev','trans'].forEach(id =>
+  document.getElementById(id).addEventListener('input', () =>
+    document.getElementById('tel-preset').value = ''));
+['qe','campix','dc','readnoise'].forEach(id =>
+  document.getElementById(id).addEventListener('input', () =>
+    document.getElementById('cam-preset').value = ''));
+
 // Init
+updateBandInfo();
 setMode('mag');
 </script>
 </body>
