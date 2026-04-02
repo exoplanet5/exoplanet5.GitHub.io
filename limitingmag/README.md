@@ -1,6 +1,6 @@
 # CCD Limiting Magnitude Calculator
 
-A browser-based calculator for estimating CCD imaging detection limits. Supports three solve modes, 13 photometric bands across Johnson-Cousins, SDSS, and Gaia systems, and a physically correct atmospheric extinction model.
+A browser-based calculator for estimating CCD imaging detection limits. Supports three solve modes, 15 photometric bands across Johnson-Cousins, SDSS, Gaia, and wide luminance systems, telescope and camera presets for common survey instruments, and a physically correct atmospheric extinction model.
 
 **Live**: [exoplanet5.github.io/limitingmag](https://exoplanet5.github.io/limitingmag/)
 
@@ -186,6 +186,29 @@ Wide-band passbands from the Gaia spacecraft. Zero-point fluxes estimated from p
 | GBP  | 5110          | 2530            | 4.00e-9                      | 2.60e10       | 0.22           | 22.0                   |
 | GRP  | 7770          | 2960            | 1.30e-9                      | 1.50e10       | 0.06           | 20.3                   |
 
+### Luminance / Wide Bandpass (AB-like)
+
+Unfiltered or broad UV-IR/visible bandpasses for luminance imaging. For wide rectangular bandpasses, the narrow-band approximation breaks down; the exact photon zero-point flux is:
+
+```
+F0 = 5.476e10 * ln(lambda_max / lambda_min)   [ph/m^2/s]
+```
+
+The photon-weighted effective wavelength is:
+
+```
+lambda_eff = (lambda_max - lambda_min) / ln(lambda_max / lambda_min)
+```
+
+Using this `lambda_eff`, the standard formula `F0 = 5.476e10 * Delta_lambda / lambda_eff` reproduces the exact integral, so no code changes are needed.
+
+| Band | Wavelength range | lambda_eff (A) | Delta_lambda (A) | F0 (ph/m^2/s) | k (mag/airmass) | Dark sky (mag/arcsec^2) |
+|------|-----------------|---------------|-----------------|---------------|----------------|------------------------|
+| UV-IR cut | 400 - 800 nm | 5771 | 4000 | 3.80e10 | 0.18 | 21.4 |
+| Visible wide | 400 - 900 nm | 6164 | 5000 | 4.44e10 | 0.15 | 21.0 |
+
+Sky brightness estimated by integrating known B+V+R+I sky fluxes across each bandpass and converting back to magnitudes using the wide-band F0. Extinction coefficient is a 1/lambda-weighted average across the bandpass.
+
 ### Band Conversion Notes
 
 Each photometric band defines its own magnitude system with a specific zero-point photon flux `F0`. When the user selects a band:
@@ -204,6 +227,31 @@ Offsets (approximate):  U: +0.79  |  B: -0.09  |  V: +0.02  |  R: +0.21  |  I: +
 ```
 
 Converting a limiting magnitude from one band to another requires knowledge of the source spectrum (color), which is beyond the scope of this calculator.
+
+---
+
+## Presets
+
+### Telescope Presets
+
+| Preset | Aperture (m) | Focal Ratio | Seeing (arcsec) | Elevation (deg) |
+|--------|-------------|-------------|-----------------|-----------------|
+| MUST 6.5m | 6.5 | f/3.70 | 1.0 | 60 |
+| Rubin/LSST 8.4m | 8.4 | f/1.234 | 1.0 | 60 |
+| WFST 2.5m | 2.5 | f/2.48 | 1.0 | 60 |
+| Mayall/DESI 3.8m | 3.797 | f/3.86 | 1.5 | 60 |
+
+### Camera Presets
+
+| Preset | Pixel (um) | QE | Dark Current (e-/s/pix) | Read Noise (e-) | Source |
+|--------|-----------|-----|------------------------|-----------------|--------|
+| e2v CCD250-82 | 10.0 | 0.93 | 0.002 @ -100C | 5.0 @ 550 kHz | Teledyne datasheet |
+| e2v CCD230-42 | 15.0 | 0.92 | 0.2 @ -25C | 4.0 @ 50 kHz | Teledyne datasheet v5 |
+| Sony IMX 455 | 3.76 | 0.80 | 0.0022 @ -20C | 1.2 (HCG mode) | ATIK guide; QHY600 specs |
+| GSENSE 1517BSI | 15.0 | 0.92 | 0.008 @ -60C | 1.2 (12-bit HDR) | Gpixel product page |
+| GSENSE 1081BSI | 10.0 | 0.95 | 0.004 @ -70C | 5.35 | Gpixel product page |
+
+Note: dark current and read noise depend on operating temperature and readout mode. Values shown are from manufacturer datasheets at the stated conditions. Selecting a preset fills all camera fields; editing any field manually resets the dropdown to "Custom".
 
 ---
 
@@ -236,8 +284,8 @@ Converting a limiting magnitude from one band to another requires knowledge of t
 |-----------|-------------|---------|
 | Quantum Efficiency | Detector QE at the observing wavelength | 0.80 |
 | Pixel Size | Physical pixel dimension (micrometers) | 3.76 |
-| Dark Current | Thermal noise rate (e-/s/pixel at operating temperature) | 0.1 |
-| Read Noise | Readout noise per frame (e-/pixel/frame) | 3 |
+| Dark Current | Thermal noise rate (e-/s/pixel at operating temperature) | 0.0022 |
+| Read Noise | Readout noise per frame (e-/pixel/frame) | 1.2 |
 
 ---
 
@@ -259,6 +307,7 @@ The dominant noise source determines the observing regime:
 
 ## References
 
+### Photometric systems
 - Bessell, M. S. 1979, PASP, 91, 589 -- UBVRI photometry II
 - Bessell, M. S. 1990, PASP, 102, 1181 -- UBVRI passbands
 - Bessell, M. S., Castelli, F., & Plez, B. 1998, A&A, 333, 231 -- Model atmospheres broad-band colors
@@ -268,6 +317,18 @@ The dominant noise source determines the observing regime:
 - Benn, C. R., & Ellison, S. L. 1998, La Palma Technical Note 115 -- Sky brightness at La Palma
 - Jordi, C. et al. 2010, A&A, 523, A48 -- Gaia broad band photometry
 - Riello, M. et al. 2021, A&A, 649, A3 -- Gaia EDR3 photometric content
+
+### Detector datasheets
+- Teledyne e2v, CCD250-82 BSI Datasheet -- LSST/WFST sensor
+- Teledyne e2v, CCD230-42 BSI Datasheet v5 (A1A-765138) -- 4MP scientific CCD
+- Sony IMX455 -- characterized in QHY600 Pro (QHYCCD) and ATIK Apx60
+- Gpixel, GSENSE1517BSI product page -- 16.8MP 15um sCMOS
+- Gpixel, GSENSE1081BSI product page -- 81MP 10um sCMOS
+
+### Telescopes
+- Ivezic, Z. et al. 2019, ApJ, 873, 111 -- Rubin Observatory LSST
+- Lei, L. et al. 2023 -- WFST primary mosaic CCD camera (SPIE 13103)
+- DESI Collaboration, Aghamousa, A. et al. 2016, arXiv:1611.00036 -- DESI instrument design
 
 ---
 
