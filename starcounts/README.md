@@ -8,27 +8,9 @@ Part of the MUST 6.5m telescope focal plane GFA (Guide, Focus & Alignment) desig
 
 ---
 
-## Project Files
+## Parameters
 
-| File | Description |
-|------|-------------|
-| `index.html` | Interactive star count calculator (this tool) |
-| `desi_gfa_star_counts.py` | Python reference: DESI GFA star count analysis (Bahcall & Soneira model, all-sky map, Poisson statistics) |
-| `desi_gfa_star_counts.png` | Output of the Python analysis (4-panel figure) |
-| `gaia_dr2_*.csv` | Local Gaia DR2 bright-star catalogs (G < 7) |
-| `GFAarea_20230619.pptx` | GFA sensor area trade study presentation |
-| `starcnts_*.png` | Star count maps at various FOV areas and magnitude limits |
-| `StarCounttvsSensorArea.png` | Star counts vs sensor area summary plot |
-| `programing/` | Python scripts for guide star PSF simulation and centroid detection |
-| `30_jsession2013.pdf`, `class_IV-2005.pdf` | Reference papers on stellar density models |
-
----
-
-## Calculator Features
-
-### Inputs
-
-**Camera Sensor**
+### Camera Sensor
 
 | Parameter | Unit | Default | Description |
 |-----------|------|---------|-------------|
@@ -45,7 +27,7 @@ FOV_y                = Chip_Y x PixelScale / 60         [arcmin]
 Effective area       = FOV_x x FOV_y                    [arcmin^2]
 ```
 
-**Sky & Observation**
+### Sky & Observation
 
 | Parameter | Default | Options |
 |-----------|---------|---------|
@@ -63,6 +45,8 @@ Effective area       = FOV_x x FOV_y                    [arcmin^2]
 ---
 
 ## Star Count Model
+
+Empirical disk + spheroid model, ported from `desi_gfa_star_counts.py` (originally r'-band only, hardcoded DESI FOV) and extended with multi-band support and parameterized inputs.
 
 Cumulative star counts per deg^2 brighter than magnitude m at Galactic (l, b):
 
@@ -83,6 +67,8 @@ N(m, l, b) = N_disk(pole) x csc|b| x (1 + f_bulge) + N_sph
 |--------|-----|-----|------|------|------|-------|-------|--------|
 | N_cum  | 7   | 28  | 120  | 250  | 520  | 1200  | 2800  | 11500  |
 
+Calibrated to Bahcall & Soneira (1980), SDSS star counts (Juric+ 2008), and Gaia DR3.
+
 ### Band conversion
 
 Other bands mapped from r' via typical stellar color offset:
@@ -91,15 +77,15 @@ Other bands mapped from r' via typical stellar color offset:
 N(<m, band) = N_r'(m + Delta)
 ```
 
-| Band | Delta (r'-band) | Band | Delta |
-|------|--------|------|--------|
-| U    | -1.35  | u'   | -1.65  |
-| B    | -0.85  | g'   | -0.50  |
-| V    | -0.15  | r'   |  0.00  |
-| Rc   | +0.20  | i'   | +0.30  |
-| Ic   | +0.60  | z'   | +0.40  |
-| G    | -0.10  | G_BP | -0.40  |
-| G_RP | +0.35  |      |        |
+| Band | Delta | Band | Delta |
+|------|-------|------|-------|
+| U    | -1.35 | u'   | -1.65 |
+| B    | -0.85 | g'   | -0.50 |
+| V    | -0.15 | r'   |  0.00 |
+| Rc   | +0.20 | i'   | +0.30 |
+| Ic   | +0.60 | z'   | +0.40 |
+| G    | -0.10 | G_BP | -0.40 |
+| G_RP | +0.35 |      |       |
 
 ### Differential count in a FOV
 
@@ -107,7 +93,7 @@ N(<m, band) = N_r'(m + Delta)
 N_FOV = [N_cum(m_faint) - N_cum(m_bright)] x A_FOV / 3600
 ```
 
-where A_FOV is in arcmin^2, and 3600 converts deg^2 to arcmin^2.
+where A_FOV is in arcmin^2.
 
 ---
 
