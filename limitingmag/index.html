@@ -198,6 +198,10 @@ footer a{color:var(--accent-mag);text-decoration:none}
         <input type="number" id="skymag" value="21.8" step="any">
       </div>
       <div class="field">
+        <label>Extinction <span class="unit">(mag/airmass)</span></label>
+        <input type="number" id="extinct" value="0.15" step="any" min="0">
+      </div>
+      <div class="field">
         <label>Aperture <span class="unit">(m)</span></label>
         <input type="number" id="aperture" value="0.3" step="any" min="0.01">
       </div>
@@ -413,6 +417,11 @@ function onBandChange() {
   el.classList.remove('flash');
   void el.offsetWidth;
   el.classList.add('flash');
+  const ek = document.getElementById('extinct');
+  ek.value = b.k;
+  ek.classList.remove('flash');
+  void ek.offsetWidth;
+  ek.classList.add('flash');
   updateBandInfo();
   calculate();
 }
@@ -420,7 +429,7 @@ function onBandChange() {
 function updateBandInfo() {
   const b = BANDS[document.getElementById('band').value];
   document.getElementById('band-info').textContent =
-    `\u03bb=${b.lam} \u00c5  |  \u0394\u03bb=${b.dlam} \u00c5  |  k=${b.k} mag/airmass  |  F\u2080=${b.F0.toExponential(2)} ph/m\u00b2/s  |  ${b.sys} system`;
+    `\u03bb=${b.lam} \u00c5  |  \u0394\u03bb=${b.dlam} \u00c5  |  F\u2080=${b.F0.toExponential(2)} ph/m\u00b2/s  |  ${b.sys} system`;
 }
 
 /* ── Read inputs ── */
@@ -432,12 +441,12 @@ function commonParams() {
   const band = getBand();
   const skymag=val('skymag'), aperture=val('aperture'), fn=val('fn'), seeing=val('seeing'),
         elev=val('elev'), trans=val('trans'), qe=val('qe'),
-        campix=val('campix'), dc=val('dc'), rn=val('readnoise');
-  if ([skymag,aperture,fn,seeing,elev,trans,qe,campix,dc,rn].some(isNaN)) return null;
+        campix=val('campix'), dc=val('dc'), rn=val('readnoise'),
+        k=val('extinct');
+  if ([skymag,aperture,fn,seeing,elev,trans,qe,campix,dc,rn,k].some(isNaN)) return null;
 
   const m0 = 0;
   const F0 = band.F0;
-  const k  = band.k;
 
   // Atmospheric extinction: proper physical model
   const zenith = (90 - elev) * Math.PI / 180;
