@@ -236,7 +236,7 @@ footer a{color:var(--accent-mag);text-decoration:none}
       </div>
       <div class="field">
         <label>Quantum Efficiency</label>
-        <input type="number" id="qe" value="0.80" step="any" min="0.01" max="1">
+        <input type="number" id="qe" value="0.80" step="any" min="0.01" max="1.0">
       </div>
       <div class="field">
         <label>Pixel Size <span class="unit">(&micro;m)</span></label>
@@ -244,11 +244,11 @@ footer a{color:var(--accent-mag);text-decoration:none}
       </div>
       <div class="field">
         <label>Dark Current <span class="unit">(e&minus;/s/pix)</span></label>
-        <input type="number" id="dc" value="0.1" step="any" min="0">
+        <input type="number" id="dc" value="0.0022" step="any" min="0">
       </div>
       <div class="field">
         <label>Read Noise <span class="unit">(e&minus;/pix/frame)</span></label>
-        <input type="number" id="readnoise" value="3" step="any" min="0">
+        <input type="number" id="readnoise" value="1.2" step="any" min="0">
       </div>
     </div>
   </div>
@@ -331,11 +331,11 @@ const TEL_PRESETS = {
 
 /* ── Camera presets ── */
 const CAM_PRESETS = {
-  e2v_250_82:    {name:'e2v CCD250-82',   qe:0.92, campix:10.0, dc:0.002, rn:6},
-  e2v_230_42:    {name:'e2v CCD230-42',   qe:0.93, campix:10.0, dc:0.002, rn:7},
-  IMX455:        {name:'Sony IMX 455',     qe:0.91, campix:3.76, dc:0.003, rn:1.2},
-  GSENSE1517BSI: {name:'GSENSE 1517BSI',  qe:0.90, campix:9.0,  dc:0.1,   rn:2.0},
-  GSENSE1081BSI: {name:'GSENSE 1081BSI',  qe:0.90, campix:4.25, dc:0.1,   rn:1.5},
+  e2v_250_82:    {name:'e2v CCD250-82',   qe:0.93, campix:10.0, dc:0.002, rn:5.0},   // Teledyne datasheet; DC @-100°C, RN @550kHz
+  e2v_230_42:    {name:'e2v CCD230-42',   qe:0.92, campix:15.0, dc:0.2,   rn:4.0},   // Teledyne datasheet v5; DC @-25°C, RN @50kHz
+  IMX455:        {name:'Sony IMX 455',     qe:0.80, campix:3.76, dc:0.0022,rn:1.2},   // ATIK/QHY measured; DC @-20°C, RN HCG mode
+  GSENSE1517BSI: {name:'GSENSE 1517BSI',  qe:0.92, campix:15.0, dc:0.008, rn:1.2},   // Gpixel datasheet; DC @-60°C, RN 12-bit HDR
+  GSENSE1081BSI: {name:'GSENSE 1081BSI',  qe:0.95, campix:10.0, dc:0.004, rn:5.35},  // Gpixel datasheet; DC @-70°C
 };
 
 function onTelPreset() {
