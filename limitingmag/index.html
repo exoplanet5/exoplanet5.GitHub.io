@@ -186,6 +186,10 @@ footer a{color:var(--accent-mag);text-decoration:none}
             <option value="Gaia_GBP">GBP (5110 &Aring;, &Delta;&lambda; 2530 &Aring;)</option>
             <option value="Gaia_GRP">GRP (7770 &Aring;, &Delta;&lambda; 2960 &Aring;)</option>
           </optgroup>
+          <optgroup label="Luminance (wide)">
+            <option value="Lum_UV_IR">UV-IR cut (400&ndash;800 nm)</option>
+            <option value="Lum_Vis">Visible wide (400&ndash;900 nm)</option>
+          </optgroup>
         </select>
         <div class="band-info" id="band-info"></div>
       </div>
@@ -319,6 +323,12 @@ const BANDS = {
   Gaia_G:   {name:'Gaia G',   sys:'Vega', lam:6230, dlam:4400, flam:2.50e-9, F0:3.45e10, k:0.13, sky:21.4},
   Gaia_GBP: {name:'Gaia GBP', sys:'Vega', lam:5110, dlam:2530, flam:4.00e-9, F0:2.60e10, k:0.22, sky:22.0},
   Gaia_GRP: {name:'Gaia GRP', sys:'Vega', lam:7770, dlam:2960, flam:1.30e-9, F0:1.50e10, k:0.06, sky:20.3},
+  // ── Luminous / wide bandpass (AB-like) ──
+  // F0 = 5.476e10 * ln(lam_max/lam_min) [exact integral for wide bands]
+  // lam_eff = (lam_max - lam_min) / ln(lam_max/lam_min)
+  // Sky estimated by summing B+V+R+I sky fluxes across bandpass
+  Lum_UV_IR: {name:'Luminance (UV-IR cut)', sys:'AB', lam:5771, dlam:4000, flam:null, F0:3.80e10, k:0.18, sky:21.4},
+  Lum_Vis:   {name:'Luminance (Vis wide)',  sys:'AB', lam:6164, dlam:5000, flam:null, F0:4.44e10, k:0.15, sky:21.0},
 };
 
 /* ── Telescope presets ── */
