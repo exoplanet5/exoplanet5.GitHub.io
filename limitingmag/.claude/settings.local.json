@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(~/.venvs/astro313/bin/python /Users/mickey/calculator/limitingmag/test.py)",
+      "Bash(open:*)",
+      "WebSearch"
+    ]
+  }
+}

@@ -239,6 +239,7 @@ footer a{color:var(--accent-mag);text-decoration:none}
             <option value="IMX455" selected>Sony IMX 455</option>
             <option value="GSENSE1517BSI">GSENSE 1517BSI</option>
             <option value="GSENSE1081BSI">GSENSE 1081BSI</option>
+            <option value="GSENSE9016BSI">GSENSE 9016BSI</option>
           </optgroup>
         </select>
       </div>
@@ -350,6 +351,7 @@ const CAM_PRESETS = {
   IMX455:        {name:'Sony IMX 455',     qe:0.80, campix:3.76, dc:0.0022,rn:1.2},   // ATIK/QHY measured; DC @-20°C, RN HCG mode
   GSENSE1517BSI: {name:'GSENSE 1517BSI',  qe:0.92, campix:15.0, dc:0.008, rn:1.2},   // Gpixel datasheet; DC @-60°C, RN 12-bit HDR
   GSENSE1081BSI: {name:'GSENSE 1081BSI',  qe:0.95, campix:10.0, dc:0.004, rn:5.35},  // Gpixel datasheet; DC @-70°C
+  GSENSE9016BSI: {name:'GSENSE 9016BSI', qe:0.95, campix:9.0,  dc:0.004, rn:0.5},
 };
 
 function onTelPreset() {
