@@ -226,10 +226,10 @@ const A = {
 
 /* ━━ Map ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function initMap() {
-  map = L.map('map', { center:[30,110], zoom:4, zoomControl:true });
+  map = L.map('map', { center:[30,110], zoom:4, zoomControl:true, worldCopyJump:true });
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
     attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
-    subdomains:'abcd', maxZoom:19
+    subdomains:'abcd', maxZoom:19, noWrap:false
   }).addTo(map);
 }
 
@@ -363,13 +363,19 @@ function updateMap() {
   D.features.forEach(f=>{
     if (!match(f)) return;
     n++;
-    const ly = L.polygon(f.coords, {
+    const polyOpts = {
       fillColor: f.style.fillColor||'#757575',
       fillOpacity: f.style.fillOpacity||0.3,
       color: f.style.strokeColor||'#757575',
       weight: f.style.strokeWidth||1.0,
       opacity: 0.8,
-    });
+    };
+    // Render each polygon three times (-360, 0, +360 lon) so zones stay visible
+    // when the user pans past the antimeridian.
+    const copies = [-360, 0, 360].map(off =>
+      L.polygon(f.coords.map(([lat,lng])=>[lat, lng+off]), polyOpts)
+    );
+    const ly = L.featureGroup(copies);
 
     // Tooltip on hover
     const p=[];
