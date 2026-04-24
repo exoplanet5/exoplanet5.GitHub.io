@@ -370,9 +370,9 @@ function updateMap() {
       weight: f.style.strokeWidth||1.0,
       opacity: 0.8,
     };
-    // Render each polygon three times (-360, 0, +360 lon) so zones stay visible
-    // when the user pans past the antimeridian.
-    const copies = [-360, 0, 360].map(off =>
+    // Render each polygon in the primary world plus one eastward copy (+360 lon)
+    // so zones stay visible when the user pans past the antimeridian.
+    const copies = [0, 360].map(off =>
       L.polygon(f.coords.map(([lat,lng])=>[lat, lng+off]), polyOpts)
     );
     const ly = L.featureGroup(copies);
