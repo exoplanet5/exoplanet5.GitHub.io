@@ -64,7 +64,11 @@
   .detail h3 { margin: 0 0 6px; font-size: 16px; font-weight: 600; }
   .detail .label { font-family: var(--sans); font-size: 11.5px; color: var(--muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.04em; margin-right: 4px; }
   .detail p { margin: 0 0 6px; font-size: 14.5px; }
-  .return-row { background: rgba(122, 85, 193, 0.06); }
+  .return-row,
+  tr:has(td > .badge.b-W),
+  tr.return-row { background: rgba(122, 85, 193, 0.06); }
+  /* Highlight any row whose status mentions Cislunar (b-C badge) — same formatting style as Will-return rows, amber tint matching the C badge */
+  tr:has(td .badge.b-C) { background: rgba(182, 97, 26, 0.06); }
   .grid-banner { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-family: var(--sans); font-size: 13px; margin: 0 0 20px; }
   .grid-banner div { padding: 10px 14px; background: var(--panel); border-left: 3px solid var(--rule); border-radius: 0 3px 3px 0; }
   .grid-banner b { display: block; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
