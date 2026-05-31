@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NanoSat &amp; CubeSat Catalog</title>
+<style>
+  :root{
+    --bg:#0b0f17; --panel:#121826; --panel2:#0e1420; --line:#223049;
+    --txt:#dde6f2; --mut:#8aa0bd; --acc:#5fb3ff; --acc2:#7ee0c0;
+    --warn:#ffcf6b; --bad:#ff7b72; --good:#6fe09a; --chip:#1b2740;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--txt);
+    font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  a{color:var(--acc);text-decoration:none} a:hover{text-decoration:underline}
+  header{padding:22px 26px 14px;border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,#0e1626,#0b0f17)}
+  h1{margin:0 0 4px;font-size:22px;letter-spacing:.3px}
+  h1 .em{color:var(--acc)}
+  .sub{color:var(--mut);font-size:13px;max-width:980px}
+  .sub code{background:var(--chip);padding:1px 6px;border-radius:5px;color:var(--acc2)}
+  .stats{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 2px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:9px 14px;min-width:104px}
+  .card b{display:block;font-size:20px;line-height:1.1}
+  .card span{color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.6px}
+  .wrap{padding:14px 26px 60px}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:6px 0 12px;
+    position:sticky;top:0;z-index:6;background:var(--bg);padding:10px 0;border-bottom:1px solid var(--line)}
+  input[type=search],select{background:var(--panel2);color:var(--txt);border:1px solid var(--line);
+    border-radius:8px;padding:8px 10px;font-size:13px;outline:none}
+  input[type=search]{min-width:280px}
+  input[type=search]:focus,select:focus{border-color:var(--acc)}
+  .chk{display:flex;align-items:center;gap:6px;color:var(--mut);font-size:13px;user-select:none;cursor:pointer}
+  .count{color:var(--mut);font-size:13px;margin-left:auto}
+  .count b{color:var(--txt)}
+  button.reset{background:var(--chip);color:var(--txt);border:1px solid var(--line);
+    border-radius:8px;padding:8px 12px;cursor:pointer;font-size:13px}
+  button.reset:hover{border-color:var(--acc)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  thead th{position:sticky;top:58px;background:#0f1626;z-index:5;text-align:left;
+    padding:9px 10px;border-bottom:2px solid var(--line);cursor:pointer;white-space:nowrap;
+    color:var(--mut);font-weight:600;letter-spacing:.3px}
+  thead th:hover{color:var(--txt)}
+  thead th .ar{opacity:.4;font-size:11px}
+  thead th.sorted .ar{opacity:1;color:var(--acc)}
+  tbody td{padding:8px 10px;border-bottom:1px solid #18223558;vertical-align:top}
+  tbody tr.row:hover{background:#131c2e;cursor:pointer}
+  td.num{text-align:right;font-variant-numeric:tabular-nums}
+  .name{font-weight:600;color:#eaf2ff}
+  .cos{color:var(--mut);font-size:11px}
+  .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid}
+  .b-orbit{color:var(--good);border-color:#1f6e44;background:#0f2a1c}
+  .b-re{color:var(--mut);border-color:#36435c;background:#161e2e}
+  .b-other{color:var(--warn);border-color:#5c4a1f;background:#2a2310}
+  .live{color:var(--acc2);font-size:11px}
+  .mut{color:var(--mut)}
+  /* detail panel */
+  tr.detail td{background:var(--panel2);border-bottom:2px solid var(--line);padding:0}
+  .dwrap{padding:16px 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px 26px}
+  .dsec h4{margin:0 0 7px;font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--acc)}
+  .kv{display:grid;grid-template-columns:128px 1fr;gap:2px 10px;font-size:12.5px}
+  .kv .k{color:var(--mut)} .kv .v{color:var(--txt);word-break:break-word}
+  .desc{grid-column:1/-1;color:var(--txt);font-size:13px;background:#0c1220;border:1px solid var(--line);
+    border-radius:8px;padding:10px 12px}
+  .links a{margin-right:12px;font-size:12.5px}
+  footer{color:var(--mut);font-size:12px;padding:18px 26px 40px;border-top:1px solid var(--line)}
+  .src{font-size:12px;color:var(--mut);margin-top:8px}
+  .src li{margin:2px 0}
+  mark{background:#3a4a2a;color:#eaffd6;border-radius:3px;padding:0 1px}
+</style>
+</head>
+<body>
+<header>
+  <h1>🛰 <span class="em">NanoSat &amp; CubeSat</span> Catalog</h1>
+  <div class="sub">
+    Small artificial satellites with payload mass <code>&le; 12&nbsp;kg</code> (nanosat / CubeSat class), all-time.
+    Orbit elements at latest epoch come from the <code id="epoch"></code> TLE snapshot; objects no longer tracked show GCAT initial orbits.
+    Built <span id="gen"></span> &middot; GCAT updated <span id="gcatu"></span>.
+  </div>
+  <div class="stats" id="stats"></div>
+</header>
+
+<div class="wrap">
+  <div class="controls">
+    <input type="search" id="q" placeholder="Search name, NORAD, COSPAR, operator, vehicle…" autocomplete="off">
+    <select id="fStatus"></select>
+    <select id="fYear"></select>
+    <select id="fSize"></select>
+    <select id="fCountry"></select>
+    <select id="fVehicle"></select>
+    <label class="chk"><input type="checkbox" id="fLive"> live elements only</label>
+    <button class="reset" id="reset">Reset</button>
+    <span class="count" id="count"></span>
+  </div>
+  <table id="tbl">
+    <thead><tr id="hrow"></tr></thead>
+    <tbody id="body"></tbody>
+  </table>
+</div>
+
+<footer>
+  <div><b>Sources &amp; provenance</b></div>
+  <ul class="src" id="srclist"></ul>
+  <div class="src">Each row records which source supplied its size and orbit (see the <i>Provenance</i> block when a row is expanded).
+  Catalog data: <a href="catalog.csv">catalog.csv</a> &middot; <a href="catalog.json">catalog.json</a>.
+  Orbit derivations (period, semi-major axis, apogee/perigee) computed from TLE mean motion using &mu;=398600.4418 km³/s², R⊕=6378.137 km.</div>
+</footer>
+
+<script src="data.js"></script>
+<script>
+const C = window.CATALOG, B = window.BUILD;
+const $ = s => document.querySelector(s);
+
+// ---- header meta
+$("#epoch").textContent = B.tle_epoch;
+$("#gen").textContent = B.generated;
+$("#gcatu").textContent = B.gcat_update;
+$("#srclist").innerHTML = B.sources.map(s=>`<li>${s}</li>`).join("");
+
+// ---- derived helpers
+const yearOf = r => (r.launch_date||"").slice(0,4);
+function uBucket(r){
+  const m = /(~?)([0-9.]+)U/.exec(r.size_class||"");
+  if(m) return m[2]+"U";
+  return "non-U";
+}
+const fmt = (v,d)=> (v===null||v===undefined||v==="")?"":(typeof v==="number"?(+v.toFixed(d)):v);
+const esc = s => (s==null?"":String(s)).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+// ---- stats cards
+const nOrbit = C.filter(r=>r.status==="In orbit").length;
+const nRe    = C.filter(r=>r.status==="Reentered").length;
+const nLive  = C.filter(r=>r.orbit_source && r.orbit_source.startsWith("TLE")).length;
+const nNorad = C.filter(r=>r.norad_id).length;
+const nNs    = C.filter(r=>r.ns_desc).length;
+$("#stats").innerHTML = [
+  ["Catalogued", C.length],["In orbit", nOrbit],["Reentered", nRe],
+  ["Live elements", nLive],["With NORAD", nNorad],["nanosats.eu", nNs],
+].map(([s,n])=>`<div class="card"><b>${n.toLocaleString()}</b><span>${s}</span></div>`).join("");
+
+// ---- filter option builders
+function fillSelect(el,label,vals){
+  el.innerHTML = `<option value="">${label}</option>` +
+    vals.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");
+}
+const years = [...new Set(C.map(yearOf).filter(Boolean))].sort().reverse();
+const sizes = [...new Set(C.map(uBucket))].sort((a,b)=>parseFloat(a)-parseFloat(b)||a.localeCompare(b));
+const countries = [...new Set(C.map(r=>r.launch_site_country).filter(Boolean))].sort();
+const vehicles = [...new Set(C.map(r=>(r.launch_vehicle||"").replace(/\s*\(.*\)$/,"")).filter(Boolean))].sort();
+fillSelect($("#fStatus"),"Any status",["In orbit","Reentered"]);
+fillSelect($("#fYear"),"Any launch year",years);
+fillSelect($("#fSize"),"Any size",sizes);
+fillSelect($("#fCountry"),"Any launch country",countries);
+fillSelect($("#fVehicle"),"Any vehicle",vehicles);
+
+// ---- columns
+const COLS = [
+  {k:"name",   t:"Satellite",    type:"s"},
+  {k:"norad_id",t:"NORAD",       type:"n", cls:"num"},
+  {k:"size_class",t:"Size",      type:"s"},
+  {k:"mass_kg",t:"Mass kg",      type:"n", cls:"num"},
+  {k:"status", t:"Status",       type:"s"},
+  {k:"launch_date",t:"Launched", type:"s"},
+  {k:"launch_vehicle",t:"Vehicle",type:"s"},
+  {k:"operator",t:"Operator",    type:"s"},
+  {k:"inclination_deg",t:"Incl°",type:"n", cls:"num"},
+  {k:"period_min",t:"Period min",type:"n", cls:"num"},
+  {k:"apogee_km",t:"Apo×Peri km",type:"n", cls:"num"},
+];
+$("#hrow").innerHTML = COLS.map((c,i)=>
+  `<th data-i="${i}">${c.t} <span class="ar">↕</span></th>`).join("");
+
+let sortKey="launch_date", sortDir=-1, sortType="s";
+let view = C.slice();
+
+function statusBadge(r){
+  if(r.status==="In orbit") return `<span class="badge b-orbit">In orbit</span>`+
+    (r.orbit_source.startsWith("TLE")?` <span class="live">●live</span>`:"");
+  if(r.status==="Reentered") return `<span class="badge b-re">Reentered</span>`;
+  return `<span class="badge b-other">${esc(r.status)}</span>`;
+}
+function cell(r,c){
+  const v=r[c.k];
+  if(c.k==="name") return `<div class="name">${hl(r.name)}</div>`+
+    (r.intl_designator?`<div class="cos">${esc(r.intl_designator)}</div>`:"");
+  if(c.k==="status") return statusBadge(r);
+  if(c.k==="launch_vehicle") return esc(v||"")||'<span class="mut">—</span>';
+  if(c.k==="apogee_km") return (r.apogee_km!=null&&r.perigee_km!=null)
+      ? `${Math.round(r.apogee_km)}×${Math.round(r.perigee_km)}` : "";
+  if(c.k==="period_min") return v!=null?(+v).toFixed(1):"";
+  if(c.k==="inclination_deg") return v!=null?(+v).toFixed(1):"";
+  if(c.k==="mass_kg") return v!=null?(+v).toFixed(v<1?2:1):"";
+  if(c.k==="operator") return esc(v||"")||'<span class="mut">—</span>';
+  if(v==null||v==="") return '<span class="mut">—</span>';
+  return esc(v);
+}
+let curQ="";
+function hl(s){
+  s=esc(s||"");
+  if(!curQ) return s;
+  try{ return s.replace(new RegExp("("+curQ.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","ig"),"<mark>$1</mark>"); }
+  catch(e){ return s; }
+}
+
+function detail(r){
+  const kv = pairs => `<div class="kv">`+pairs.filter(p=>p[1]!==""&&p[1]!=null)
+    .map(p=>`<div class="k">${p[0]}</div><div class="v">${p[1]}</div>`).join("")+`</div>`;
+  const links=[];
+  if(r.norad_id){
+    links.push(`<a href="https://celestrak.org/satcat/table-satcat.php?CATNR=${r.norad_id}" target="_blank">CelesTrak</a>`);
+    links.push(`<a href="https://www.n2yo.com/satellite/?s=${r.norad_id}" target="_blank">N2YO live</a>`);
+    links.push(`<a href="https://planet4589.org/space/gcat/data/cat/S${String(r.norad_id).padStart(5,"0")}.html" target="_blank">GCAT</a>`);
+  }
+  if(r.intl_designator)
+    links.push(`<a href="https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=${encodeURIComponent(r.intl_designator)}" target="_blank">NSSDCA</a>`);
+  if(r.ns_url) links.push(`<a href="${esc(r.ns_url)}" target="_blank">nanosats.eu</a>`);
+
+  return `<div class="dwrap">
+    <div class="dsec"><h4>Identity &amp; physical</h4>${kv([
+      ["NORAD", r.norad_id||"—"],["Int'l desig.", esc(r.intl_designator)],
+      ["Alt names", esc(r.alt_names)],["Size class", esc(r.size_class)+` <span class="mut">(${esc(r.size_source)})</span>`],
+      ["Mass", r.mass_kg!=null?r.mass_kg+" kg":""],
+      ["Body L×W×H", [r.length_m,r.width_m,r.height_m].some(x=>x!=null)
+        ? [r.length_m,r.width_m,r.height_m].map(x=>x==null?"?":x).join(" × ")+" m":""],
+      ["Deployed span", r.deployed_span_m!=null?r.deployed_span_m+" m":""],
+      ["Shape", esc(r.shape)],
+      ["Equiv. sphere r", r.equiv_sphere_radius_m!=null?r.equiv_sphere_radius_m+" m":""],
+      ["RCS", r.rcs_m2!=null?r.rcs_m2+" m²":""],
+    ])}</div>
+    <div class="dsec"><h4>Launch</h4>${kv([
+      ["Launch date", esc(r.launch_date)],["Decay date", esc(r.decay_date)],
+      ["Vehicle", esc(r.launch_vehicle)],["Site", esc(r.launch_site)],
+      ["Site country", esc(r.launch_site_country)],["Pad", esc(r.launch_pad)],
+      ["Operator", esc(r.operator)],["Operator country", esc(r.operator_country)],
+    ])}</div>
+    <div class="dsec"><h4>Orbit <span class="mut" style="text-transform:none">(${esc(r.orbit_source)||"none"})</span></h4>${kv([
+      ["Epoch", esc(r.orbit_epoch)],["Op. orbit", esc(r.op_orbit)],
+      ["Inclination", r.inclination_deg!=null?r.inclination_deg+"°":""],
+      ["RAAN", r.raan_deg!=null?r.raan_deg+"°":""],
+      ["Eccentricity", r.eccentricity!=null?r.eccentricity:""],
+      ["Arg. perigee", r.arg_perigee_deg!=null?r.arg_perigee_deg+"°":""],
+      ["Mean anomaly", r.mean_anomaly_deg!=null?r.mean_anomaly_deg+"°":""],
+      ["Mean motion", r.mean_motion_rev_day!=null?r.mean_motion_rev_day+" rev/day":""],
+      ["Period", r.period_min!=null?r.period_min+" min":""],
+      ["Semi-major axis", r.sma_km!=null?r.sma_km+" km":""],
+      ["Apogee", r.apogee_km!=null?r.apogee_km+" km":""],
+      ["Perigee", r.perigee_km!=null?r.perigee_km+" km":""],
+    ])}</div>
+    ${r.ns_desc?`<div class="desc"><b>nanosats.eu:</b> ${esc(r.ns_desc)}
+       ${r.ns_org?`<span class="mut">— ${esc(r.ns_org)}${r.ns_nation?", "+esc(r.ns_nation):""}${r.ns_status?" · "+esc(r.ns_status):""}</span>`:""}</div>`:""}
+    <div class="desc links">${links.join("")||'<span class="mut">no external links</span>'}</div>
+  </div>`;
+}
+
+function render(){
+  const body=$("#body"), frag=document.createDocumentFragment();
+  view.forEach((r,i)=>{
+    const tr=document.createElement("tr");
+    tr.className="row"; tr.dataset.idx=i;
+    tr.innerHTML=COLS.map(c=>`<td class="${c.cls||""}">${cell(r,c)}</td>`).join("");
+    frag.appendChild(tr);
+  });
+  body.innerHTML=""; body.appendChild(frag);
+  $("#count").innerHTML=`<b>${view.length.toLocaleString()}</b> of ${C.length.toLocaleString()} shown`;
+}
+
+function applySort(){
+  const dir=sortDir, k=sortKey, t=sortType;
+  view.sort((a,b)=>{
+    let x=a[k], y=b[k];
+    if(t==="n"){ x=(x==null?-Infinity:+x); y=(y==null?-Infinity:+y); return (x-y)*dir; }
+    x=(x==null?"":String(x)).toLowerCase(); y=(y==null?"":String(y)).toLowerCase();
+    return x<y?-dir:x>y?dir:0;
+  });
+}
+
+function filterData(){
+  const q=curQ.toLowerCase();
+  const st=$("#fStatus").value, yr=$("#fYear").value, sz=$("#fSize").value,
+        ct=$("#fCountry").value, vh=$("#fVehicle").value, live=$("#fLive").checked;
+  view = C.filter(r=>{
+    if(st && r.status!==st) return false;
+    if(yr && yearOf(r)!==yr) return false;
+    if(sz && uBucket(r)!==sz) return false;
+    if(ct && r.launch_site_country!==ct) return false;
+    if(vh && !(r.launch_vehicle||"").startsWith(vh)) return false;
+    if(live && !(r.orbit_source||"").startsWith("TLE")) return false;
+    if(q){
+      const hay=(r.name+" "+r.norad_id+" "+r.intl_designator+" "+r.operator+" "+
+                 r.launch_vehicle+" "+r.alt_names+" "+r.ns_org).toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  applySort(); render();
+}
+
+// ---- sort header interaction
+$("#hrow").addEventListener("click",e=>{
+  const th=e.target.closest("th"); if(!th) return;
+  const c=COLS[+th.dataset.i];
+  if(sortKey===c.k) sortDir=-sortDir; else {sortKey=c.k; sortType=c.type; sortDir=(c.type==="n"?-1:1);}
+  document.querySelectorAll("#hrow th").forEach(h=>{h.classList.remove("sorted");
+    h.querySelector(".ar").textContent="↕";});
+  th.classList.add("sorted"); th.querySelector(".ar").textContent=sortDir>0?"↑":"↓";
+  applySort(); render();
+});
+
+// ---- row expand (event delegation)
+$("#body").addEventListener("click",e=>{
+  const tr=e.target.closest("tr.row"); if(!tr) return;
+  const nxt=tr.nextElementSibling;
+  if(nxt && nxt.classList.contains("detail")){ nxt.remove(); return; }
+  document.querySelectorAll("tr.detail").forEach(d=>d.remove());
+  const d=document.createElement("tr"); d.className="detail";
+  d.innerHTML=`<td colspan="${COLS.length}">${detail(view[+tr.dataset.idx])}</td>`;
+  tr.after(d);
+});
+
+// ---- controls
+let deb;
+$("#q").addEventListener("input",e=>{clearTimeout(deb);
+  deb=setTimeout(()=>{curQ=e.target.value.trim(); filterData();},120);});
+["fStatus","fYear","fSize","fCountry","fVehicle","fLive"].forEach(id=>
+  $("#"+id).addEventListener("change",filterData));
+$("#reset").addEventListener("click",()=>{
+  ["fStatus","fYear","fSize","fCountry","fVehicle"].forEach(id=>$("#"+id).value="");
+  $("#fLive").checked=false; $("#q").value=""; curQ="";
+  sortKey="launch_date"; sortDir=-1; sortType="s";
+  document.querySelectorAll("#hrow th").forEach(h=>{h.classList.remove("sorted");h.querySelector(".ar").textContent="↕";});
+  filterData();
+});
+
+// ---- initial
+applySort(); render();
+</script>
+</body>
+</html>
