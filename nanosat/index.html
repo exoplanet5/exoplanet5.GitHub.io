@@ -110,14 +110,17 @@
 
 <script src="data.js"></script>
 <script>
-const C = window.CATALOG, B = window.BUILD;
+let C, B;                          // populated by load() below
 const $ = s => document.querySelector(s);
-
-// ---- header meta
-$("#epoch").textContent = B.tle_epoch;
-$("#gen").textContent = B.generated;
-$("#gcatu").textContent = B.gcat_update;
-$("#srclist").innerHTML = B.sources.map(s=>`<li>${s}</li>`).join("");
+const DEFAULT_BUILD = {            // used when data.js is absent (page fetches catalog.json instead)
+  generated:"2026-05-30", tle_epoch:"2026-05-28", gcat_update:"2026-05-25", mass_max:12,
+  sources:[
+    "GCAT (J. McDowell) satcat + launch + sites/lv/orgs tables",
+    "Local 3LE TLE catalog, epoch 2026-05-28",
+    "current_in_orbit_morphology_lambert_sphere.csv",
+    "nanosats.eu/database",
+  ],
+};
 
 // ---- derived helpers
 const yearOf = r => (r.launch_date||"").slice(0,4);
@@ -129,31 +132,11 @@ function uBucket(r){
 const fmt = (v,d)=> (v===null||v===undefined||v==="")?"":(typeof v==="number"?(+v.toFixed(d)):v);
 const esc = s => (s==null?"":String(s)).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
-// ---- stats cards
-const nOrbit = C.filter(r=>r.status==="In orbit").length;
-const nRe    = C.filter(r=>r.status==="Reentered").length;
-const nLive  = C.filter(r=>r.orbit_source && r.orbit_source.startsWith("TLE")).length;
-const nNorad = C.filter(r=>r.norad_id).length;
-const nNs    = C.filter(r=>r.ns_desc).length;
-$("#stats").innerHTML = [
-  ["Catalogued", C.length],["In orbit", nOrbit],["Reentered", nRe],
-  ["Live elements", nLive],["With NORAD", nNorad],["nanosats.eu", nNs],
-].map(([s,n])=>`<div class="card"><b>${n.toLocaleString()}</b><span>${s}</span></div>`).join("");
-
-// ---- filter option builders
+// ---- filter option builder (lists are populated in boot(), once data has loaded)
 function fillSelect(el,label,vals){
   el.innerHTML = `<option value="">${label}</option>` +
     vals.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");
 }
-const years = [...new Set(C.map(yearOf).filter(Boolean))].sort().reverse();
-const sizes = [...new Set(C.map(uBucket))].sort((a,b)=>parseFloat(a)-parseFloat(b)||a.localeCompare(b));
-const countries = [...new Set(C.map(r=>r.launch_site_country).filter(Boolean))].sort();
-const vehicles = [...new Set(C.map(r=>(r.launch_vehicle||"").replace(/\s*\(.*\)$/,"")).filter(Boolean))].sort();
-fillSelect($("#fStatus"),"Any status",["In orbit","Reentered"]);
-fillSelect($("#fYear"),"Any launch year",years);
-fillSelect($("#fSize"),"Any size",sizes);
-fillSelect($("#fCountry"),"Any launch country",countries);
-fillSelect($("#fVehicle"),"Any vehicle",vehicles);
 
 // ---- columns
 const COLS = [
@@ -173,7 +156,7 @@ $("#hrow").innerHTML = COLS.map((c,i)=>
   `<th data-i="${i}">${c.t} <span class="ar">↕</span></th>`).join("");
 
 let sortKey="launch_date", sortDir=-1, sortType="s";
-let view = C.slice();
+let view = [];
 
 function statusBadge(r){
   if(r.status==="In orbit") return `<span class="badge b-orbit">In orbit</span>`+
@@ -333,8 +316,45 @@ $("#reset").addEventListener("click",()=>{
   filterData();
 });
 
-// ---- initial
-applySort(); render();
+// ---- build the UI once data is present
+function boot(){
+  $("#epoch").textContent = B.tle_epoch;
+  $("#gen").textContent   = B.generated;
+  $("#gcatu").textContent = B.gcat_update;
+  $("#srclist").innerHTML = (B.sources||[]).map(s=>`<li>${s}</li>`).join("");
+  const cnt = f => C.filter(f).length;
+  $("#stats").innerHTML = [
+    ["Catalogued", C.length],
+    ["In orbit", cnt(r=>r.status==="In orbit")],
+    ["Reentered", cnt(r=>r.status==="Reentered")],
+    ["Live elements", cnt(r=>r.orbit_source && r.orbit_source.startsWith("TLE"))],
+    ["With NORAD", cnt(r=>r.norad_id)],
+    ["nanosats.eu", cnt(r=>r.ns_desc)],
+  ].map(([s,n])=>`<div class="card"><b>${n.toLocaleString()}</b><span>${s}</span></div>`).join("");
+  const uniq = fn => [...new Set(C.map(fn).filter(Boolean))];
+  fillSelect($("#fStatus"),"Any status",["In orbit","Reentered"]);
+  fillSelect($("#fYear"),"Any launch year", uniq(yearOf).sort().reverse());
+  fillSelect($("#fSize"),"Any size", uniq(uBucket).sort((a,b)=>parseFloat(a)-parseFloat(b)||a.localeCompare(b)));
+  fillSelect($("#fCountry"),"Any launch country", uniq(r=>r.launch_site_country).sort());
+  fillSelect($("#fVehicle"),"Any vehicle", uniq(r=>(r.launch_vehicle||"").replace(/\s*\(.*\)$/,"")).sort());
+  view = C.slice();
+  applySort(); render();
+}
+
+// ---- load data: embedded data.js (offline / file://) if present, else fetch catalog.json (hosted)
+(async function load(){
+  try{
+    if(window.CATALOG){ C = window.CATALOG; B = window.BUILD || DEFAULT_BUILD; }
+    else { C = await (await fetch("catalog.json")).json(); B = window.BUILD || DEFAULT_BUILD; }
+  }catch(err){
+    $("#count").innerHTML = '<span style="color:#ff7b72">Could not load catalog data ('+err+
+      '). If opening locally from disk, run <code>python3 -m http.server</code> in this folder, '+
+      'or keep <code>data.js</code> next to index.html.</span>';
+    return;
+  }
+  if(!B.total) B.total = C.length;
+  boot();
+})();
 </script>
 </body>
 </html>
