@@ -133,6 +133,94 @@ Date (UTC) HH:MM   RA             Dec           delta  r     elong  mag  "/min  
 2026 08 20 03:54  21 44 40.491   +09 53 10.39  543646 1.0152 157.4 20.4  25.893  38.2 
 </pre>
 <hr>
+<a name="analysis"></a>
+<h2>Identification analysis (2026 Aug 20)</h2>
+<p style="font-family: sans-serif; font-size: 0.95em; max-width: 60em;">
+MPC removed Sar2901 from the NEOCP as <b>artificial</b> (no designation; purged from
+Scout). The object is a <b>temporarily captured weak-stability-boundary loiterer</b>:
+24 clones sampled from the find_orb covariance agree it was captured (geocentric
+two-body energy E&lt;0) around <b>2026 May 24</b> at ~2.2M km with capture
+v<sub>&infin;</sub> &asymp; <b>0.07 km/s</b>, made the discovery perigee on Aug 17&ndash;18 at
+~527,000 km, and will make a second, deeper perigee near <b>2026 Dec 7 at ~233,000 km</b>
+(observable Nov 28 &ndash; Dec 14, peaking near V&nbsp;&asymp;&nbsp;18.5) before escaping
+around <b>2027 Jan</b> &mdash; an eight-month, two-loop episode closely resembling
+2020&nbsp;SO's 2020&ndash;21 capture (in at 0.26 km/s, two perigees, out at 0.34 km/s).
+</p>
+<p style="font-family: sans-serif; font-size: 0.95em; max-width: 60em;">
+All catalogued candidates were tested and excluded: every full-size rocket stage
+(DART / DSCOVR / IMAP Falcon&nbsp;9 S2, CZ-3B lunar stages, New Glenn GS2) is
+H&nbsp;&asymp;&nbsp;25&ndash;28, i.e. 25&ndash;60&times; too bright for Sar2901's
+H&nbsp;=&nbsp;31.5; all fresh Space-Track TLEs and all 59 JPL Horizons spacecraft with
+valid ephemerides miss by 26&ndash;147&deg;. The closest physical match was the lost
+CAPSTONE kick stage <b>Lunar Photon</b> (2022-070C = NORAD 52916; Bill Gray's fit:
+H&nbsp;=&nbsp;31.59, WSB orbit q=256k&nbsp;km, Q=1.56M&nbsp;km, lost 2023 Mar) &mdash;
+but the joint propagation below rules it out: the Earth-distance curves of
+Photon-forward (from 2023) and Sar2901-backward (from 2026) cross on 2024-12-30 at
+72.8M&nbsp;km with only a 0.2M&nbsp;km radial gap, yet the 3D check shows the two tracks
+are then <b>139&deg; apart in orbital phase</b> (0.91 AU separation) &mdash; same
+distance, opposite sides of Earth. <b>Sar2901 and Lunar Photon are different objects;
+the identity of Sar2901 remains open.</b>
+</p>
+<pre>
+JOINT DATE (r curves cross): 2024-12-30 - Photon r=72.9 M km, Sar2901 r=72.7 M km (radial gap 0.21 M km)
+3D check at joint date: separation 136.6 M km (0.91 AU), 139.4 deg geocentric phase gap, dV 30.3 km/s
+=> the two r(t) curves cross but the objects are on opposite sides of Earth: DIFFERENT OBJECTS.
+
+Date              r (km)      E_geo    Phase                               Track
+--------------------------------------------------------------------------------
+2023-03-15        461,452    -0.2195   bound, inside Hill (post-perigee)   Photon fwd
+2023-04-14      1,324,559    -0.2162   bound, inside Hill                  Photon fwd
+2023-05-14      1,847,903    -0.2040   gateway drift (bound, beyond Hill)  Photon fwd
+2023-06-13      2,346,766    -0.1247   gateway drift (bound, beyond Hill)  Photon fwd
+2023-07-13      3,419,871    +0.0761   solar tide unbinding                Photon fwd
+2023-08-12      5,218,182    +0.5427   heliocentric, receding              Photon fwd
+2023-09-11      7,890,155    +1.4953   heliocentric, receding              Photon fwd
+2023-10-11     11,576,111    +3.2440   heliocentric, receding              Photon fwd
+2023-11-10     16,249,381    +6.1089   heliocentric, receding              Photon fwd
+2023-12-10     21,630,528   +10.2125   heliocentric, receding              Photon fwd
+2024-01-09     27,211,296   +15.2678   heliocentric, receding              Photon fwd
+2024-02-08     32,404,773   +20.6228   heliocentric, receding              Photon fwd
+2024-03-09     36,755,567   +25.6365   heliocentric, receding              Photon fwd
+2024-04-08     40,089,290   +30.0603   heliocentric, receding              Photon fwd
+2024-05-08     42,538,502   +34.1175   heliocentric, receding              Photon fwd
+2024-06-07     44,474,480   +38.3513   heliocentric, receding              Photon fwd
+2024-07-07     46,400,703   +43.4616   heliocentric, receding              Photon fwd
+2024-08-06     48,834,863   +50.2073   heliocentric, receding              Photon fwd
+2024-09-05     52,181,809   +59.2960   heliocentric, receding              Photon fwd
+2024-10-05     56,608,804   +71.1376   heliocentric, receding              Photon fwd
+2024-11-04     61,962,035   +85.4284   heliocentric, receding              Photon fwd
+2024-12-04     67,777,503  +100.8230   heliocentric, receding              Photon fwd
+================================ 2024-12-30 =====================================
+       JOINT - r curves cross; 3D check: 139 deg phase gap => different objects
+==================================================================================
+2025-01-27     65,880,473  +105.2105   heliocentric, approaching           Sar2901 bwd
+2025-02-26     60,177,874   +87.3157   heliocentric, approaching           Sar2901 bwd
+2025-03-28     56,473,704   +73.4080   heliocentric, approaching           Sar2901 bwd
+2025-04-27     54,508,232   +63.2374   heliocentric, approaching           Sar2901 bwd
+2025-05-27     53,517,635   +55.7210   heliocentric, approaching           Sar2901 bwd
+2025-06-26     52,532,790   +49.6759   heliocentric, approaching           Sar2901 bwd
+2025-07-26     50,643,450   +44.0974   heliocentric, approaching           Sar2901 bwd
+2025-08-25     47,178,719   +38.1885   heliocentric, approaching           Sar2901 bwd
+2025-09-24     41,842,467   +31.4243   heliocentric, approaching           Sar2901 bwd
+2025-10-24     34,826,019   +23.7885   heliocentric, approaching           Sar2901 bwd
+2025-11-23     26,843,136   +16.0021   heliocentric, approaching           Sar2901 bwd
+2025-12-23     18,973,664    +9.2840   heliocentric, approaching           Sar2901 bwd
+2026-01-22     12,280,997    +4.5638   heliocentric, approaching           Sar2901 bwd
+2026-02-21      7,389,673    +1.9038   heliocentric, approaching           Sar2901 bwd
+2026-03-23      4,324,691    +0.6938   gateway approach (unbound)          Sar2901 bwd
+2026-04-22      2,744,984    +0.2165   gateway approach (unbound)          Sar2901 bwd
+2026-05-22      2,206,044    +0.0113   gateway approach (unbound)          Sar2901 bwd
+2026-05-25      2,182,562     0.0000   *** CAPTURE (v_inf 0.04 km/s) ***   Sar2901 bwd
+2026-06-21      2,005,077    -0.0929   CAPTURED (E&lt;0), beyond Hill        Sar2901 bwd
+2026-07-21      1,459,289    -0.1216   captured, inside Hill               Sar2901 bwd
+2026-08-17        527,024    -0.0743   *** PERIGEE - discovery ***         Sar2901 bwd
+
+Note: E_geo beyond ~5M km is dominated by heliocentric phase separation, not real
+binding energy; it is physically meaningful only inside a few million km.
+Method: RK4, Earth+Moon+Sun point masses, DE421; clones from find_orb covariance.
+Full write-up: SAR2901_ANALYSIS.md in the neocpsat repository.
+</pre>
+<hr>
 <p style="font-family: sans-serif; font-size: 0.9em;">
   <a href="https://www.projectpluto.com/neocp2/mpecs/Sar2901.htm" target="_blank" rel="noopener">Bill Gray&rsquo;s pseudo-MPEC for Sar2901 &rarr;</a><br>
   <a href="../index.html">&larr; back to NEOCP artsat catalog</a>
