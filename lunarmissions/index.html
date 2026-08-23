@@ -25,7 +25,8 @@
   .b-C { background:#fff2dc; color:#b6611a; } .b-E { background:#f0e8d8; color:#6e4a12; } .b-R { background:#fde2e2; color:#a23c3c; }
   .b-B { background:#d9f2ef; color:#0d6b61; } .b-F { background:#f3d6d6; color:#7d1f1f; } .b-U { background:#eee; color:#777; }
   .meta { color:var(--muted); font-size:14px; } hr { border:none; border-top:1px solid var(--rule); margin:40px 0; }
-  .toc { font-family:var(--sans); font-size:13px; padding:14px 18px; background:var(--panel); border:1px solid var(--rule); border-radius:4px; margin:18px 0 30px; columns:2; }
+  .toc { font-family:var(--sans); font-size:13px; padding:14px 18px; background:var(--panel); border:1px solid var(--rule); border-radius:4px; margin:18px 0 36px; }
+  .toc ol { margin:0; padding-left:22px; } .toc li { margin:3px 0; } .toc ol ol { margin-top:3px; columns:2; column-gap:28px; }
 </style></head>
 <body><div class="wrap">
 <h1>Lunar Missions 1958–2026: Every Object, Then and Now</h1>
@@ -37,8 +38,46 @@
 <p class="meta">4. <b>Bill Gray's <code>~/tles/</code> archive</b> (<code>tle_list.txt</code>, 682 files): fresh fits for the cislunar residents and the 'Warn' calendar of Earth-return dates.</p>
 <p>Authority rules follow the rocketdebris wiki: SATCAT DECAY beats stale GP; a fresh Bill Gray TLE beats stale GP; GCAT's phase chain decides the bucket when nobody tracks the object; <code>?</code> marks GCAT's own uncertainty flag. Coordinates are planetographic (°N, °E; negative = S/W), dates UTC.</p>
 <p>Scope: every launch whose target was the Moon (successful or not), Apollo/N1/LK/L1 test flights that never left Earth orbit (marked <i>programme test</i>), and spacecraft re-tasked to the Moon (ARTEMIS, HGS-1). Missions that merely used a lunar swing-by are listed in §4.</p>
+<div class="toc"><ol>
+  <li><a href="#ch1">Where-are-they-now taxonomy</a>
+  </li>
+  <li><a href="#ch2">Master timeline</a>
+  </li>
+  <li><a href="#ch3">Mission-by-mission object ledger</a>
+    <ol>
+      <li><a href="#era-1958-1960">1958–1960: Pioneers and the first Lunas</a></li>
+      <li><a href="#era-1961-1965">1961–1965: Ranger, the E-6 landers and Zond 3</a></li>
+      <li><a href="#era-1966-1968">1966–1968: Soft landers, orbiters, Zond and Apollo 8</a></li>
+      <li><a href="#era-1969-1972">1969–1972: Apollo landings, Luna sample return, N1</a></li>
+      <li><a href="#era-1973-1976">1973–1976: The last first-age Lunas and Explorer 49</a></li>
+      <li><a href="#era-1977-2009">1977–2009: The long gap and the second lunar age</a></li>
+      <li><a href="#era-2010-2020">2010–2020: Chang'e, GRAIL, LADEE, the first private lander</a></li>
+      <li><a href="#era-2021-2023">2021–2023: Artemis I, CLPS precursors, Chandrayaan-3, SLIM</a></li>
+      <li><a href="#era-2024-2026">2024–2026: The commercial landers, Chang'e 6, Artemis II</a></li>
+    </ol>
+  </li>
+  <li><a href="#ch4">Lunar swing-bys by non-lunar missions</a>
+  </li>
+  <li><a href="#ch5">Roll-ups: what is still out there</a>
+    <ol>
+      <li><a href="#ch5-1">Objects in lunar orbit (tracked, operating, or presumed)</a></li>
+      <li><a href="#ch5-2">Cislunar / high-Earth-orbit residents from lunar launches</a></li>
+      <li><a href="#ch5-3">Bill Gray's Earth-return calendar</a></li>
+      <li><a href="#ch5-4">Lunar launches expected after 2026-08-23</a></li>
+    </ol>
+  </li>
+  <li><a href="#ch6">Surface map: where the landers and impactors are</a>
+    <ol>
+      <li><a href="#ch6-1">Site key</a></li>
+      <li><a href="#ch6-2">On the Moon but not on the map — 33 objects with no published location</a></li>
+      <li><a href="#ch6-3">Surface census by decade</a></li>
+    </ol>
+  </li>
+  <li><a href="#ch7">Open questions and known conflicts</a>
+  </li>
+</ol></div>
 <hr>
-<h2>1. Where-are-they-now taxonomy</h2>
+<h2 id="ch1">1. Where-are-they-now taxonomy</h2>
 <table><thead><tr><th>Badge</th><th>Bucket</th><th>Objects</th><th>Meaning</th></tr></thead><tbody>
 <tr><td><span class="badge b-S">S</span></td><td>ON_MOON</td><td>55</td><td>On the lunar surface</td></tr>
 <tr><td><span class="badge b-I">I</span></td><td>LUNAR_IMPACT</td><td>134</td><td>Lunar impact (debris on the Moon)</td></tr>
@@ -55,7 +94,7 @@
 </tbody></table>
 <p>894 objects from 153 GCAT launch tags (145 missions with catalogued hardware). Attached items that GCAT books under a parent (EVA suits, jettison bags that reentered with a module, etc.) are folded into the parent row.</p>
 <hr>
-<div class="toc"><b>Missions</b><br><a href="#m-pioneer0">Pioneer 0</a> · <a href="#m-e1n1">Luna E-1 No.1</a> · <a href="#m-pioneer1">Pioneer 1</a> · <a href="#m-e1n2">Luna E-1 No.2</a> · <a href="#m-pioneer2">Pioneer 2</a> · <a href="#m-e1n3">Luna E-1 No.3</a> · <a href="#m-pioneer3">Pioneer 3</a> · <a href="#m-luna1">Luna 1</a> · <a href="#m-pioneer4">Pioneer 4</a> · <a href="#m-e1an5">Luna E-1A No.5</a> · <a href="#m-luna2">Luna 2</a> · <a href="#m-p1">Pioneer P-1</a> · <a href="#m-luna3">Luna 3</a> · <a href="#m-p3">Pioneer P-3</a> · <a href="#m-e3n1">Luna E-3 No.1</a> · <a href="#m-e3n2">Luna E-3 No.2</a> · <a href="#m-p30">Pioneer P-30</a> · <a href="#m-p31">Pioneer P-31</a> · <a href="#m-ranger1">Ranger 1</a> · <a href="#m-ranger2">Ranger 2</a> · <a href="#m-ranger3">Ranger 3</a> · <a href="#m-ranger4">Ranger 4</a> · <a href="#m-ranger5">Ranger 5</a> · <a href="#m-sputnik25">Sputnik 25</a> · <a href="#m-e6n3">Luna E-6 No.3</a> · <a href="#m-luna4">Luna 4</a> · <a href="#m-ranger6">Ranger 6</a> · <a href="#m-e6n6">Luna E-6 No.6</a> · <a href="#m-e6n5">Luna E-6 No.5</a> · <a href="#m-ranger7">Ranger 7</a> · <a href="#m-ranger8">Ranger 8</a> · <a href="#m-kosmos60">Kosmos 60</a> · <a href="#m-ranger9">Ranger 9</a> · <a href="#m-e6n8">Luna E-6 No.8</a> · <a href="#m-luna5">Luna 5</a> · <a href="#m-luna6">Luna 6</a> · <a href="#m-zond3">Zond 3</a> · <a href="#m-luna7">Luna 7</a> · <a href="#m-luna8">Luna 8</a> · <a href="#m-luna9">Luna 9</a> · <a href="#m-kosmos111">Kosmos 111</a> · <a href="#m-luna10">Luna 10</a> · <a href="#m-surveyor1">Surveyor 1</a> · <a href="#m-explorer33">Explorer 33</a> · <a href="#m-lo1">Lunar Orbiter 1</a> · <a href="#m-luna11">Luna 11</a> · <a href="#m-surveyor2">Surveyor 2</a> · <a href="#m-luna12">Luna 12</a> · <a href="#m-lo2">Lunar Orbiter 2</a> · <a href="#m-luna13">Luna 13</a> · <a href="#m-lo3">Lunar Orbiter 3</a> · <a href="#m-kosmos146">Kosmos 146</a> · <a href="#m-kosmos154">Kosmos 154</a> · <a href="#m-surveyor3">Surveyor 3</a> · <a href="#m-lo4">Lunar Orbiter 4</a> · <a href="#m-kosmos159">Kosmos 159</a> · <a href="#m-surveyor4">Surveyor 4</a> · <a href="#m-explorer35">Explorer 35</a> · <a href="#m-lo5">Lunar Orbiter 5</a> · <a href="#m-surveyor5">Surveyor 5</a> · <a href="#m-l1n4">Soyuz 7K-L1 No.4L</a> · <a href="#m-surveyor6">Surveyor 6</a> · <a href="#m-apollo4">Apollo 4</a> · <a href="#m-l1n5">Soyuz 7K-L1 No.5L</a> · <a href="#m-surveyor7">Surveyor 7</a> · <a href="#m-e6lsn112">Luna E-6LS No.112</a> · <a href="#m-zond4">Zond 4</a> · <a href="#m-apollo6">Apollo 6</a> · <a href="#m-luna14">Luna 14</a> · <a href="#m-l1n7">Soyuz 7K-L1 No.7L</a> · <a href="#m-zond5">Zond 5</a> · <a href="#m-zond6">Zond 6</a> · <a href="#m-apollo8">Apollo 8</a> · <a href="#m-l1n13">Soyuz 7K-L1 No.13L</a> · <a href="#m-e8n201">Luna E-8 No.201</a> · <a href="#m-n1_3l">N1 3L / 7K-L1S No.3</a> · <a href="#m-apollo9">Apollo 9</a> · <a href="#m-apollo10">Apollo 10</a> · <a href="#m-e85n402">Luna E-8-5 No.402</a> · <a href="#m-n1_5l">N1 5L / 7K-L1S No.5</a> · <a href="#m-luna15">Luna 15</a> · <a href="#m-apollo11">Apollo 11</a> · <a href="#m-zond7">Zond 7</a> · <a href="#m-kosmos300">Kosmos 300</a> · <a href="#m-kosmos305">Kosmos 305</a> · <a href="#m-apollo12">Apollo 12</a> · <a href="#m-l1e_1k">7K-L1e No.1K</a> · <a href="#m-e85n405">Luna E-8-5 No.405</a> · <a href="#m-apollo13">Apollo 13</a> · <a href="#m-luna16">Luna 16</a> · <a href="#m-zond8">Zond 8</a> · <a href="#m-luna17">Luna 17 / Lunokhod 1</a> · <a href="#m-kosmos379">Kosmos 379</a> · <a href="#m-kosmos382">Kosmos 382</a> · <a href="#m-apollo14">Apollo 14</a> · <a href="#m-kosmos398">Kosmos 398</a> · <a href="#m-n1_6l">N1 6L</a> · <a href="#m-apollo15">Apollo 15</a> · <a href="#m-kosmos434">Kosmos 434</a> · <a href="#m-luna18">Luna 18</a> · <a href="#m-luna19">Luna 19</a> · <a href="#m-luna20">Luna 20</a> · <a href="#m-apollo16">Apollo 16</a> · <a href="#m-n1_7l">N1 7L</a> · <a href="#m-apollo17">Apollo 17</a> · <a href="#m-luna21">Luna 21 / Lunokhod 2</a> · <a href="#m-explorer49">Explorer 49</a> · <a href="#m-luna22">Luna 22</a> · <a href="#m-luna23">Luna 23</a> · <a href="#m-e85mn412">Luna E-8-5M No.412</a> · <a href="#m-luna24">Luna 24</a> · <a href="#m-hiten">Hiten / Hagoromo</a> · <a href="#m-clementine">Clementine</a> · <a href="#m-hgs1">HGS-1</a> · <a href="#m-lp">Lunar Prospector</a> · <a href="#m-smart1">SMART-1</a> · <a href="#m-artemisp">ARTEMIS P1 / P2</a> · <a href="#m-kaguya">Kaguya / SELENE</a> · <a href="#m-change1">Chang&#x27;e 1</a> · <a href="#m-ch1">Chandrayaan-1</a> · <a href="#m-lro">LRO + LCROSS</a> · <a href="#m-change2">Chang&#x27;e 2</a> · <a href="#m-grail">GRAIL</a> · <a href="#m-ladee">LADEE</a> · <a href="#m-change3">Chang&#x27;e 3 + Yutu</a> · <a href="#m-ce5t1">Chang&#x27;e 5-T1</a> · <a href="#m-queqiao1">Queqiao-1 + Longjiang-1/2</a> · <a href="#m-change4">Chang&#x27;e 4 + Yutu-2</a> · <a href="#m-beresheet">Beresheet</a> · <a href="#m-ch2">Chandrayaan-2</a> · <a href="#m-change5">Chang&#x27;e 5</a> · <a href="#m-capstone">CAPSTONE + Lunar Photon</a> · <a href="#m-danuri">Danuri</a> · <a href="#m-artemis1">Artemis I</a> · <a href="#m-hakuto1">HAKUTO-R M1</a> · <a href="#m-ch3">Chandrayaan-3</a> · <a href="#m-luna25">Luna 25</a> · <a href="#m-slim">SLIM</a> · <a href="#m-peregrine">Peregrine Mission One + Vulcan Cert-1</a> · <a href="#m-im1">IM-1 Odysseus</a> · <a href="#m-droab">DRO-A / DRO-B</a> · <a href="#m-queqiao2">Queqiao-2 + Tiandu-1/2</a> · <a href="#m-change6">Chang&#x27;e 6</a> · <a href="#m-blueghost1">Blue Ghost M1 + HAKUTO-R M2 Resilience</a> · <a href="#m-im2">IM-2 Athena + Lunar Trailblazer + Odin + Chimera</a> · <a href="#m-artemis2">Artemis II</a></div><h2>2. Master timeline</h2>
+<h2 id="ch2">2. Master timeline</h2>
 <table><thead><tr><th>#</th><th>Mission</th><th>Launch (UTC)</th><th>COSPAR</th><th>Agency</th><th>Type</th><th>Outcome</th><th>Objects: where now</th></tr></thead><tbody>
 <tr><td>1</td><td><a href="#m-pioneer0">Pioneer 0 (Able 1)</a></td><td>1958-08-17</td><td>1958-F09 (no orbit)</td><td>USAF / ARPA</td><td>Orbiter</td><td>Launch failure</td><td>3 destroyed in launch failure</td></tr>
 <tr><td>2</td><td><a href="#m-e1n1">Luna E-1 No.1</a></td><td>1958-09-23</td><td>1958-F15 (no orbit)</td><td>USSR / OKB-1</td><td>Impactor</td><td>Launch failure</td><td>2 destroyed in launch failure</td></tr>
@@ -205,9 +244,9 @@
 <tr><td>146</td><td><a href="#m-artemis2">Artemis II (Orion Integrity)</a></td><td>2026-04-01</td><td>2026-069</td><td>NASA / ESA / CSA</td><td>Crewed lunar flyby</td><td>Success</td><td>1 earth orbit; 10 reentered earth's atmosphere; 1 returned to earth intact</td></tr>
 </tbody></table>
 <hr>
-<h2>3. Mission-by-mission object ledger</h2>
+<h2 id="ch3">3. Mission-by-mission object ledger</h2>
 <p>Columns: <b>Object</b> (GCAT name; <i>PLName</i> in italics when different) · <b>ID</b> (COSPAR piece / NORAD; <code>NNA</code> = not catalogued by Space-Track) · <b>Kind</b> (from GCAT SatType) · <b>Now</b> (bucket badge + GCAT-derived status, hand-corrected where noted) · <b>Space-Track</b> · <b>Horizons / Bill Gray</b>.</p>
-<h3>1958–1960: Pioneers and the first Lunas</h3>
+<h3 id="era-1958-1960">1958–1960: Pioneers and the first Lunas</h3>
 <a id="m-pioneer0"></a>
 <h4>Pioneer 0 (Able 1) — 1958-08-17</h4>
 <p><i>1958-F09 (no orbit) · USAF / ARPA · Thor DM-18 Able I · Orbiter · <b>Launch failure</b>.</i> First attempt to launch anything beyond Earth.</p>
@@ -356,7 +395,7 @@
 <tr><td>Atlas Able VB Stage 3 <i>(X-248 Altair)</i></td><td>1960-F18 / NNA</td><td>Rocket stage (third)</td><td><span class="badge b-F">F</span> launch failure 1960-12-15 -</td><td>—</td><td></td></tr>
 <tr><td>NASA P-31 <i>(Able VB)</i></td><td>1960-F18 / NNA</td><td>Spacecraft</td><td><span class="badge b-F">F</span> launch failure 1960-12-15 -</td><td>—</td><td></td></tr>
 </tbody></table>
-<h3>1961–1965: Ranger, the E-6 landers and Zond 3</h3>
+<h3 id="era-1961-1965">1961–1965: Ranger, the E-6 landers and Zond 3</h3>
 <a id="m-ranger1"></a>
 <h4>Ranger 1 (P-32) — 1961-08-23</h4>
 <p><i>1961-021 (1961 Phi) · NASA / JPL · Atlas-Agena B · Technology test (deep-space trajectory) · <b>Launch failure</b>.</i> Agena B failed to restart; stranded in 179 × 446 km LEO.</p>
@@ -588,7 +627,7 @@
 <tr><td>BOZ</td><td>1965-099C / 01811</td><td>Component</td><td><span class="badge b-R">R</span> reentered 1965-12-06 -</td><td>1965-099C / 01811; SATCAT decay 1965-12-06</td><td></td></tr>
 <tr><td>Molniya 8K78 (N33) Blok-I <i>(8K78I)</i></td><td>1965-099B / 01809</td><td>Rocket stage (third)</td><td><span class="badge b-R">R</span> reentered 1965-12-05 -</td><td>1965-099B / 01809; SATCAT decay 1965-12-05</td><td></td></tr>
 </tbody></table>
-<h3>1966–1968: Soft landers, orbiters, Zond and Apollo 8</h3>
+<h3 id="era-1966-1968">1966–1968: Soft landers, orbiters, Zond and Apollo 8</h3>
 <a id="m-luna9"></a>
 <h4>Luna 9 (E-6M No.202/13) — 1966-01-31</h4>
 <p><i>1966-006 · USSR / Lavochkin · Molniya-M 8K78M · Soft lander · <b>Success</b>.</i> First soft landing on another world, 1966-02-03 18:44:52 UTC, Oceanus Procellarum; first surface panoramas.</p>
@@ -997,7 +1036,7 @@
 <tr><td>Telescope optics cover</td><td>1968-118 / NNA</td><td>Component</td><td><span class="badge b-R">R</span> reentered 1968-12-22? -</td><td>—</td><td></td></tr>
 <tr><td>Apollo 8 <i>(Apollo CM-103)</i></td><td>1968-118A / 03626</td><td>Spacecraft (crew-rated)</td><td><span class="badge b-B">B</span> landed/splashed 1968-12-27 15:51 165W 08.1N</td><td>1968-118A / 03626; SATCAT decay 1968-12-27</td><td></td></tr>
 </tbody></table>
-<h3>1969–1972: Apollo landings, Luna sample return, N1</h3>
+<h3 id="era-1969-1972">1969–1972: Apollo landings, Luna sample return, N1</h3>
 <a id="m-l1n13"></a>
 <h4>Soyuz 7K-L1 No.13L — 1969-01-20</h4>
 <p><i>1969-F01 (no orbit) · USSR / TsKBEM · Proton-K / Blok D · Circumlunar (uncrewed Zond) · <b>Launch failure</b>.</i> Second-stage engine failed at 313 s; escape system saved the capsule.</p>
@@ -1495,7 +1534,7 @@
 <tr><td>Telescope optics cover</td><td>1972-096 / NNA</td><td>Component</td><td><span class="badge b-R">R</span> reentered 1972-12-07? -</td><td>—</td><td></td></tr>
 <tr><td>America <i>(Apollo CM-114)</i></td><td>1972-096A / 06300</td><td>Spacecraft (crew-rated)</td><td><span class="badge b-B">B</span> landed/splashed 1972-12-19 19:24 POR</td><td>1972-096A / 06300; SATCAT decay 1972-12-19</td><td></td></tr>
 </tbody></table>
-<h3>1973–1976: The last first-age Lunas and Explorer 49</h3>
+<h3 id="era-1973-1976">1973–1976: The last first-age Lunas and Explorer 49</h3>
 <a id="m-luna21"></a>
 <h4>Luna 21 / Lunokhod 2 (E-8 No.204) — 1973-01-08</h4>
 <p><i>1973-001 · USSR / Lavochkin · Proton-K / Blok D · Rover lander · <b>Success</b>.</i> Landed 1973-01-15 23:35 UTC in Le Monnier (25.85°N 30.45°E); Lunokhod 2 drove 39 km before dying 1973-06.</p>
@@ -1577,7 +1616,7 @@
 <tr><td>D-1501L SOZ-1 <i>(SOZ)</i></td><td>1976-081B / 09273</td><td>Component</td><td><span class="badge b-R">R</span> reentered 1976-08-09 -</td><td>1976-081B / 09273; SATCAT decay 1976-08-09</td><td></td></tr>
 <tr><td>D-1501L SOZ-2 <i>(SOZ)</i></td><td>1976-081C / 09274</td><td>Component</td><td><span class="badge b-R">R</span> reentered 1976-08-15 -</td><td>1976-081C / 09274; SATCAT decay 1976-08-15</td><td></td></tr>
 </tbody></table>
-<h3>1977–2009: The long gap and the second lunar age</h3>
+<h3 id="era-1977-2009">1977–2009: The long gap and the second lunar age</h3>
 <a id="m-hiten"></a>
 <h4>Hiten / Hagoromo (MUSES-A) — 1990-01-24</h4>
 <p><i>1990-007 · ISAS (Japan) · Mu-3S-II · Technology orbiter + sub-satellite · <b>Success</b>.</i> First non-US/USSR lunar mission; Hagoromo orbiter released 1990-03-18; Hiten used the first ballistic (weak-stability) capture.</p>
@@ -1685,7 +1724,7 @@
 <tr><td>LCROSS Shepherding S/C <i>(S-S/C)</i></td><td>2009-031B / 35316</td><td>Spacecraft</td><td><span class="badge b-I">I</span> impacted Moon 2009-10-09 11:35 at -84.729N -49.360E -</td><td>2009-031B / 35316; SATCAT decay 2009-10-09 (= lunar impact date)</td><td>Horizons -18: hyperbolic/escape arc at 2009-Oct-08</td></tr>
 <tr><td>Lunar Reconnaissance Orbiter <i>(LRO)</i></td><td>2009-031A / 35315</td><td>Spacecraft</td><td><span class="badge b-L">L</span> selenocentric 39x188 km i=89.91 (epoch 2009-08-01)</td><td>2009-031A / 35315; catalogued, no decay</td><td>Horizons -85 (today): 67 × 113 km alt, i 82.4°, P 1.9 h</td></tr>
 </tbody></table>
-<h3>2010–2020: Chang'e, GRAIL, LADEE, the first private lander</h3>
+<h3 id="era-2010-2020">2010–2020: Chang'e, GRAIL, LADEE, the first private lander</h3>
 <a id="m-change2"></a>
 <h4>Chang'e 2 — 2010-10-01</h4>
 <p><i>2010-050 · CNSA · CZ-3C · Orbiter → Sun-Earth L2 → asteroid flyby · <b>Success</b>.</i> Lunar orbit 2010-10-06 (100 km, 15 km passes over Sinus Iridum); left 2011-06-08 for SE-L2; Toutatis flyby 2012-12-13 at 3.2 km.</p>
@@ -1788,7 +1827,7 @@
 <tr><td>CZ-5 Y5 Stage 2 <i>(CZ-5 Stage 2)</i></td><td>2020-087B / NNA</td><td>Rocket stage (second)</td><td><span class="badge b-R">R</span> reentered 2020-11-30 15:41 136W 4N</td><td>—</td><td></td></tr>
 <tr><td>Chang'e-5 Fanhui Qi <i>(Chang'e-5 Capsule)</i></td><td>2020-087 / NNA</td><td>Spacecraft element</td><td><span class="badge b-B">B</span> landed/splashed 2020-12-16 17:59 111.4E 42.3N</td><td>—</td><td></td></tr>
 </tbody></table>
-<h3>2021–2023: Artemis I, CLPS precursors, Chandrayaan-3, SLIM</h3>
+<h3 id="era-2021-2023">2021–2023: Artemis I, CLPS precursors, Chandrayaan-3, SLIM</h3>
 <a id="m-capstone"></a>
 <h4>CAPSTONE + Lunar Photon — 2022-06-28</h4>
 <p><i>2022-070 · NASA / Advanced Space / Rocket Lab · Electron + Photon · NRHO pathfinder cubesat · <b>Operational</b>.</i> Ballistic lunar transfer via Sun-Earth L1 region; entered the Gateway NRHO 2022-11-13 - first spacecraft there.</p>
@@ -1877,7 +1916,7 @@
 <tr><td>4/4D-LC Lower Fairing Half? <i>(Fairing Half)</i></td><td>2023-137H / 57807</td><td>Component</td><td><span class="badge b-R">R</span> reentered 2024-10-11 10:32 116W 22N</td><td>2023-137H / 57807; SATCAT decay 2024-10-11</td><td></td></tr>
 <tr><td>H-2A F47 Stage 2 <i>(H-2A Stage 2)</i></td><td>2023-137E / 57804</td><td>Rocket stage (second)</td><td><span class="badge b-R">R</span> reentered 2025-01-03 12:40 7E 12S</td><td>2023-137E / 57804; SATCAT decay 2025-01-03</td><td>Bill Gray TLE: yes</td></tr>
 </tbody></table>
-<h3>2024–2026: The commercial landers, Chang'e 6, Artemis II</h3>
+<h3 id="era-2024-2026">2024–2026: The commercial landers, Chang'e 6, Artemis II</h3>
 <a id="m-peregrine"></a>
 <h4>Peregrine Mission One + Vulcan Cert-1 — 2024-01-08</h4>
 <p><i>2024-006 · Astrobotic / ULA (NASA CLPS) · Vulcan Centaur (first flight) · Private lander · <b>Spacecraft failure</b>.</i> Propellant leak hours after launch; flew to 390,000 km and back; reentered 2024-01-18 21:04 UTC over the South Pacific.</p>
@@ -1986,7 +2025,7 @@
 <tr><td>Artemis II <i>(Orion CM003)</i></td><td>2026-069A / 68538</td><td>Spacecraft</td><td><span class="badge b-B">B</span> landed/splashed 2026-04-11 00:07 117.8W 32.3N</td><td>2026-069A / 68538; SATCAT decay 2026-04-10</td><td>Horizons -1024 (last arc 2026-Apr-09): 37 × 442,424 km alt, i 19.9°, P 12.5 d; Bill Gray TLE: yes</td></tr>
 </tbody></table>
 <hr>
-<h2>4. Lunar swing-bys by non-lunar missions</h2>
+<h2 id="ch4">4. Lunar swing-bys by non-lunar missions</h2>
 <p>Not lunar missions, but their hardware entered the Moon's sphere of influence and GCAT books the passes.</p>
 <table><thead><tr><th>Mission</th><th>Launch</th><th>Objects in GCAT lunar set</th><th>Note</th></tr></thead><tbody>
 <tr><td>ISEE-3 / ICE</td><td>1978-08-12</td><td>ISEE 3 (<span class="badge b-H">H</span>); Star 37E S/N 40069 (<span class="badge b-H">H</span>); ISEE-C despin weight (<span class="badge b-H">H</span>); ISEE-C despin weight (<span class="badge b-H">H</span>); Delta 144 (<span class="badge b-R">R</span>)</td><td>Five lunar flybys 1982-83 (closest 120 km, 1983-12-22) to leave SE-L1 for comet Giacobini-Zinner; heliocentric, returned past Earth 2014-08-10 (reboot attempt). Star 37E kick stage heliocentric.</td></tr>
@@ -1999,8 +2038,8 @@
 <tr><td>JUICE</td><td>2023-04-14</td><td>Ariane 5 L5120 EPC (<span class="badge b-R">R</span>); JUICE (<span class="badge b-H">H</span>); Ariane 5 L5120 ESC-D (<span class="badge b-H">H</span>)</td><td>Lunar-Earth double gravity assist 2024-08-19/20 (first LEGA) en route to Jupiter; Ariane 5 ESC-A heliocentric.</td></tr>
 </tbody></table>
 <hr>
-<h2>5. Roll-ups: what is still out there</h2>
-<h3>5.1 Objects in lunar orbit (tracked, operating, or presumed)</h3>
+<h2 id="ch5">5. Roll-ups: what is still out there</h2>
+<h3 id="ch5-1">5.1 Objects in lunar orbit (tracked, operating, or presumed)</h3>
 <table><thead><tr><th>Object</th><th>Mission</th><th>Status</th><th>Evidence</th></tr></thead><tbody>
 <tr><td>Explorer 35</td><td><a href="#m-explorer35">Explorer 35 (AIMP-E)</a></td><td><span class="badge b-L">L?</span> operated in lunar orbit until 1973-06-24; impact date unknown (GCAT '1970??' predates end of operations)</td><td>GCAT only</td></tr>
 <tr><td>Star 13</td><td><a href="#m-explorer35">Explorer 35 (AIMP-E)</a></td><td><span class="badge b-L">L?</span> insertion motor released in lunar orbit 1967-07-22; impact date unknown</td><td>GCAT only</td></tr>
@@ -2025,7 +2064,7 @@
 <tr><td>Tiandu-2</td><td><a href="#m-queqiao2">Queqiao-2 + Tiandu-1/2</a></td><td><span class="badge b-L">L</span> selenocentric 289x10000 km i=105.07 (epoch 2024-04-03)</td><td>GCAT only</td></tr>
 <tr><td>Lianje Zhijia</td><td><a href="#m-change6">Chang'e 6 (+ ICUBE-Q, Jinchan rover)</a></td><td><span class="badge b-L">L</span> selenocentric 200x8600 km i=- (epoch 2024-05-08 02:27)</td><td>GCAT only</td></tr>
 </tbody></table>
-<h3>5.2 Cislunar / high-Earth-orbit residents from lunar launches</h3>
+<h3 id="ch5-2">5.2 Cislunar / high-Earth-orbit residents from lunar launches</h3>
 <p><b>5.2a Tracked in the last two years</b> (Space-Track GP epoch ≥ 2024-08, or a Bill Gray fit file):</p>
 <table><thead><tr><th>Object</th><th>Mission</th><th>GCAT</th><th>Space-Track</th></tr></thead><tbody>
 <tr><td>Blok D No. 26</td><td><a href="#m-kosmos382">Kosmos 382 (7K-L1e No.2K)</a></td><td>geocentric 303x5038 km i=51.60 MEO</td><td>1970-103A / 04786; GP 2026-08-22: 2,434 × 5,221 km, i 55.9°, P 171 min</td></tr>
@@ -2074,7 +2113,7 @@
 <tr><td>Lunar IceCube</td><td><a href="#m-artemis1">Artemis I (Orion, ICPS, 10 cubesats)</a></td><td>geocentric -x- km i=- CLO (epoch 2022-11-23) lost</td></tr>
 <tr><td>Orbit Guard 2</td><td><a href="#m-im2">IM-2 Athena + Lunar Trailblazer + Odin + Chimera</a></td><td>geocentric 40000x380000 km i=0.00 CLO (epoch 2025-03-06)</td></tr>
 </tbody></table>
-<h3>5.3 Bill Gray's Earth-return calendar (lunar-mission objects only)</h3>
+<h3 id="ch5-3">5.3 Bill Gray's Earth-return calendar (lunar-mission objects only)</h3>
 <p>From <code>~/tles/tle_list.txt</code> 'Warn' lines (2026-08-23):</p>
 <table><thead><tr><th>Warn date</th><th>Object</th><th>Returns</th></tr></thead><tbody>
 <tr><td>2032-Jun-01</td><td>J002E3 = Apollo 12 S-IVB (1969-099B)</td><td>July 2032</td></tr>
@@ -2085,7 +2124,7 @@
 <tr><td>2042-Dec-01</td><td>2025-038E IM-2 / Lunar Trailblazer Falcon 9 stage</td><td>March 2043</td></tr>
 <tr><td>2044-Oct-01</td><td>2024-030B IM-1 Falcon 9 stage</td><td>April 2045</td></tr>
 </tbody></table>
-<h3>5.4 Lunar launches expected after 2026-08-23</h3>
+<h3 id="ch5-4">5.4 Lunar launches expected after 2026-08-23</h3>
 <table><thead><tr><th>Mission</th><th>Plan</th></tr></thead><tbody>
 <tr><td>Chang'e 7 (orbiter, lander, rover, hopper)</td><td>window 2026-08-24 → 08-31, CZ-5 from Wenchang; south-pole landing planned for ~2026-11 (SpaceNews / CGTN, 2026-08-19/22)</td></tr>
 <tr><td>Blue Ghost M2 + ESA Lunar Pathfinder + Elytra</td><td>NET 2026-12, Falcon 9 (far side)</td></tr>
@@ -2096,10 +2135,10 @@
 <tr><td>Starship HLS uncrewed demo</td><td>2027</td></tr>
 </tbody></table>
 <hr>
-<h2>6. Surface map: where the landers and impactors are</h2>
+<h2 id="ch6">6. Surface map: where the landers and impactors are</h2>
 <figure class="map"><img src="lunar_surface_map.jpg" alt="Map of every located lander, rover, impactor and stage on the Moon" style="max-width:100%;height:auto;display:block"></figure>
 <p><i>Figure: A – equirectangular LRO LROC-WAC mosaic (NASA Moon Trek, zoom 3, ≈2.7 km/px) with every located site; B/C – near and far side (orthographic); D – south pole from 55°S; E – the crowded equatorial band; key below the figure. ● soft landing or deployed hardware, ✕ impact/crash, hollow = approximate position, colour = operator. Image files: <a href="lunar_surface_map.jpg">2400 px</a> · <a href="lunar_surface_map_7200.jpg">7200 px (11 MB)</a>.</i></p>
-<h3>6.1 Site key (78 sites, numbered in order of arrival)</h3>
+<h3 id="ch6-1">6.1 Site key (78 sites, numbered in order of arrival)</h3>
 <table><thead><tr><th>#</th><th>Site</th><th>Year</th><th>Lat °N</th><th>Lon °E</th><th>Side</th><th>Objects</th></tr></thead><tbody>
 <tr><td>1</td><td>Luna 2</td><td>1959</td><td>30.00~</td><td>0.00~</td><td>near</td><td>AMS Luna-2</td></tr>
 <tr><td>2</td><td>Ranger 4</td><td>1962</td><td>-15.50</td><td>-130.50</td><td>far</td><td>BE-3; Ranger 4; Ranger Capsule 13</td></tr>
@@ -2181,7 +2220,7 @@
 <tr><td>78</td><td>IM-2 Athena</td><td>2025</td><td>-84.79</td><td>-29.20</td><td>near</td><td>Grace; IM-2 Athena; MAPP; Yaoki</td></tr>
 </tbody></table>
 <p><code>~</code> = approximate: GCAT gives the position to ≤0.1° or as a rounded estimate (1960s crash sites, Soviet bus impacts, some stage impacts).</p>
-<h3>6.2 On the Moon but not on the map — 33 objects with no published location</h3>
+<h3 id="ch6-2">6.2 On the Moon but not on the map — 33 objects with no published location</h3>
 <p>These are on (or, for the first three, possibly still above) the lunar surface, but no source gives coordinates; they appear only in the yellow box on the figure. Most are Soviet orbiters whose orbits decayed after contact was lost, the jettisoned tank sections (<i>sbrasivaemiy otsek</i>) of the E-8 landers, and two Apollo items.</p>
 <table><thead><tr><th>Mission</th><th>Object</th><th>What is known</th></tr></thead><tbody>
 <tr><td>Luna 2</td><td>8K72E No. I1-7B</td><td>Luna 2's Blok-E stage followed the probe and is believed to have hit the Moon ~30 min later; never observed.</td></tr>
@@ -2218,7 +2257,7 @@
 <tr><td>Chang'e 5-T1</td><td>Chang'e-5 FTD</td><td>service module after EM-L2 and lunar-orbit tests; GCAT 'D?' (probable deliberate impact), date unpublished.</td></tr>
 <tr><td>Chang'e 6</td><td>ICUBE-Q</td><td>Pakistani cubesat released 2024-05-08 into a 323 × 8,704 km orbit; GCAT 'impacted 2025?'.</td></tr>
 </tbody></table>
-<h3>6.3 Surface census by decade</h3>
+<h3 id="ch6-3">6.3 Surface census by decade</h3>
 <p>Objects GCAT places intact on the surface (soft landings, deployed hardware) versus impact debris, by decade.</p>
 <table><thead><tr><th>Decade</th><th>Landed / deployed</th><th>Impact debris (incl. crashes, deliberate impacts, stages)</th></tr></thead><tbody>
 <tr><td>1950s</td><td>0</td><td>2</td></tr>
@@ -2231,7 +2270,7 @@
 <tr><td><b>Total</b></td><td><b>55</b></td><td><b>134</b></td></tr>
 </tbody></table>
 <hr>
-<h2>7. Open questions and known conflicts</h2>
+<h2 id="ch7">7. Open questions and known conflicts</h2>
 <ul>
 <li><b>Apollo 11 Eagle ascent stage</b> - NASA/GCAT assume an early impact; Meador (2021) finds the 1969 orbit long-term stable. Unobserved either way; a targeted LRO search has been proposed.</li>
 <li><b>Apollo 10 Snoopy</b> - Bill Gray's candidate 2018 AV2 (Warn 2037) is not confirmed; spectra at the 2037 pass could settle it.</li>
