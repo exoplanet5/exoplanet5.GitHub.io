@@ -227,15 +227,11 @@ const A = {
 /* ━━ Map ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function initMap() {
   map = L.map('map', { center:[30,110], zoom:4, zoomControl:true, worldCopyJump:true });
-  // Esri Light Gray Canvas: keyless. CARTO basemaps now watermark tiles
-  // with "API KEY REQUIRED" unless a paid key is supplied (2026-08).
-  const esri = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/';
-  const esriAttr = 'Tiles &copy; <a href="https://www.esri.com/">Esri</a> &mdash; Esri, HERE, Garmin, &copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors';
-  L.tileLayer(esri + 'World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-    attribution: esriAttr, maxZoom:19, maxNativeZoom:16, noWrap:false
-  }).addTo(map);
-  L.tileLayer(esri + 'World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
-    maxZoom:19, maxNativeZoom:15, noWrap:false, pane:'tilePane'
+  // Esri World Topo: keyless. CARTO basemaps now watermark tiles with
+  // "API KEY REQUIRED" unless a paid key is supplied (2026-08).
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+    attribution:'Tiles &copy; <a href="https://www.esri.com/">Esri</a> &mdash; Esri, HERE, Garmin, FAO, NOAA, USGS, &copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors',
+    maxZoom:19, noWrap:false
   }).addTo(map);
 }
 
