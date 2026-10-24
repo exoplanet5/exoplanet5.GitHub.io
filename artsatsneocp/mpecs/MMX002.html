@@ -1,0 +1,217 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+   <TITLE> Pseudo-MPEC for MMX002 </TITLE>
+   <META http-equiv=Content-Type content="text/html; charset=utf-8">
+   <style type="text/css">
+   .neocp {color:black; background-color:black; text-decoration:blink;}
+   .whtext {color:white;}
+   </style>
+</HEAD>
+<BODY>
+
+<P><b>  "Pseudo-MPEC" for MMX002 </b></p>
+
+<p><i> Created 2026 Oct 24  9:01:17 UT using <a href="https://www.projectpluto.com/find_orb.htm">Find_Orb</a></i></p>
+<p><i> <a href="https://www.projectpluto.com/mpec_xpl.htm"> Click here for an
+   explanation of pseudo-MPECs </a> </i> </p>
+
+<ul>
+<li> <a href="#ast"> Astrometry </a> </li>
+<li> <a href="#stations"> Observing stations </a> </li>
+<li> <a href="#elements"> Orbital elements </a> </li>
+<li> <a href="#residuals"> Residuals in arcseconds </a> </li>
+<li> <a href="#eph"> Ephemeris </a> </li>
+</ul>
+<p>
+<input type = "button" value = "Orbit Simulator View" onclick = "window.open('http://orbitsimulator.com/gravitySimulatorCloud/yr/gsim2023.html?sv,1,MMX002,2461437.50,-110627611605.273346,140600610995.048004,1614824187.888380,-25183.515225,-12249.276901,-1.946981,0,0,00FF00,90,65,,16000,0,12,1,0,25.127851,0.150000')">
+</p>
+<pre> <a name="ast"></a>
+<a href="https://www.projectpluto.com/mpec_xpl.htm#astrometry"> <b>Astrometry:</b> </a>
+<a name="o001"></a><a href="#r001">     MMX002 </a>  B2026 10 20.41088 08 58 13.14 +23 11 46.2          14.9 V      <a href="#stn_W05">W05</a>
+<a name="o002"></a><a href="#r002">     MMX002 </a>  B2026 10 20.41734 08 58 13.44 +23 11 54.7          14.6 V      <a href="#stn_W05">W05</a>
+<a name="o003"></a><a href="#r003">     MMX002 </a>  B2026 10 20.41955 08 58 13.43 +23 11 56.9          14.7 V      <a href="#stn_W05">W05</a>
+<a name="o004"></a><a href="#r004">     MMX002 </a>  B2026 10 20.42319 08 58 13.30 +23 12 00.2          15.5 V      <a href="#stn_W05">W05</a>
+<a name="o005"></a><a href="#r005">     MMX002 </a>  B2026 10 20.43056 08 58 12.67 +23 12 03.8          15.1 V      <a href="#stn_W05">W05</a>
+<a name="o006"></a><a href="#r006">     MMX002 </a>  B2026 10 20.43500 08 58 12.04 +23 12 04.5          14.8 V      <a href="#stn_W05">W05</a>
+<a name="o007"></a><a href="#r007">     MMX002 </a>  B2026 10 20.44156 08 58 10.76 +23 12 03.4          15.5 V      <a href="#stn_W05">W05</a>
+<a name="o008"></a><a href="#r008">     MMX002 </a>  B2026 10 20.45111 08 58 08.25 +23 11 55.7          15.2 V      <a href="#stn_W05">W05</a>
+<a name="o009"></a><a href="#r009">     MMX002 </a> KB2026 10 20.79529 09 05 23.66 +22 37 02.3          15.7 G      <a href="#stn_P87">P87</a>
+<a name="o010"></a><a href="#r010">     MMX002 </a> KB2026 10 20.80184 09 05 21.51 +22 37 19.7          15.4 G      <a href="#stn_P87">P87</a>
+<a name="o011"></a><a href="#r011">     MMX002 </a> KB2026 10 20.81016 09 05 18.40 +22 37 39.2          15.9 G      <a href="#stn_P87">P87</a>
+<a name="o012"></a><a href="#r012">     MMX002 </a>  BK261021:0253382  137.132501  +23.166639           15.7 GW     <a href="#stn_M21">M21</a>
+<a name="o013"></a><a href="#r013">     MMX002 </a>  BK261021:0301536  137.120988  +23.168472           15.8 GW     <a href="#stn_M21">M21</a>
+<a name="o014"></a><a href="#r014">     MMX002 </a>  BK261021:0310315  137.108308  +23.170026           15.8 GW     <a href="#stn_M21">M21</a>
+<a name="o015"></a><a href="#r015">     MMX002 </a>  BK261021:0316327  137.098902  +23.170906           15.8 GW     <a href="#stn_M21">M21</a>
+<a name="o016"></a><a href="#r016">     MMX002 </a>  BK261021:0320406  137.092258  +23.171443           15.8 GW     <a href="#stn_M21">M21</a>
+<a name="o017"></a><a href="#r017">     MMX002 </a> KBK261021:1910038  137.92824   +22.02408            16.9 GV     <a href="#stn_P13">P13</a>
+<a name="o018"></a><a href="#r018">     MMX002 </a> KBK261021:1930430  137.91917   +22.03425            16.9 GV     <a href="#stn_P13">P13</a>
+<a name="o019"></a><a href="#r019">     MMX002 </a> KBK261021:1951225  137.90684   +22.04361            16.9 GV     <a href="#stn_P13">P13</a>
+<a name="o020"></a><a href="#r020">     MMX002 </a> KBK261021:2014429  137.88917   +22.05304            17.0 GV     <a href="#stn_P13">P13</a>
+<a name="o021"></a><a href="#r021">     MMX002 </a> KBK261021:2035223  137.87069   +22.06041            16.9 GV     <a href="#stn_P13">P13</a>
+<a name="o022"></a><a href="#r022">     MMX002 </a> KBK261021:2058059  137.84751   +22.06720            16.9 GV     <a href="#stn_P13">P13</a>
+<a name="stations"></a>
+<a href="https://www.projectpluto.com/mpec_xpl.htm#stns"><b>Station data:
+</b></a><a name="stn_M21"></a>(M21) Schiaparelli Southern Observatory, Hakos  (<a title="Click for map" href="http://maps.google.com/maps?q=-23.23655,+16.36144">S23.236549 E16.361440</a>)
+   Namibia.  Observers A. Aletti, F. Bellini, L. <a href="https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=6517&amp;view=OPD">Buzzi</a>, G. <a href="https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=6515&amp;view=OPD">Galli</a>. Measurer L.
+   <a href="https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=6517&amp;view=OPD">Buzzi</a>. 0.36-m f/8.4 reflector + CCD.
+<a name="stn_P13"></a>(P13) Baihuashan Observatory, Beijing  (<a title="Click for map" href="http://maps.google.com/maps?q=39.83755,+115.57333">N39.837554 E115.573330</a>)  China.
+   Observers Z. Wang, B. Liu. Measurer Z. Wang. 0.28-m f/2.2 reflector + CMO.
+<a name="stn_P87"></a>(P87) Hirao Observatory, Yamaguchi  (<a title="Click for map" href="http://maps.google.com/maps?q=33.95413,+132.09419">N33.954133 E132.094190</a>)  Japan.
+   Observer K. Yoshimoto. 0.20-m f/8.0 Ritchey-Chr&eacute;tien + CCD + f/5.4 focal
+   reducer.
+<a name="stn_W05"></a>(W05) Tree Gate Farm Observatory, Starkville  (<a title="Click for map" href="http://maps.google.com/maps?q=33.34763,+-88.73281">N33.347635 W88.732810</a>)
+   US/Mississippi.  Observer J.-F. Gout. 0.5-m f/1.5 reflector + CMOS.
+<a name="elements"></a>
+<a href="https://www.projectpluto.com/mpec_xpl.htm#elems"><b>Orbital elements:  MMX002</b></a>
+   Perihelion 2026 Nov 2.04989 +/- 0.00024 TT =  1:11:50 (JD 2461346.54989)
+Epoch 2027 Feb  1.0 TT = JDT 2461437.5   Earth MOID: 0.0001   Ma: 0.0028
+M  62.73602111 +/- 0.0012           (J2000 ecliptic)             Find_Orb
+n   0.68978501 +/- 1.5e-5           Peri.   15.19759 +/- 0.00031
+a   1.26860634 +/- 1.84e-5          Node    25.50777 +/- 0.00011
+e   0.2195588 +/- 1.14e-5           Incl.    0.53009 +/- 0.000026
+P   1.429/521.892d         H 25.13  G  0.15   U  5.3
+q 0.99007256 +/- 7.47e-8    Q 1.54714012 +/- 3.69e-5
+From 22 observations 2026 Oct. 20-21 (35.1 hr); mean residual 0".16
+# State vector (heliocentric equatorial J2000):
+#   -0.739499907904  +0.858008190428  +0.383757356445 AU
+#  -14.544697095593  -6.490324867629  -2.815125820026 mAU/day
+# MOIDs: Me  0.665484 Ve  0.268536 Ea  0.000088 Ma  0.002788
+# MOIDs: Ju  3.828884 Sa  7.890037 Ur 16.823127 Ne 28.779401
+# 1 oppositions
+# Elements written: 24 Oct 2026  9:01:17 (JD 2461337.875894)
+# Full range of obs: 2026 Oct. 20-21 (35.1 hr) (22 observations)
+# Find_Orb ver: 2026 Mar 01
+# Perturbers: 000007fe (Merc-Pluto plus Luna);  JPL DE-440
+# Tisserand relative to Earth: 2.98585
+# Earth encounter velocity 3.5680 km/s
+# Barbee-style encounter velocity: 3.1458 km/s
+# Diameter 38.8 meters (assuming 10% albedo)
+# Score: 0.356744
+#  $Name=MMX002  $Ty=2026  $Tm=11  $Td=02.049892  $MA=62.73602
+#  $ecc=0.2195589  $Eqnx=2000.
+#  $a=1.2686063  $Peri=15.19760  $Node=25.50777  $Incl=0.53009
+#  $EpJD=2461437.500  $q=0.990073  $T=2461346.549893  $H=25.1
+# Sigmas avail: 1
+</pre> <!-- State vector (heliocentric equatorial J2000): -->
+<!--   -0.739499907904  +0.858008190428  +0.383757356445 AU -->
+<!--  -14.544697095593  -6.490324867629  -2.815125820026 mAU/day -->
+<!-- MOIDs: Me  0.665484 Ve  0.268536 Ea  0.000088 Ma  0.002788 -->
+<!-- MOIDs: Ju  3.828884 Sa  7.890037 Ur 16.823127 Ne 28.779401 -->
+<!-- 1 oppositions -->
+<!-- Elements written: 24 Oct 2026  9:01:17 (JD 2461337.875894) -->
+<!-- Full range of obs: 2026 Oct. 20-21 (35.1 hr) (22 observations) -->
+<!-- Find_Orb ver: 2026 Mar 01 -->
+<!-- Perturbers: 000007fe (Merc-Pluto plus Luna);  JPL DE-440 -->
+<!-- Tisserand relative to Earth: 2.98585 -->
+<!-- Earth encounter velocity 3.5680 km/s -->
+<!-- Barbee-style encounter velocity: 3.1458 km/s -->
+<!-- Diameter 38.8 meters (assuming 10% albedo) -->
+<!-- Score: 0.356744 -->
+<!--  $Name=MMX002  $Ty=2026  $Tm=11  $Td=02.049892  $MA=62.73602 -->
+<!--  $ecc=0.2195589  $Eqnx=2000. -->
+<!--  $a=1.2686063  $Peri=15.19760  $Node=25.50777  $Incl=0.53009 -->
+<!--  $EpJD=2461437.500  $q=0.990073  $T=2461346.549893  $H=25.1 -->
+<!-- Sigmas avail: 1 -->
+<pre><b><a name="residuals"></a><a href="https://www.projectpluto.com/mpec_xpl.htm#resids">Residuals in arcseconds:</a> </b>
+<a name="r001"></a><a href="#o001">261020</a> <a href="#stn_W05">W05</a>  .07-  .25+    <a name="r009"></a><a href="#o009">261020</a> <a href="#stn_P87">P87</a>  .04+  .11-    <a name="r017"></a><a href="#o017">261021</a> <a href="#stn_P13">P13</a>  .05-  .02+    
+<a name="r002"></a><a href="#o002">261020</a> <a href="#stn_W05">W05</a>  .08+  .09+    <a name="r010"></a><a href="#o010">261020</a> <a href="#stn_P87">P87</a>  .09-  .04-    <a name="r018"></a><a href="#o018">261021</a> <a href="#stn_P13">P13</a>  .08-  .01+    
+<a name="r003"></a><a href="#o003">261020</a> <a href="#stn_W05">W05</a>  .02+  .06-    <a name="r011"></a><a href="#o011">261020</a> <a href="#stn_P87">P87</a>  .02-  .08-    <a name="r019"></a><a href="#o019">261021</a> <a href="#stn_P13">P13</a>  .04+  .03+    
+<a name="r004"></a><a href="#o004">261020</a> <a href="#stn_W05">W05</a>  .08-  .06+    <a name="r012"></a><a href="#o012">261021</a> <a href="#stn_M21">M21</a>  .03-  .06-    <a name="r020"></a><a href="#o020">261021</a> <a href="#stn_P13">P13</a>  .11-  .11-    
+<a name="r005"></a><a href="#o005">261020</a> <a href="#stn_W05">W05</a>  .24+  .16-    <a name="r013"></a><a href="#o013">261021</a> <a href="#stn_M21">M21</a>  .14-  .06+    <a name="r021"></a><a href="#o021">261021</a> <a href="#stn_P13">P13</a>  .04+  .07+    
+<a name="r006"></a><a href="#o006">261020</a> <a href="#stn_W05">W05</a>  .39+  .06-    <a name="r014"></a><a href="#o014">261021</a> <a href="#stn_M21">M21</a>  .17+  .02+    <a name="r022"></a><a href="#o022">261021</a> <a href="#stn_P13">P13</a>  .07+  .00     
+<a name="r007"></a><a href="#o007">261020</a> <a href="#stn_W05">W05</a>  .14+  .30+    <a name="r015"></a><a href="#o015">261021</a> <a href="#stn_M21">M21</a>  .01+  .03-    
+<a name="r008"></a><a href="#o008">261020</a> <a href="#stn_W05">W05</a>  .69-  .24-    <a name="r016"></a><a href="#o016">261021</a> <a href="#stn_M21">M21</a>  .06-  .03+    
+
+<a name="eph"></a><a href="https://www.projectpluto.com/mpec_xpl.htm#ephems"><b>Ephemerides (geocentric):</b></a>
+Date (UTC) HH:MM   RA             Dec           delta  r     elong  mag  "/min    PA  
+---- -----------  ------------   ------------  ------ ------ -----  --- ------- ------
+2026 10 21 20:57  09 10 13.714   +22 16 23.76  643493 0.9943  74.8 17.2   2.113 111.3 
+2026 10 21 21:07  09 10 15.271   +22 16 15.48  645500 0.9943  74.8 17.2   2.100 111.3 
+2026 10 21 21:17  09 10 16.818   +22 16 07.25  647506 0.9943  74.8 17.2   2.086 111.3 
+2026 10 21 21:27  09 10 18.355   +22 15 59.08  649512 0.9943  74.9 17.2   2.073 111.3 
+2026 10 21 21:37  09 10 19.883   +22 15 50.95  651518 0.9943  74.9 17.2   2.060 111.3 
+2026 10 21 21:47  09 10 21.402   +22 15 42.86  653523 0.9943  74.9 17.2   2.047 111.3 
+2026 10 21 21:57  09 10 22.912   +22 15 34.83  655528 0.9942  74.9 17.2   2.035 111.3 
+2026 10 21 22:07  09 10 24.413   +22 15 26.84  657532 0.9942  74.9 17.2   2.022 111.3 
+2026 10 21 22:17  09 10 25.905   +22 15 18.90  659537 0.9942  74.9 17.2   2.009 111.3 
+2026 10 21 22:27  09 10 27.388   +22 15 11.00  661541 0.9942  74.9 17.2   1.997 111.3 
+2026 10 21 22:37  09 10 28.862   +22 15 03.15  663544 0.9942  74.9 17.2   1.985 111.3 
+2026 10 21 22:47  09 10 30.328   +22 14 55.34  665548 0.9942  74.9 17.2   1.972 111.3 
+2026 10 21 22:57  09 10 31.785   +22 14 47.58  667551 0.9942  74.9 17.2   1.960 111.3 
+2026 10 21 23:07  09 10 33.233   +22 14 39.86  669553 0.9942  74.9 17.2   1.948 111.3 
+2026 10 21 23:17  09 10 34.673   +22 14 32.19  671556 0.9942  74.9 17.3   1.937 111.3 
+2026 10 21 23:27  09 10 36.105   +22 14 24.56  673558 0.9942  74.9 17.3   1.925 111.3 
+2026 10 21 23:37  09 10 37.528   +22 14 16.97  675560 0.9942  74.9 17.3   1.913 111.3 
+2026 10 21 23:47  09 10 38.943   +22 14 09.43  677561 0.9942  74.9 17.3   1.902 111.3 
+2026 10 21 23:57  09 10 40.350   +22 14 01.92  679562 0.9942  74.9 17.3   1.890 111.3 
+2026 10 22 00:07  09 10 41.749   +22 13 54.46  681563 0.9942  74.9 17.3   1.879 111.3 
+</pre>
+<hr>
+<a name="returns"></a>
+<h2>Synodic period and Earth returns (2026 Oct 24)</h2>
+<p style="font-family: sans-serif; font-size: 0.95em; max-width: 60em;">
+MMX002 is the H3 F10 second stage (2026-236B = NORAD 101110), launched with JAXA's MMX
+on 2026 Oct 19 19:41:03 UTC. The 22 observations (Oct 20.41&ndash;21.87, W05 / P87 / M21 / P13)
+fit a direct Earth-escape hyperbola: geocentric e&nbsp;=&nbsp;1.170, perigee 6,804&nbsp;km on
+Oct 19 20:49:43 TT (68&nbsp;min after liftoff, i&nbsp;=&nbsp;30.18&deg;), v<sub>&infin;</sub>&nbsp;=&nbsp;3.16&nbsp;km/s
+(C3&nbsp;&asymp;&nbsp;9.96&nbsp;km&sup2;/s&sup2;). The elements block above is heliocentric
+(J2000 ecliptic) at <b>2027 Feb 1</b>, after the stage has left Earth's sphere of influence:
+a&nbsp;=&nbsp;1.2686&nbsp;AU, e&nbsp;=&nbsp;0.2196, q&nbsp;=&nbsp;0.990&nbsp;AU, Q&nbsp;=&nbsp;1.547&nbsp;AU,
+i&nbsp;=&nbsp;0.53&deg;, P&nbsp;=&nbsp;521.9&nbsp;d &mdash; the MMX Mars-transfer orbit.
+</p>
+<p style="font-family: sans-serif; font-size: 0.95em; max-width: 60em;">
+<b>Mars flyby:</b> the stage passes Mars on <b>2027 Sep 2 at ~451,000&nbsp;km</b>
+(clone 16&ndash;84%: 445,000&ndash;456,000&nbsp;km), inside Mars's Hill sphere. The flyby is
+gentle: P changes 521.9&nbsp;&rarr;&nbsp;521.6&nbsp;d, i 0.53&deg;&nbsp;&rarr;&nbsp;0.60&deg;.
+</p>
+<p style="font-family: sans-serif; font-size: 0.95em; max-width: 60em;">
+<b>Synodic period with Earth:</b> S&nbsp;=&nbsp;1&nbsp;/&nbsp;|1/P<sub>&oplus;</sub>&nbsp;&minus;&nbsp;1/P|
+= <b>1,219&nbsp;d = 3.34&nbsp;yr</b> for the post-Mars orbit (P&nbsp;=&nbsp;521.6&nbsp;d;
+3.33&nbsp;yr before the flyby). The Earth&ndash;stage geometry repeats every 3.34&nbsp;yr, but a
+<i>close</i> return needs a near-commensurability, and this orbit has a very good one:
+<b>7&nbsp;orbits = 3,651&nbsp;d &asymp; 10&nbsp;years</b> (3,652.6&nbsp;d). The stage therefore comes
+back to Earth almost exactly ten years after launch.
+</p>
+<p style="font-family: sans-serif; font-size: 0.95em; max-width: 60em;">
+<b>Return:</b> closest approach <b>2036 Oct 12 ~14:50 TT at ~964,000&nbsp;km</b>
+(2.5&nbsp;lunar distances; v<sub>rel</sub>&nbsp;=&nbsp;3.45&nbsp;km/s), gravity only. 64 clones drawn
+from the find_orb covariance give 830,000&ndash;1,060,000&nbsp;km (16&ndash;84%; minimum
+640,000&nbsp;km) with the date good to &plusmn;1&nbsp;d. Solar radiation pressure is not
+included (the 35-hour arc cannot measure it) and matters more than the astrometry: with
+AMR&nbsp;=&nbsp;0.013&nbsp;m&sup2;/kg (the Falcon Heavy stage's value) the pass moves to
+Oct 14 at ~730,000&nbsp;km, and with 0.03&nbsp;m&sup2;/kg to Oct 16 at ~440,000&nbsp;km.
+Expect <b>2036 Oct 12&ndash;16, 0.4&ndash;1.0 million km</b> until a longer arc constrains AMR.
+The stage brightens from V&nbsp;&asymp;&nbsp;18 on Oct 1 to <b>V&nbsp;&asymp;&nbsp;15.5</b> on
+Oct 10&ndash;12 at 150&ndash;160&deg; elongation (night sky, moving up to ~43&Prime;/min), and
+fades below V&nbsp;20 by Oct 22.
+</p>
+<p style="font-family: sans-serif; font-size: 0.95em; max-width: 60em;">
+<b>After 2036:</b> the Earth pass shortens the period to 510.7&nbsp;d (synodic period
+3.51&nbsp;yr). The nominal next approach is 2043 Sep 28 at 7.6&nbsp;million km, but the
+clones already span 2.5&ndash;36&nbsp;million km (one clone within 50,000&nbsp;km), so later
+returns cannot be predicted from this arc. No other nominal pass within 19&nbsp;million km
+occurs through 2076.
+</p>
+<pre>
+Event        Date (TT)           Distance (nominal)   64-clone 16-84%        Notes
+-----------  ------------------  -------------------  ---------------------  -----------------------------
+Perigee      2026 Oct 19 20:50          6,804 km      -                      escape burn, 68 min after launch
+Mars flyby   2027 Sep  2 ~13h         451,000 km      445,000 - 456,000 km   P 521.9 -> 521.6 d
+Earth        2036 Oct 12 ~15h         964,000 km      830,000 - 1,060,000 km SRP: up to Oct 16 / 440,000 km
+Earth        2043 Sep 28            7,600,000 km      2.5 - 36 million km    after the 2036 pass; unreliable
+</pre>
+<p style="font-family: sans-serif; font-size: 0.85em; max-width: 60em;">
+Method: find_orb with DE440 and all planets plus the Moon forced as perturbers
+(PERTURBERS=7fe; the automatic selection dropped planets and moved the 2036 pass by
+10&nbsp;days), cross-checked against an independent DE440 N-body integration (agreement
+within 1,200&nbsp;km through 2029) and a 64-clone forward propagation of the find_orb
+covariance (Sun, Earth, Moon, Venus, Mars, Jupiter, Saturn).
+</p>
+
+<hr>
+<p style="font-family: sans-serif; font-size: 0.9em;">
+  <br>
+  <a href="../index.html">&larr; back to NEOCP artsat catalog</a>
+</p>
+</body></html>
