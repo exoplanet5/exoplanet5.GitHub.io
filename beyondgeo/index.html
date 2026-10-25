@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Beyond-GEO Missions: Upper-Stage Disposal &amp; Orbit Evolution</title>
 <style>
   :root {
@@ -20,19 +21,8 @@
     --mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
     --sans: -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial, sans-serif;
   }
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--fg);
-    font-family: var(--serif);
-    font-size: 16px;
-    line-height: 1.55;
-  }
-  .wrap {
-    max-width: 980px;
-    margin: 0 auto;
-    padding: 48px 28px 96px;
-  }
+  body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--serif); font-size: 16px; line-height: 1.55; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 48px 28px 96px; }
   h1 { font-size: 30px; line-height: 1.2; margin: 0 0 8px; letter-spacing: -0.01em; }
   h2 { font-size: 22px; margin: 56px 0 14px; padding-bottom: 6px; border-bottom: 1px solid var(--rule); letter-spacing: -0.005em; }
   h3 { font-size: 18px; margin: 32px 0 10px; font-weight: 600; }
@@ -46,6 +36,8 @@
   th { font-weight: 600; color: var(--muted); text-transform: uppercase; font-size: 11.5px; letter-spacing: 0.05em; background: var(--panel); }
   tr:hover td { background: rgba(31, 89, 196, 0.04); }
   td.col-id { font-family: var(--mono); white-space: nowrap; font-size: 12.5px; }
+  td.col-wrap { white-space: normal; min-width: 7ch; }
+  td.col-status { min-width: 240px; }
   td.col-mission a { font-weight: 500; }
   a { color: var(--link); text-decoration: none; border-bottom: 1px solid transparent; }
   a:hover { color: var(--link-hov); border-bottom-color: var(--link-hov); }
@@ -64,14 +56,10 @@
   .detail h3 { margin: 0 0 6px; font-size: 16px; font-weight: 600; }
   .detail .label { font-family: var(--sans); font-size: 11.5px; color: var(--muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.04em; margin-right: 4px; }
   .detail p { margin: 0 0 6px; font-size: 14.5px; }
-  .return-row,
-  tr:has(td > .badge.b-W),
-  tr.return-row { background: rgba(122, 85, 193, 0.06); }
-  /* Highlight any row whose status mentions Cislunar (b-C badge) — same formatting style as Will-return rows, amber tint matching the C badge */
+  .detail ul { font-size: 14.5px; margin: 0 0 6px; }
+  /* Will-return rows (purple) and cislunar-resident rows (amber) */
+  tr:has(td > .badge.b-W) { background: rgba(122, 85, 193, 0.06); }
   tr:has(td .badge.b-C) { background: rgba(182, 97, 26, 0.06); }
-  .grid-banner { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-family: var(--sans); font-size: 13px; margin: 0 0 20px; }
-  .grid-banner div { padding: 10px 14px; background: var(--panel); border-left: 3px solid var(--rule); border-radius: 0 3px 3px 0; }
-  .grid-banner b { display: block; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
   hr { border: none; border-top: 1px solid var(--rule); margin: 40px 0; }
   .small { font-family: var(--sans); font-size: 12.5px; color: var(--muted); }
 </style>
@@ -80,88 +68,113 @@
 <div class="wrap">
 
 <h1>Beyond-GEO Missions: Upper-Stage Disposal &amp; Orbit Evolution</h1>
-<p class="lede">Working notes on space-exploration missions launched higher than GEO — lunar, deep space, high-Earth-orbit science observatories — and the eventual fate of their upper stages and dispensers. Three independent sources are cross-checked: Bill Gray's local TLE archive, Space-Track SATCAT &amp; GP, and JPL Horizons SPK ephemerides. Element snapshots use today's date as the reference epoch.</p>
+<p class="lede">Where the upper stages, kick stages and derelict spacecraft of missions launched beyond GEO — lunar, planetary, Sun–Earth Lagrange-point and high-Earth-orbit science — are now, how their orbits evolved, and when they come back. Status as of <b>2026-10-25</b>; every <i>Now</i> line names its source and epoch.</p>
 
 <div class="toc">
   <ol>
-    <li><a href="#ch1">Disposal taxonomy</a></li>
+    <li><a href="#ch1">Disposal taxonomy and status rules</a></li>
     <li><a href="#ch2">Master mission table</a>
       <ol>
         <li><a href="#t-lunar">Lunar missions</a></li>
         <li><a href="#t-mars">Mars / inner-planet missions</a></li>
         <li><a href="#t-deep">Outer-planet, asteroid, comet missions</a></li>
-        <li><a href="#t-helio">Sun-Earth Lagrange / heliocentric science</a></li>
+        <li><a href="#t-helio">Sun–Earth Lagrange / heliocentric science</a></li>
         <li><a href="#t-heo">High-Earth-orbit science</a></li>
         <li><a href="#t-artsat">Unidentified deep-space artsats</a></li>
       </ol>
     </li>
-    <li><a href="#ch3">Per-stage Before / Now / Future</a></li>
-    <li><a href="#ch4">Bill Gray "Warn" calendar</a></li>
+    <li><a href="#ch3">Per-object Before / Now / Future</a></li>
+    <li><a href="#ch4">Flyby and return calendar</a></li>
   </ol>
 </div>
 
 <hr>
 
-<h2 id="ch1">1. Disposal taxonomy</h2>
+<h2 id="ch1">1. Disposal taxonomy and status rules</h2>
+
+<h3>1.1 Buckets</h3>
 
 <table>
-  <thead>
-    <tr><th>Bucket</th><th>Description</th><th>Canonical examples</th></tr>
-  </thead>
+  <thead><tr><th>Bucket</th><th>Definition</th><th>Canonical examples</th></tr></thead>
   <tbody>
-    <tr><td class="col-bucket"><span class="badge b-R">R</span>Reentered Earth</td><td>Stage burned up or made contained reentry</td><td>Chang'e-5 R/B (2020-11-30), Chang'e-6 R/B (2024-05-16), Queqiao-2 R/B (2024-04-24), Chandrayaan-2 cryo (2019-10-16), Chandrayaan-3 LVM3 cryo (2023-11-15), SLIM H-IIA F47 S2 (2025-01-03), Peregrine (2024-01-18), Beresheet/Nusantara F9 S2 (2021-01-03), Queqiao-1 stage (2018-09-25), THEMIS-G (2024-05-12), Cluster-II FM6 (2025-10-22), Apollo-9 S-IVB</td></tr>
-    <tr><td class="col-bucket"><span class="badge b-H">H</span>Heliocentric</td><td>Left Earth-Moon system; in stable solar orbit</td><td>Hera F9 S2, Europa Clipper FH S2, Lucy Centaur, JWST ESC-D, JUICE ESC-A, Tianwen-1 R/B, Mars-2020 Centaur, Hope H-IIA S2, BepiColombo, Tesla Roadster, Apollo 8/10/11 S-IVB, Chang'e-2 booster, Chang'e-4 booster, Lunar Photon (CAPSTONE), Cert-1 Centaur, Cert-2 Centaur, NG-2 GS2 (EscaPADE STAGE), TESS F9 S2, HAKUTO-R M1 F9 S2, Lunar Flashlight</td></tr>
-    <tr><td class="col-bucket"><span class="badge b-C">C</span>Cislunar resident</td><td>Long-lived geocentric / Earth-Moon manifold orbit</td><td>DRO-A / DRO-B / YZ-1S, Tiandu-1 / Tiandu-2, Chandrayaan-3 propulsion module, Chang'e-3 booster, Spektr-R, IBEX, TESS, Geotail, THEMIS-A/D/E, INTEGRAL, Cluster-II FM7, 1960s Vela / OGO / IMP / SOLRAD high-fliers</td></tr>
-    <tr class="return-row"><td class="col-bucket"><span class="badge b-W">W</span>Will return</td><td>Currently heliocentric (or near-Earth); next Earth encounter forecast</td><td>Cert-2 Vulcan Centaur (Nov 2026 / Dec 2027 / Dec 2028), DART F9 S2 (May 2026), Solar-Orbiter Centaur (Feb 2035), Chang'e-2 booster (Dec 2033), Herschel/Planck booster (Dec 2034), 2020 SO = Surveyor-2 Centaur (Mar 2036), Spektr-RG booster (Jun 2038), Chang'e-4 booster (Nov 2041), IM-2 / Lunar-Trailblazer F9 S2 (Mar 2043), IM-1 F9 S2 (Apr 2045), JWST ESC-D (Jun 2047), J002E3 = Apollo-12 S-IVB (mid-2040s)</td></tr>
-    <tr><td class="col-bucket"><span class="badge b-I">I</span>Lunar impact</td><td>Stage crashed into the Moon (deliberate or accidental)</td><td>Apollo 13–17 S-IVB, Chang'e-5T1 R/B = WE0913A (2022-03-04, double crater), Blue Ghost / HAKUTO-R-M2 F9 S2 (2026-08-05)</td></tr>
+    <tr><td class="col-bucket"><span class="badge b-R">R</span>Reentered Earth</td><td>Re-entered Earth's atmosphere: burn-up, controlled entry or splashdown. Terminal.</td><td>Chang'e-5 CZ-5 stage (47098, 2020-11-30), Chang'e-6 CZ-5 stage (59628, 2024-05-16), Queqiao-1 CZ-4C stage (43473, 2018-09-25), Queqiao-2 CZ-8 stage (59277, 2024-04-24), Chandrayaan-2 GSLV cryo stage (44442, 2019-10-16), Chandrayaan-3 LVM3 cryo stage (57321, 2023-11-15), Luna 25 Fregat (57601, 2024-02-26), SLIM H-IIA F47 stage 2 (57804, 2025-01-03), Beresheet / Nusantara F9 stage 2 (44050, 2021-01-03), Artemis II ICPS-2 (68655, 2026-04-02), WMAP Delta II stage 2 (26860, 2001-07-07), MMS Centaur (40486, 2017-08-26), THEMIS Delta II stage 2 (30799, 2024-05-12), Spektr-R Fregat (46736, 2021-08-09), Peregrine (58751, 2024-01-18), Cluster II FM5–FM8 (2024–2026)</td></tr>
+    <tr><td class="col-bucket"><span class="badge b-H">H</span>Heliocentric</td><td>Left Earth's Hill sphere (~1.5 million km) for a solar orbit with no forecast Earth return.</td><td>Apollo 8 / 9 / 10 / 11 S-IVB, Chang'e-5 orbiter, Danuri F9 stage 2 (53366), TESS F9 stage 2, HAKUTO-R M1 F9 stage 2, Lunar Flashlight, Cert-1 Centaur, Lunar Photon (CAPSTONE), GRAIL Delta II stage 2, Psyche and Europa Clipper Falcon Heavy stages, Mars-2020 Centaur, ExoMars Breeze-M, Gaia Fregat, Euclid F9 stage 2, Roman Falcon Heavy stage 2 (100533), Tianwen-2 CZ-3B stage, DART F9 stage 2 (since its 2026-05-11 pass)</td></tr>
+    <tr><td class="col-bucket"><span class="badge b-C">C</span>Cislunar resident</td><td>Bound to Earth or Moon in an orbit whose apogee is beyond GEO (lunar orbit, DRO, resonant or high-eccentricity HEO) and not decaying within a year.</td><td>Chang'e-3 CZ-3B stage (39459), DRO-A / DRO-B / YZ-1S (59228 / 60058 / 60326), Tiandu-1 (59278), Chang'e-6 orbiter (59627), Chandrayaan-3 propulsion module (57770), CAPSTONE (52914, since 2026-08), DSCOVR F9 stage 2 (40391), Chandra IUS-2 (25869), XMM-Newton Ariane 5 stage (25990), Proba-3 PSLV PS4 (62257), Spektr-R, TESS, IBEX, Geotail, INTEGRAL, THEMIS-A/D/E, 1960s–70s Vela / IMP / SOLRAD high-fliers</td></tr>
+    <tr><td class="col-bucket"><span class="badge b-W">W</span>Will return</td><td>Heliocentric (or leaving), with a forecast Earth return from a Bill Gray <code>Warn</code> line or an orbit fit. "Distant" = closest approach beyond 1 million km.</td><td>Cert-2 Vulcan Centaur (Earth perigee 2029-02-27), J002E3 = Apollo-12 S-IVB (Jul 2032), Chang'e-2 booster (Dec 2033), Herschel/Planck ESC-A (Dec 2034), Solar Orbiter Centaur (Feb 2035), 2020 SO = Surveyor-2 Centaur (2036), MMX H3 stage 2 (Oct 2036), Spektr-RG Block DM (Jun 2038), JUICE ESC-A (Aug 2040), Chang'e-4 booster (Nov 2041), IM-2 F9 stage 2 (Mar 2043), IM-1 F9 stage 2 (Apr 2045), Tianwen-1 CZ-5 stage 2 (Aug 2046), Tesla Roadster (Jan 2047), JWST ESC-A (Jun 2047), Hope H-IIA stage 2 (Jul 2049), Lucy Centaur (Oct 2051), Hera F9 stage 2 (Nov 2051), New Glenn NG-2 GS2 (Oct–Nov 2052); distant spacecraft returns: Planck (Jun 2027), Herschel (Oct 2027), Chang'e 2 probe (Jun 2029), Gaia (2039)</td></tr>
+    <tr><td class="col-bucket"><span class="badge b-I">I</span>Lunar impact</td><td>Struck the Moon, deliberately or not. Terminal.</td><td>Apollo 13–17 S-IVB, LCROSS Centaur (2009-10-09), Chang'e-5T1 CZ-3C stage = WE0913A (2022-03-04, double crater), Blue Ghost / HAKUTO-R-M2 F9 stage 2 (62719, 2026-08-05)</td></tr>
   </tbody>
 </table>
 
-<p>The "returner" set traces three return-event categories: low-energy Earth co-orbital trajectories that resonantly re-encounter on year-class periods; weakly-bound Earth-Sun-Moon manifold orbits like J002E3 with multi-decade return cycles; and engineered disposal trajectories whose orbital geometry was chosen for rapid solar-system clearance but unintentionally keeps the stage Earth-resonant.</p>
+<p>A letter describes where an object is <b>now</b>, not where it was sent. A status cell carries one letter for each object it describes. A spacecraft still working at its operational orbit gets no letter unless that orbit is itself a long-lived Earth–Moon residence (C), or it is derelict. R and I are terminal. W takes precedence over H; once a forecast return has passed without capture the object reverts to H, or stays W for its next return — DART's F9 stage after its 2026-05-11 pass at 2.7 million km is the example.</p>
 
-<p>For Cert-2 Vulcan Centaur the "return" is three close approaches over two years (2026-Nov-10, 2027-Dec-10, 2028-Dec-23), not a single capture event.</p>
+<p>Returns come in three kinds: Earth co-orbital stages that drift back on synodic periods of years to decades (most of the W list); weakly bound Earth–Sun–Moon manifold objects such as J002E3 and 2020 SO, which can be temporarily recaptured; and stages put on fast-clearing disposal paths that turned out Earth-resonant — MMX's H3 stage completes 7 orbits in almost exactly 10 years and returns in October 2036.</p>
+
+<h3>1.2 Sources and authority</h3>
+
+<ol>
+  <li><b>Space-Track SATCAT</b> <code>DECAY</code> + <code>COMMENT</code> — final word on the end of an object's geocentric track. A DECAY date with an empty comment is an atmospheric reentry. Space-Track also sets DECAY when a payload lands on or hits the Moon (<code>LUNAR LANDING</code>, <code>LUNAR IMPACT</code>) or departs to a libration point (<code>L1 LAGRANGIAN ORBIT</code> — IMAP, its two companions and its Falcon 9 stage all carry DECAY 2025-09-26), so the comment, not the date alone, decides the bucket. Comments without a DECAY date (<code>HELIOCENTRIC ORBIT (SUN)</code>, <code>L2 LAGRANGIAN ORBIT</code>, <code>SELENOCENTRIC ORBIT (MOON)</code>) are labels set near launch and are often stale.</li>
+  <li><b>JPL Horizons</b> SPK ephemerides — mission navigation data, authoritative up to the last tracking date given in the target header; later dates are predictions.</li>
+  <li><b>Bill Gray's TLE archive</b> <code>~/tles/</code> — 672 hex/classical TLE files behind 838 <code># Include</code> directives in <code>tle_list.txt</code>, plus his <code>Warn</code> lines. A year suffix (<code>13070b25.tle</code>) gives the year of the fit.</li>
+  <li><b>Space-Track GP</b> element sets — used only when the epoch is less than one year old; an older "latest" set is usually a launch-era capture of an object that has since escaped.</li>
+  <li><b>Amateur astrometry fits</b> — find_orb fits to NEOCP and pseudo-MPEC observations (the <code>neocpsat</code> catalogue) and dedicated reconstructions (<code>Change3</code>, <code>change2</code>, <code>25010d</code>). These are the only current tracks for the manoeuvring Chang'e-6 orbiter and Tiandu-1, and for new stages that have no Space-Track elements (Roman's Falcon Heavy stage, MMX's H3 stage).</li>
+</ol>
+
+<p>After DECAY, the source with the freshest epoch wins; ties go in the order above. The object list is cross-checked against the cislunar-eye target catalogue (master list of 2026-10-22).</p>
+
+<h3>1.3 Notation</h3>
+
+<ul>
+  <li>COSPAR <code>YYYY-NNNX</code>; NORAD = 5- or 6-digit catalogue number. Bill Gray uses 79xxx / 89xxx surrogates for objects Space-Track has not catalogued.</li>
+  <li><b>q / Q</b> = perigee / apogee distance from Earth's centre (Bill Gray, Horizons and find_orb fits); <b>alt</b> = altitude above Earth's equatorial radius (Space-Track values). Heliocentric q / Q in AU.</li>
+  <li>Times are UTC unless a fit is quoted in TT. LD = lunar distance, 384 400 km.</li>
+  <li>Source tags: <b>SATCAT</b>, <b>ST-GP</b> (Space-Track GP), <b>BG</b> (Bill Gray TLE), <b>JPL</b> (Horizons, with SPK ID), <b>fit</b> (amateur find_orb fit).</li>
+</ul>
 
 <hr>
 
 <h2 id="ch2">2. Master mission table</h2>
 
-<p class="small">Mission summaries in one sentence; mission names link to the corresponding Before / Now / Future detail entry in chapter 3. Decay/disposal status uses the freshest available source (SATCAT decay date beats stale GP; fresh Bill Gray TLE beats stale GP; JPL Horizons SPK is consulted for stale Earth-track cases).</p>
+<p class="small">One row per launch; mission names link to the chapter 3 entry. Each status cell gives a bucket letter for every object it describes.</p>
 
 <h3 id="t-lunar">2.1 Lunar missions</h3>
 
 <table>
   <thead><tr><th>Mission</th><th>COSPAR</th><th>NORAD</th><th>Launch</th><th>Summary</th><th>Status</th></tr></thead>
   <tbody>
-    <tr><td class="col-mission"><a href="#m-apollo8">Apollo 8</a></td><td class="col-id">1968-118</td><td class="col-id">—</td><td class="col-id">1968-12-21</td><td>First crewed circumlunar</td><td><span class="badge b-H">H</span> S-IVB heliocentric</td></tr>
-    <tr><td class="col-mission"><a href="#m-apollo9">Apollo 9</a></td><td class="col-id">1969-018</td><td class="col-id">—</td><td class="col-id">1969-03-03</td><td>LM rendezvous in LEO</td><td><span class="badge b-R">R</span> S-IVB reentered 1981</td></tr>
-    <tr><td class="col-mission"><a href="#m-apollo10">Apollo 10</a></td><td class="col-id">1969-043</td><td class="col-id">—</td><td class="col-id">1969-05-18</td><td>Lunar dress rehearsal</td><td><span class="badge b-H">H</span> S-IVB heliocentric</td></tr>
-    <tr><td class="col-mission"><a href="#m-apollo11">Apollo 11</a></td><td class="col-id">1969-059</td><td class="col-id">—</td><td class="col-id">1969-07-16</td><td>First lunar landing</td><td><span class="badge b-H">H</span> S-IVB presumed heliocentric</td></tr>
-    <tr class="return-row"><td class="col-mission"><a href="#m-apollo12">Apollo 12 / J002E3</a></td><td class="col-id">1969-099</td><td class="col-id">—</td><td class="col-id">1969-11-14</td><td>First pinpoint landing</td><td><span class="badge b-W">W</span> Chaotic Earth-Sun-Moon orbit; returns mid-2040s</td></tr>
-    <tr><td class="col-mission"><a href="#m-apollo13to17">Apollo 13–17</a></td><td class="col-id">multiple</td><td class="col-id">—</td><td class="col-id">1970–1972</td><td>Each S-IVB targeted at Moon for ALSEP seismometers</td><td><span class="badge b-I">I</span> Lunar impact</td></tr>
-    <tr><td class="col-mission"><a href="#m-luna24">Luna 24</a></td><td class="col-id">1976-081</td><td class="col-id">9272</td><td class="col-id">1976-08-09</td><td>Last Soviet lunar sample return</td><td><span class="badge b-H">H</span> Block-D presumed heliocentric</td></tr>
-    <tr><td class="col-mission"><a href="#m-change1">Chang'e 1</a></td><td class="col-id">2007-051</td><td class="col-id">32275</td><td class="col-id">2007-10-24</td><td>First Chinese lunar orbiter</td><td>Spacecraft impacted Moon 2009</td></tr>
-    <tr class="return-row"><td class="col-mission"><a href="#m-change2">Chang'e 2</a></td><td class="col-id">2010-050</td><td class="col-id">37174 / 37175</td><td class="col-id">2010-10-01</td><td>Lunar orbiter then Toutatis flyby</td><td><span class="badge b-W">W</span> Booster lingered in Earth-Moon system ~9 yr, escaped 2019-2020; heliocentric, returns Dec 2033</td></tr>
-    <tr><td class="col-mission"><a href="#m-change3">Chang'e 3</a></td><td class="col-id">2013-070</td><td class="col-id">39458 / 39459</td><td class="col-id">2013-12-01</td><td>First Chinese lunar lander/Yutu rover</td><td><span class="badge b-C">C</span> Booster cislunar HEO</td></tr>
-    <tr><td class="col-mission"><a href="#m-ce5t1">Chang'e 5-T1</a></td><td class="col-id">2014-065</td><td class="col-id">—</td><td class="col-id">2014-10-23</td><td>Sample-return tech demo</td><td><span class="badge b-I">I</span> R/B = WE0913A; lunar impact 2022-03-04</td></tr>
-    <tr><td class="col-mission"><a href="#m-queqiao1">Queqiao 1</a></td><td class="col-id">2018-045</td><td class="col-id">43470 / 43473</td><td class="col-id">2018-05-20</td><td>Chang'e-4 EM-L2 relay</td><td>Spacecraft at EM-L2; <span class="badge b-R">R</span> stage reentered 2018-09-25</td></tr>
-    <tr class="return-row"><td class="col-mission"><a href="#m-change4">Chang'e 4 / Longjiang</a></td><td class="col-id">2018-103</td><td class="col-id">43845 / 43846</td><td class="col-id">2018-12-07</td><td>First lunar far-side lander</td><td><span class="badge b-W">W</span> Booster lingered in Earth-Moon system ~4 yr, escaped 2022-2023; heliocentric, returns Nov 2041</td></tr>
-    <tr><td class="col-mission"><a href="#m-beresheet">Beresheet</a></td><td class="col-id">2019-009</td><td class="col-id">44049 / 44050</td><td class="col-id">2019-02-22</td><td>First private lunar lander attempt; rideshare with Nusantara Satu + S5</td><td><span class="badge b-I">I</span> Beresheet impacted Moon 2019-04-11; <span class="badge b-R">R</span> F9 S2 reentered 2021-01-03</td></tr>
-    <tr><td class="col-mission"><a href="#m-c2">Chandrayaan-2</a></td><td class="col-id">2019-042</td><td class="col-id">44441 / 44442</td><td class="col-id">2019-07-22</td><td>Indian orbiter+lander (lander crashed)</td><td>Spacecraft in lunar polar orbit; <span class="badge b-R">R</span> GSLV cryo upper stage reentered 2019-10-16</td></tr>
-    <tr><td class="col-mission"><a href="#m-change5">Chang'e 5</a></td><td class="col-id">2020-087</td><td class="col-id">47097 / 47098</td><td class="col-id">2020-11-23</td><td>Sample return (1.7 kg)</td><td>Service module near SE-L1; <span class="badge b-R">R</span> booster reentered 2020-11-30</td></tr>
-    <tr><td class="col-mission"><a href="#m-capstone">CAPSTONE / Lunar Photon</a></td><td class="col-id">2022-070</td><td class="col-id">52914 / 52916</td><td class="col-id">2022-06-28</td><td>First NRHO operational tech demo</td><td>CAPSTONE in NRHO; <span class="badge b-H">H</span> Photon kick stage heliocentric</td></tr>
-    <tr><td class="col-mission"><a href="#m-danuri">Danuri / KPLO</a></td><td class="col-id">2022-094</td><td class="col-id">53382</td><td class="col-id">2022-08-04</td><td>Korean lunar orbiter via 135-d ballistic transfer</td><td>Spacecraft in lunar orbit; <span class="badge b-H">H</span> F9 S2 heliocentric</td></tr>
-    <tr><td class="col-mission"><a href="#m-artemis1">Artemis I — Orion + ICPS</a></td><td class="col-id">2022-156</td><td class="col-id">54257 / 54258</td><td class="col-id">2022-11-16</td><td>Uncrewed Orion lunar test</td><td>Orion splashed 2022-12-11; <span class="badge b-H">H</span> ICPS heliocentric (return-prone)</td></tr>
-    <tr><td class="col-mission"><a href="#m-artemis1cubes">Artemis I cubesats</a></td><td class="col-id">2022-156C…</td><td class="col-id">54260, 79970, …</td><td class="col-id">2022-11-16</td><td>EQUULEUS, NEA Scout, BioSentinel</td><td>Mixed</td></tr>
-    <tr><td class="col-mission"><a href="#m-hakuto1">HAKUTO-R M1 + Lunar Flashlight</a></td><td class="col-id">2022-168</td><td class="col-id">54696 / 54697 / 54698</td><td class="col-id">2022-12-11</td><td>Private Japanese lander (crashed); LFL failed</td><td><span class="badge b-I">I</span> M1 crashed on Moon; <span class="badge b-H">H</span> Lunar Flashlight + F9 S2 heliocentric</td></tr>
-    <tr><td class="col-mission"><a href="#m-c3">Chandrayaan-3</a></td><td class="col-id">2023-098</td><td class="col-id">57320 / 57321 / 57770</td><td class="col-id">2023-07-14</td><td>First Indian lunar landing (south pole)</td><td><span class="badge b-R">R</span> LVM3 cryo reentered 2023-11-15; <span class="badge b-C">C</span> propulsion module in cislunar HEO</td></tr>
-    <tr><td class="col-mission"><a href="#m-slim">SLIM + XRISM</a></td><td class="col-id">2023-137</td><td class="col-id">57803 / 57804</td><td class="col-id">2023-09-06</td><td>Precision lander (succeeded)</td><td>SLIM on Moon; <span class="badge b-R">R</span> H-IIA F47 S2 reentered 2025-01-03</td></tr>
-    <tr><td class="col-mission"><a href="#m-peregrine">Peregrine + Cert-1 Centaur</a></td><td class="col-id">2024-006</td><td class="col-id">58751 / 58752</td><td class="col-id">2024-01-08</td><td>First Vulcan flight; lander failed</td><td><span class="badge b-R">R</span> Peregrine reentered 2024-01-18; <span class="badge b-H">H</span> Centaur heliocentric</td></tr>
-    <tr class="return-row"><td class="col-mission"><a href="#m-im1">IM-1 (Odysseus) + F9 S2</a></td><td class="col-id">2024-030</td><td class="col-id">58963 / 58964</td><td class="col-id">2024-02-15</td><td>First commercial lunar landing</td><td>Nova-C on Moon; <span class="badge b-W">W</span> F9 S2 heliocentric, returns Apr 2045</td></tr>
-    <tr><td class="col-mission"><a href="#m-droab">DRO-A / DRO-B</a></td><td class="col-id">2024-048</td><td class="col-id">59228 / 60058 / 60326</td><td class="col-id">2024-03-13</td><td>Twin DRO test sats; YZ-1S kick-stage anomaly recovered with chemical thrusters + lunar gravity assists (4 months, ~8.5 M km, completed 2024-07-15)</td><td><span class="badge b-C">C</span> DRO-A, DRO-B, YZ-1S R/B all in cislunar long-period orbits</td></tr>
-    <tr><td class="col-mission"><a href="#m-queqiao2">Queqiao-2 + Tiandu 1/2</a></td><td class="col-id">2024-051</td><td class="col-id">59276 / 59277 / 59278 / 59279</td><td class="col-id">2024-03-19</td><td>Chang'e-6 relay + cislunar tech sats</td><td>Queqiao-2 + Tiandu-1/2 in lunar orbit; <span class="badge b-R">R</span> CZ-8 R/B reentered 2024-04-24</td></tr>
-    <tr><td class="col-mission"><a href="#m-change6">Chang'e 6</a></td><td class="col-id">2024-083</td><td class="col-id">59627 / 59628 / 59629</td><td class="col-id">2024-05-03</td><td>First far-side sample return (1.935 kg); ICECUBE-Q rideshare</td><td>Sample capsule returned 2024-06-25; orbiter to SE-L2 (2024-09-09) then back to cislunar; <span class="badge b-R">R</span> CZ-5 R/B reentered 2024-05-16; <span class="badge b-H">H</span> ICECUBE-Q heliocentric</td></tr>
-    <tr><td class="col-mission"><a href="#m-blueghost">Blue Ghost M1 + HAKUTO-R M2 + F9 S2</a></td><td class="col-id">2025-010</td><td class="col-id">62716 / 62717 / 62718 / 62719</td><td class="col-id">2025-01-15</td><td>Two private landers on shared F9</td><td>Blue Ghost on Moon; M2 crashed; <span class="badge b-I">I</span> F9 S2 lunar impact 2026-08-05 after ~1.6 yr cislunar</td></tr>
-    <tr class="return-row"><td class="col-mission"><a href="#m-im2">IM-2 (Athena) + Lunar Trailblazer + F9 S2</a></td><td class="col-id">2025-038</td><td class="col-id">63100 / 63101 / 63102 / 63103</td><td class="col-id">2025-02-26</td><td>IM-2 tipped; Trailblazer comm-lost</td><td><span class="badge b-W">W</span> F9 S2 heliocentric, returns Mar 2043</td></tr>
+    <tr><td class="col-mission"><a href="#m-apollo8">Apollo 8</a></td><td class="col-id">1968-118</td><td class="col-id col-wrap">3627</td><td class="col-id">1968-12-21</td><td>First crewed circumlunar flight</td><td class="col-status"><span class="badge b-H">H</span> S-IVB heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-apollo9">Apollo 9</a></td><td class="col-id">1969-018</td><td class="col-id col-wrap">3770 / 3771</td><td class="col-id">1969-03-03</td><td>LM test in Earth orbit</td><td class="col-status"><span class="badge b-H">H</span> S-IVB restarted to Earth escape, heliocentric; <span class="badge b-R">R</span> LM ascent stage reentered 1981-10-23</td></tr>
+    <tr><td class="col-mission"><a href="#m-apollo10">Apollo 10</a></td><td class="col-id">1969-043</td><td class="col-id col-wrap">3943 / 3949</td><td class="col-id">1969-05-18</td><td>Lunar dress rehearsal</td><td class="col-status"><span class="badge b-H">H</span> S-IVB and LM ascent stage heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-apollo11">Apollo 11</a></td><td class="col-id">1969-059</td><td class="col-id col-wrap">4040</td><td class="col-id">1969-07-16</td><td>First lunar landing</td><td class="col-status"><span class="badge b-H">H</span> S-IVB heliocentric, never re-observed</td></tr>
+    <tr><td class="col-mission"><a href="#m-apollo12">Apollo 12 / J002E3</a></td><td class="col-id">1969-099</td><td class="col-id col-wrap">4226</td><td class="col-id">1969-11-14</td><td>Pinpoint landing</td><td class="col-status"><span class="badge b-W">W</span> S-IVB = J002E3, weakly bound Earth–Sun–Moon orbit; returns Jul 2032</td></tr>
+    <tr><td class="col-mission"><a href="#m-apollo13to17">Apollo 13–17</a></td><td class="col-id">multiple</td><td class="col-id col-wrap">—</td><td class="col-id">1970–1972</td><td>S-IVBs aimed at the Moon for the seismometers</td><td class="col-status"><span class="badge b-I">I</span> lunar impact</td></tr>
+    <tr><td class="col-mission"><a href="#m-luna24">Luna 24</a></td><td class="col-id">1976-081</td><td class="col-id col-wrap">9272</td><td class="col-id">1976-08-09</td><td>Last Soviet sample return</td><td class="col-status"><span class="badge b-H">H</span> Block D presumed heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-change1">Chang'e 1</a></td><td class="col-id">2007-051</td><td class="col-id col-wrap">32275</td><td class="col-id">2007-10-24</td><td>First Chinese lunar orbiter</td><td class="col-status"><span class="badge b-I">I</span> spacecraft impacted 2009-03-01</td></tr>
+    <tr><td class="col-mission"><a href="#m-lro">LRO + LCROSS</a></td><td class="col-id">2009-031</td><td class="col-id col-wrap">35315 / 35316 / 35317</td><td class="col-id">2009-06-18</td><td>Orbiter + Centaur impactor</td><td class="col-status">LRO in lunar orbit (operating); <span class="badge b-I">I</span> Centaur and LCROSS impacted 2009-10-09</td></tr>
+    <tr><td class="col-mission"><a href="#m-change2">Chang'e 2</a></td><td class="col-id">2010-050</td><td class="col-id col-wrap">37174 / 37175</td><td class="col-id">2010-10-01</td><td>Lunar orbiter, SE-L2, Toutatis flyby</td><td class="col-status"><span class="badge b-W">W</span> probe heliocentric, no-manoeuvre distant return Jun 2029 (7.9 million km); <span class="badge b-W">W</span> booster left Earth's Hill sphere 2021-09 after ~11 yr, returns Dec 2033</td></tr>
+    <tr><td class="col-mission"><a href="#m-grail">GRAIL</a></td><td class="col-id">2011-046</td><td class="col-id col-wrap">37801 / 37802 / 37803</td><td class="col-id">2011-09-10</td><td>Twin gravity mappers</td><td class="col-status"><span class="badge b-I">I</span> GRAIL-A/B impacted 2012-12-17; <span class="badge b-H">H</span> Delta II stage heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-change3">Chang'e 3</a></td><td class="col-id">2013-070</td><td class="col-id col-wrap">39458 / 39459</td><td class="col-id">2013-12-01</td><td>Lander + Yutu rover</td><td class="col-status"><span class="badge b-C">C</span> booster in a lunar-perturbed HEO for 12+ yr (P 16 d; lowest perigee 22 728 km on 2026-03-29, now rising)</td></tr>
+    <tr><td class="col-mission"><a href="#m-ce5t1">Chang'e 5-T1</a></td><td class="col-id">2014-065</td><td class="col-id col-wrap">40283 / 40284</td><td class="col-id">2014-10-23</td><td>Sample-return test flight</td><td class="col-status"><span class="badge b-I">I</span> CZ-3C stage = WE0913A, impacted 2022-03-04 (double crater)</td></tr>
+    <tr><td class="col-mission"><a href="#m-queqiao1">Queqiao 1 + Longjiang-1/2</a></td><td class="col-id">2018-045</td><td class="col-id col-wrap">43470 / 43471 / 43472 / 43473</td><td class="col-id">2018-05-20</td><td>Chang'e-4 EM-L2 relay + two lunar microsats</td><td class="col-status">Queqiao-1 at EM-L2 (operating); <span class="badge b-C">C</span> Longjiang-1 lost in high Earth orbit; <span class="badge b-I">I</span> Longjiang-2 impacted 2019-07-31; <span class="badge b-R">R</span> CZ-4C stage reentered 2018-09-25</td></tr>
+    <tr><td class="col-mission"><a href="#m-change4">Chang'e 4</a></td><td class="col-id">2018-103</td><td class="col-id col-wrap">43845 / 43846</td><td class="col-id">2018-12-07</td><td>First far-side lander</td><td class="col-status"><span class="badge b-W">W</span> booster left Earth's Hill sphere 2024-08 after ~5.7 yr, returns Nov 2041</td></tr>
+    <tr><td class="col-mission"><a href="#m-beresheet">Beresheet</a></td><td class="col-id">2019-009</td><td class="col-id col-wrap">44049 / 44050</td><td class="col-id">2019-02-22</td><td>Private lander on the Nusantara Satu launch</td><td class="col-status"><span class="badge b-I">I</span> Beresheet impacted 2019-04-11; <span class="badge b-R">R</span> F9 stage 2 reentered 2021-01-03</td></tr>
+    <tr><td class="col-mission"><a href="#m-c2">Chandrayaan-2</a></td><td class="col-id">2019-042</td><td class="col-id col-wrap">44441 / 44442</td><td class="col-id">2019-07-22</td><td>Orbiter + Vikram lander</td><td class="col-status">Orbiter in lunar orbit (operating); <span class="badge b-I">I</span> Vikram crashed 2019-09-06; <span class="badge b-R">R</span> GSLV cryo stage reentered 2019-10-16</td></tr>
+    <tr><td class="col-mission"><a href="#m-change5">Chang'e 5</a></td><td class="col-id">2020-087</td><td class="col-id col-wrap">47097 / 47098</td><td class="col-id">2020-11-23</td><td>Sample return (1.731 kg)</td><td class="col-status"><span class="badge b-H">H</span> orbiter SE-L1 2021, heliocentric since 2024; <span class="badge b-R">R</span> CZ-5 stage reentered 2020-11-30</td></tr>
+    <tr><td class="col-mission"><a href="#m-capstone">CAPSTONE + Lunar Photon</a></td><td class="col-id">2022-070</td><td class="col-id col-wrap">52914 / 52916</td><td class="col-id">2022-06-28</td><td>NRHO pathfinder</td><td class="col-status"><span class="badge b-C">C</span> CAPSTONE left the NRHO in Aug 2026, now HEO P 14.9 d; <span class="badge b-H">H</span> Photon kick stage heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-danuri">Danuri (KPLO)</a></td><td class="col-id">2022-094</td><td class="col-id col-wrap">53365 / 53366</td><td class="col-id">2022-08-04</td><td>Korean orbiter via ballistic lunar transfer</td><td class="col-status">Danuri in lunar orbit (operating); <span class="badge b-H">H</span> F9 stage 2 heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-artemis1">Artemis I</a></td><td class="col-id">2022-156</td><td class="col-id col-wrap">54257 / 54258</td><td class="col-id">2022-11-16</td><td>Uncrewed Orion test flight</td><td class="col-status"><span class="badge b-R">R</span> Orion splashdown 2022-12-11; <span class="badge b-H">H</span> ICPS heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-artemis1cubes">Artemis I cubesats</a></td><td class="col-id">2022-156C–M</td><td class="col-id col-wrap">55903–55907, 57684–57688</td><td class="col-id">2022-11-16</td><td>Ten secondary payloads</td><td class="col-status"><span class="badge b-H">H</span> eight heliocentric; <span class="badge b-C">C</span> EQUULEUS and Lunar IceCube lost in Earth–Moon space</td></tr>
+    <tr><td class="col-mission"><a href="#m-hakuto1">HAKUTO-R M1 + Lunar Flashlight</a></td><td class="col-id">2022-168</td><td class="col-id col-wrap">54696 / 54697 / 54698</td><td class="col-id">2022-12-11</td><td>Private lander; NASA cubesat</td><td class="col-status"><span class="badge b-I">I</span> M1 crashed 2023-04-25; <span class="badge b-H">H</span> Lunar Flashlight and F9 stage 2 heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-c3">Chandrayaan-3</a></td><td class="col-id">2023-098</td><td class="col-id col-wrap">57320 / 57321 / 57770</td><td class="col-id">2023-07-14</td><td>First south-polar landing</td><td class="col-status"><span class="badge b-R">R</span> LVM3 cryo stage reentered 2023-11-15; <span class="badge b-C">C</span> propulsion module in HEO P 25.6 d, possible escape after a 2026-08-19 lunar pass</td></tr>
+    <tr><td class="col-mission"><a href="#m-luna25">Luna 25</a></td><td class="col-id">2023-118</td><td class="col-id col-wrap">57600 / 57601</td><td class="col-id">2023-08-10</td><td>Russian south-polar lander</td><td class="col-status"><span class="badge b-I">I</span> lander crashed 2023-08-19; <span class="badge b-R">R</span> Fregat reentered 2024-02-26 after its own lunar flyby</td></tr>
+    <tr><td class="col-mission"><a href="#m-slim">SLIM + XRISM</a></td><td class="col-id">2023-137</td><td class="col-id col-wrap">57803 / 57804</td><td class="col-id">2023-09-06</td><td>Precision lander</td><td class="col-status">SLIM on the Moon; <span class="badge b-R">R</span> H-IIA stage 2 reentered 2025-01-03</td></tr>
+    <tr><td class="col-mission"><a href="#m-peregrine">Peregrine + Cert-1 Centaur</a></td><td class="col-id">2024-006</td><td class="col-id col-wrap">58751 / 58752</td><td class="col-id">2024-01-08</td><td>First Vulcan flight; lander failed</td><td class="col-status"><span class="badge b-R">R</span> Peregrine reentered 2024-01-18; <span class="badge b-H">H</span> Centaur heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-im1">IM-1 (Odysseus)</a></td><td class="col-id">2024-030</td><td class="col-id col-wrap">58963 / 58964</td><td class="col-id">2024-02-15</td><td>First commercial landing</td><td class="col-status">Nova-C on the Moon; <span class="badge b-W">W</span> F9 stage 2 returns Apr 2045</td></tr>
+    <tr><td class="col-mission"><a href="#m-droab">DRO-A / DRO-B</a></td><td class="col-id">2024-048</td><td class="col-id col-wrap">59228 / 60058 / 60326</td><td class="col-id">2024-03-13</td><td>Cislunar test pair; kick-stage anomaly, rescued with chemical burns and lunar gravity assists</td><td class="col-status"><span class="badge b-C">C</span> DRO-A, DRO-B (3:2 resonant since Mar 2025) and YZ-1S stage in Earth–Moon space</td></tr>
+    <tr><td class="col-mission"><a href="#m-queqiao2">Queqiao-2 + Tiandu-1/2</a></td><td class="col-id">2024-051</td><td class="col-id col-wrap">59276 / 59277 / 59278 / 59279</td><td class="col-id">2024-03-20</td><td>Far-side relay + navigation test pair</td><td class="col-status">Queqiao-2 in 24-h lunar orbit (operating); <span class="badge b-C">C</span> Tiandu-1 left lunar orbit in 2025 for an HEO (P 11.8 d), manoeuvring; Tiandu-2 in lunar orbit; <span class="badge b-R">R</span> CZ-8 stage reentered 2024-04-24</td></tr>
+    <tr><td class="col-mission"><a href="#m-change6">Chang'e 6</a></td><td class="col-id">2024-083</td><td class="col-id col-wrap">59627 / 59628 / 59629</td><td class="col-id">2024-05-03</td><td>First far-side sample return (1.935 kg)</td><td class="col-status"><span class="badge b-C">C</span> orbiter back from SE-L2, manoeuvring in a P ≈ 34 d, i ≈ 75° HEO; <span class="badge b-R">R</span> CZ-5 stage reentered 2024-05-16; <span class="badge b-I">I</span> ICUBE-Q presumed impacted</td></tr>
+    <tr><td class="col-mission"><a href="#m-blueghost">Blue Ghost M1 + HAKUTO-R M2</a></td><td class="col-id">2025-010</td><td class="col-id col-wrap">62716 / 62717 / 62718 / 62719</td><td class="col-id">2025-01-15</td><td>Two private landers on one F9</td><td class="col-status">Blue Ghost on the Moon; <span class="badge b-I">I</span> M2 crashed 2025-06-05; <span class="badge b-R">R</span> F9 debris 62718 reentered 2025-03-15; <span class="badge b-I">I</span> F9 stage 2 impacted 2026-08-05 after ~1.6 yr in Earth–Moon space</td></tr>
+    <tr><td class="col-mission"><a href="#m-im2">IM-2 + Lunar Trailblazer</a></td><td class="col-id">2025-038</td><td class="col-id col-wrap">63099 / 63100 / 63101 / 63102 / 63103</td><td class="col-id">2025-02-27</td><td>Lander tipped; Trailblazer lost</td><td class="col-status">Athena on the Moon; <span class="badge b-C">C</span> Chimera-1 lost in HEO; <span class="badge b-H">H</span> Trailblazer and Odin heliocentric; <span class="badge b-W">W</span> F9 stage 2 returns Mar 2043</td></tr>
+    <tr><td class="col-mission"><a href="#m-artemis2">Artemis II</a></td><td class="col-id">2026-069</td><td class="col-id col-wrap">68538 / 68539 / 68540 / 68541 / 68655</td><td class="col-id">2026-04-01</td><td>First crewed lunar flyby since 1972</td><td class="col-status"><span class="badge b-R">R</span> Orion splashdown 2026-04-11; ICPS-2 and two cubesats reentered 2026-04-02; <span class="badge b-C">C</span> SWC-1 cubesat in HEO</td></tr>
   </tbody>
 </table>
 
@@ -170,18 +183,18 @@
 <table>
   <thead><tr><th>Mission</th><th>COSPAR</th><th>NORAD</th><th>Launch</th><th>Status</th></tr></thead>
   <tbody>
-    <tr><td>Mariner 4</td><td class="col-id">1964-077</td><td class="col-id">—</td><td class="col-id">1964-11-28</td><td><span class="badge b-H">H</span> Atlas-Agena heliocentric</td></tr>
-    <tr><td class="col-mission"><a href="#m-cassini">Cassini-Huygens</a></td><td class="col-id">1997-061</td><td class="col-id">25008</td><td class="col-id">1997-10-15</td><td>Spacecraft EOM Saturn entry 2017-09-15; <span class="badge b-H">H</span> Centaur heliocentric</td></tr>
-    <tr><td>MAVEN</td><td class="col-id">2013-063</td><td class="col-id">—</td><td class="col-id">2013-11-18</td><td><span class="badge b-H">H</span> Centaur heliocentric</td></tr>
-    <tr><td>MSL Curiosity</td><td class="col-id">2011-070</td><td class="col-id">—</td><td class="col-id">2011-11-26</td><td><span class="badge b-H">H</span> Centaur heliocentric</td></tr>
-    <tr><td class="col-mission"><a href="#m-insight">InSight</a></td><td class="col-id">2018-042</td><td class="col-id">—</td><td class="col-id">2018-05-05</td><td>Spacecraft on Mars; <span class="badge b-H">H</span> Centaur heliocentric</td></tr>
-    <tr><td class="col-mission"><a href="#m-exomars">ExoMars 2016 (TGO)</a></td><td class="col-id">2016-017</td><td class="col-id">41553+</td><td class="col-id">2016-03-14</td><td>TGO at Mars; <span class="badge b-H">H</span> Briz-M + tank heliocentric</td></tr>
-    <tr><td class="col-mission"><a href="#m-hope">Hope (EMM)</a></td><td class="col-id">2020-047</td><td class="col-id">45918 / 45919</td><td class="col-id">2020-07-19</td><td>Spacecraft at Mars; <span class="badge b-H">H</span> H-IIA S2 heliocentric</td></tr>
-    <tr><td class="col-mission"><a href="#m-tianwen1">Tianwen-1</a></td><td class="col-id">2020-049</td><td class="col-id">45935 / 45936</td><td class="col-id">2020-07-23</td><td>Spacecraft at Mars; <span class="badge b-H">H</span> R/B heliocentric ~1.02×1.60 AU</td></tr>
-    <tr><td class="col-mission"><a href="#m-mars2020">Mars 2020 Perseverance</a></td><td class="col-id">2020-052</td><td class="col-id">45983 / 45984</td><td class="col-id">2020-07-30</td><td>Spacecraft + Ingenuity at Mars; <span class="badge b-H">H</span> Centaur heliocentric</td></tr>
-    <tr><td class="col-mission"><a href="#m-akatsuki">Akatsuki</a></td><td class="col-id">2010-020</td><td class="col-id">—</td><td class="col-id">2010-05-21</td><td>Venus orbiter (operational); <span class="badge b-H">H</span> H-IIA S2 heliocentric</td></tr>
-    <tr><td class="col-mission"><a href="#m-bepi">BepiColombo</a></td><td class="col-id">2018-080</td><td class="col-id">43653</td><td class="col-id">2018-10-20</td><td>Cruise spacecraft heliocentric, q≈0.36 AU at present</td></tr>
-    <tr><td class="col-mission"><a href="#m-escapade">ESCAPADE + NG-2 GS2</a></td><td class="col-id">2025-260</td><td class="col-id">66453 + smallsats</td><td class="col-id">2025-11-13</td><td>Twin Mars probes; <span class="badge b-H">H</span> ESCAPADE-Blue/Gold + GS2 all heliocentric</td></tr>
+    <tr><td>Mariner 4</td><td class="col-id">1964-077</td><td class="col-id col-wrap">—</td><td class="col-id">1964-11-28</td><td class="col-status"><span class="badge b-H">H</span> Agena stage heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-akatsuki">Akatsuki</a></td><td class="col-id">2010-020</td><td class="col-id col-wrap">—</td><td class="col-id">2010-05-20</td><td class="col-status">Venus orbiter; <span class="badge b-H">H</span> H-IIA stage 2 heliocentric</td></tr>
+    <tr><td>MSL Curiosity</td><td class="col-id">2011-070</td><td class="col-id col-wrap">—</td><td class="col-id">2011-11-26</td><td class="col-status"><span class="badge b-H">H</span> Centaur heliocentric</td></tr>
+    <tr><td>MAVEN</td><td class="col-id">2013-063</td><td class="col-id col-wrap">—</td><td class="col-id">2013-11-18</td><td class="col-status"><span class="badge b-H">H</span> Centaur heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-exomars">ExoMars 2016 (TGO)</a></td><td class="col-id">2016-017</td><td class="col-id col-wrap">41388 / 41389</td><td class="col-id">2016-03-14</td><td class="col-status">TGO at Mars; <span class="badge b-H">H</span> Breeze-M heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-insight">InSight</a></td><td class="col-id">2018-042</td><td class="col-id col-wrap">—</td><td class="col-id">2018-05-05</td><td class="col-status">Lander on Mars (ended 2022); <span class="badge b-H">H</span> Centaur heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-bepi">BepiColombo</a></td><td class="col-id">2018-080</td><td class="col-id col-wrap">43653 / 43654</td><td class="col-id">2018-10-20</td><td class="col-status">Weak capture at Mercury under way (Horizons); <span class="badge b-H">H</span> Ariane 5 stage heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-hope">Hope (EMM)</a></td><td class="col-id">2020-047</td><td class="col-id col-wrap">45918 / 45919</td><td class="col-id">2020-07-19</td><td class="col-status">At Mars; <span class="badge b-W">W</span> H-IIA stage 2 returns Jul 2049</td></tr>
+    <tr><td class="col-mission"><a href="#m-tianwen1">Tianwen-1</a></td><td class="col-id">2020-049</td><td class="col-id col-wrap">45935 / 45936</td><td class="col-id">2020-07-23</td><td class="col-status">At Mars; <span class="badge b-W">W</span> CZ-5 stage 2 returns Aug 2046</td></tr>
+    <tr><td class="col-mission"><a href="#m-mars2020">Mars 2020 Perseverance</a></td><td class="col-id">2020-052</td><td class="col-id col-wrap">45983 / 45984</td><td class="col-id">2020-07-30</td><td class="col-status">On Mars; <span class="badge b-H">H</span> Centaur heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-escapade">ESCAPADE + NG-2 GS2</a></td><td class="col-id">2025-260</td><td class="col-id col-wrap">66451 / 66452 / 66453</td><td class="col-id">2025-11-13</td><td class="col-status">Twin probes back from SE-L2 for Earth flybys 2026-11-07 / 11-09; <span class="badge b-W">W</span> GS2 returns Oct–Nov 2052</td></tr>
+    <tr><td class="col-mission"><a href="#m-mmx">MMX</a></td><td class="col-id">2026-236</td><td class="col-id col-wrap">101109 / 101110</td><td class="col-id">2026-10-19</td><td class="col-status">Martian-moons sample return, cruising to Mars (arrival Aug 2027); <span class="badge b-W">W</span> H3 stage 2 returns Oct 2036</td></tr>
   </tbody>
 </table>
 
@@ -190,491 +203,587 @@
 <table>
   <thead><tr><th>Mission</th><th>COSPAR</th><th>NORAD</th><th>Launch</th><th>Status</th></tr></thead>
   <tbody>
-    <tr><td>Voyager 1, 2</td><td class="col-id">1977-084 / 076</td><td class="col-id">—</td><td class="col-id">1977</td><td><span class="badge b-H">H</span> Hyperbolic; Centaur heliocentric</td></tr>
-    <tr><td>Pioneer 10, 11</td><td class="col-id">1972-012 / 1973-019</td><td class="col-id">—</td><td class="col-id">1972/73</td><td><span class="badge b-H">H</span> Atlas-Centaur heliocentric</td></tr>
-    <tr><td>Galileo</td><td class="col-id">1989-084B</td><td class="col-id">—</td><td class="col-id">1989-10-18</td><td><span class="badge b-H">H</span> IUS heliocentric</td></tr>
-    <tr><td class="col-mission"><a href="#m-stardust">Stardust</a></td><td class="col-id">1999-003</td><td class="col-id">—</td><td class="col-id">1999-02-07</td><td><span class="badge b-H">H</span> Stage heliocentric</td></tr>
-    <tr><td class="col-mission"><a href="#m-genesis">Genesis</a></td><td class="col-id">2001-034</td><td class="col-id">—</td><td class="col-id">2001-08-08</td><td><span class="badge b-H">H</span> Stage heliocentric</td></tr>
-    <tr><td class="col-mission"><a href="#m-deepimpact">Deep Impact / EPOXI</a></td><td class="col-id">2005-001</td><td class="col-id">—</td><td class="col-id">2005-01-12</td><td><span class="badge b-H">H</span> Both spacecraft + impactor heliocentric</td></tr>
-    <tr><td class="col-mission"><a href="#m-rosetta">Rosetta</a></td><td class="col-id">2004-006</td><td class="col-id">—</td><td class="col-id">2004-03-02</td><td><span class="badge b-H">H</span> Spacecraft + Sylda heliocentric</td></tr>
-    <tr><td class="col-mission"><a href="#m-stereo">STEREO-A/B</a></td><td class="col-id">2006-047</td><td class="col-id">—</td><td class="col-id">2006-10-26</td><td><span class="badge b-H">H</span> STEREO-B + booster heliocentric</td></tr>
-    <tr><td class="col-mission"><a href="#m-haya1">Hayabusa</a></td><td class="col-id">2003-019</td><td class="col-id">—</td><td class="col-id">2003-05-09</td><td><span class="badge b-H">H</span> M-V S3 heliocentric</td></tr>
-    <tr><td class="col-mission"><a href="#m-haya2">Hayabusa 2</a></td><td class="col-id">2014-076</td><td class="col-id">—</td><td class="col-id">2014-12-03</td><td><span class="badge b-H">H</span> H-IIA S2 heliocentric ~0.92×1.09 AU</td></tr>
-    <tr><td class="col-mission"><a href="#m-osirisrex">OSIRIS-REx → APEX</a></td><td class="col-id">2016-055</td><td class="col-id">41757</td><td class="col-id">2016-09-08</td><td>Bennu sample delivered; APEX flyby Mar 2027</td></tr>
-    <tr class="return-row"><td class="col-mission"><a href="#m-lucy">Lucy</a></td><td class="col-id">2021-093</td><td class="col-id">49328 / 49329</td><td class="col-id">2021-10-16</td><td>Spacecraft at 4.5 AU; <span class="badge b-W">W</span> Centaur Earth co-orbital</td></tr>
-    <tr class="return-row"><td class="col-mission"><a href="#m-dart">DART + LICIACube</a></td><td class="col-id">2021-110</td><td class="col-id">49497 / 49498</td><td class="col-id">2021-11-24</td><td>DART impacted 2022-09-26; <span class="badge b-W">W</span> F9 S2 returns May 2026</td></tr>
-    <tr><td class="col-mission"><a href="#m-psyche">Psyche</a></td><td class="col-id">2023-157</td><td class="col-id">58049 / 58050</td><td class="col-id">2023-10-13</td><td><span class="badge b-H">H</span> Spacecraft + FH S2 heliocentric</td></tr>
-    <tr><td class="col-mission"><a href="#m-hera">Hera</a></td><td class="col-id">2024-180</td><td class="col-id">61449</td><td class="col-id">2024-10-07</td><td><span class="badge b-H">H</span> Spacecraft + F9 S2 heliocentric</td></tr>
-    <tr><td class="col-mission"><a href="#m-clipper">Europa Clipper</a></td><td class="col-id">2024-182</td><td class="col-id">61507 / 61508</td><td class="col-id">2024-10-14</td><td><span class="badge b-H">H</span> Spacecraft + FH S2 heliocentric</td></tr>
-    <tr><td class="col-mission"><a href="#m-juice">JUICE</a></td><td class="col-id">2023-053</td><td class="col-id">56176 / 56177</td><td class="col-id">2023-04-14</td><td><span class="badge b-H">H</span> Spacecraft + ESC-A heliocentric; flybys 2026 Sep, 2028 Jan</td></tr>
+    <tr><td>Pioneer 10, 11</td><td class="col-id">1972-012 / 1973-019</td><td class="col-id col-wrap">—</td><td class="col-id">1972 / 1973</td><td class="col-status"><span class="badge b-H">H</span> Atlas-Centaur stages heliocentric</td></tr>
+    <tr><td>Voyager 1, 2</td><td class="col-id">1977-084 / 1977-076</td><td class="col-id col-wrap">—</td><td class="col-id">1977</td><td class="col-status"><span class="badge b-H">H</span> Centaur stages heliocentric</td></tr>
+    <tr><td>Galileo</td><td class="col-id">1989-084B</td><td class="col-id col-wrap">—</td><td class="col-id">1989-10-18</td><td class="col-status"><span class="badge b-H">H</span> IUS heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-cassini">Cassini-Huygens</a></td><td class="col-id">1997-061</td><td class="col-id col-wrap">25008</td><td class="col-id">1997-10-15</td><td class="col-status">Spacecraft entered Saturn 2017-09-15; <span class="badge b-H">H</span> Centaur heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-stardust">Stardust</a></td><td class="col-id">1999-003</td><td class="col-id col-wrap">—</td><td class="col-id">1999-02-07</td><td class="col-status"><span class="badge b-H">H</span> Delta II stage heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-genesis">Genesis</a></td><td class="col-id">2001-034</td><td class="col-id col-wrap">26884 / 26886 / 28453</td><td class="col-id">2001-08-08</td><td class="col-status"><span class="badge b-H">H</span> bus and Delta II stage 2 heliocentric; <span class="badge b-R">R</span> sample capsule landed 2004-09-08</td></tr>
+    <tr><td class="col-mission"><a href="#m-haya1">Hayabusa</a></td><td class="col-id">2003-019</td><td class="col-id col-wrap">—</td><td class="col-id">2003-05-09</td><td class="col-status"><span class="badge b-H">H</span> M-V stage 3 heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-rosetta">Rosetta</a></td><td class="col-id">2004-006</td><td class="col-id col-wrap">—</td><td class="col-id">2004-03-02</td><td class="col-status"><span class="badge b-H">H</span> Ariane 5 stage heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-deepimpact">Deep Impact / EPOXI</a></td><td class="col-id">2005-001</td><td class="col-id col-wrap">—</td><td class="col-id">2005-01-12</td><td class="col-status"><span class="badge b-H">H</span> spacecraft and stage heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-stereo">STEREO-A/B</a></td><td class="col-id">2006-047</td><td class="col-id col-wrap">29510 / 29511</td><td class="col-id">2006-10-26</td><td class="col-status">STEREO-A operating; <span class="badge b-H">H</span> STEREO-B (lost) and stage heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-haya2">Hayabusa 2</a></td><td class="col-id">2014-076</td><td class="col-id col-wrap">40319 / 40323</td><td class="col-id">2014-12-03</td><td class="col-status">Torifune flyby 2026-07-05; Earth flybys Dec 2027 / Jun 2028; <span class="badge b-H">H</span> H-IIA stage 2 heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-osirisrex">OSIRIS-REx → APEX</a></td><td class="col-id">2016-055</td><td class="col-id col-wrap">41757 / 41758</td><td class="col-id">2016-09-08</td><td class="col-status">Earth flyby 2025-09-23, next 2027-03-16; Apophis Apr 2029; <span class="badge b-H">H</span> Centaur heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-lucy">Lucy</a></td><td class="col-id">2021-093</td><td class="col-id col-wrap">49328 / 49329</td><td class="col-id">2021-10-16</td><td class="col-status">Earth flyby 2024-12-13, Donaldjohanson 2025-04-20; <span class="badge b-W">W</span> Centaur returns Oct 2051</td></tr>
+    <tr><td class="col-mission"><a href="#m-dart">DART + LICIACube</a></td><td class="col-id">2021-110</td><td class="col-id col-wrap">49497 / 49498</td><td class="col-id">2021-11-24</td><td class="col-status">DART impacted Dimorphos 2022-09-26; <span class="badge b-H">H</span> F9 stage 2 passed Earth at 2.7 million km on 2026-05-11</td></tr>
+    <tr><td class="col-mission"><a href="#m-juice">JUICE</a></td><td class="col-id">2023-053</td><td class="col-id col-wrap">56176 / 56177</td><td class="col-id">2023-04-14</td><td class="col-status">Earth flyby 2026-09-28 at 15 017 km, next Jan 2029; <span class="badge b-W">W</span> ESC-A returns Aug 2040</td></tr>
+    <tr><td class="col-mission"><a href="#m-psyche">Psyche</a></td><td class="col-id">2023-157</td><td class="col-id col-wrap">58049 / 58050</td><td class="col-id">2023-10-13</td><td class="col-status">Mars flyby 2026-05-15; <span class="badge b-H">H</span> Falcon Heavy stage 2 heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-hera">Hera</a></td><td class="col-id">2024-180</td><td class="col-id col-wrap">61449 / 61732</td><td class="col-id">2024-10-07</td><td class="col-status">Mars flyby 2025-03-12, Didymos late 2026; <span class="badge b-W">W</span> F9 stage 2 returns Nov 2051</td></tr>
+    <tr><td class="col-mission"><a href="#m-clipper">Europa Clipper</a></td><td class="col-id">2024-182</td><td class="col-id col-wrap">61507 / 61508</td><td class="col-id">2024-10-14</td><td class="col-status">Mars flyby 2025-03-01, Earth flyby 2026-12-03; <span class="badge b-H">H</span> Falcon Heavy stage 2 heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-tianwen2">Tianwen-2</a></td><td class="col-id">2025-114</td><td class="col-id col-wrap">64197 / 64198</td><td class="col-id">2025-05-28</td><td class="col-status">At quasi-satellite Kamo'oalewa since Jul 2026; <span class="badge b-H">H</span> CZ-3B stage heliocentric</td></tr>
   </tbody>
 </table>
 
-<h3 id="t-helio">2.4 Sun-Earth Lagrange / heliocentric science</h3>
+<h3 id="t-helio">2.4 Sun–Earth Lagrange / heliocentric science</h3>
 
 <table>
   <thead><tr><th>Mission</th><th>COSPAR</th><th>NORAD</th><th>Launch</th><th>Status</th></tr></thead>
   <tbody>
-    <tr><td>ISEE-3 / ICE</td><td class="col-id">1978-079</td><td class="col-id">—</td><td class="col-id">1978-08-12</td><td>First L1; later comet flyby</td></tr>
-    <tr><td class="col-mission"><a href="#m-wmap">WMAP</a></td><td class="col-id">2001-027</td><td class="col-id">26859</td><td class="col-id">2001-06-30</td><td><span class="badge b-H">H</span> Heliocentric graveyard since 2010</td></tr>
-    <tr><td>WIND</td><td class="col-id">1994-071</td><td class="col-id">—</td><td class="col-id">1994-11-01</td><td>Solar wind, multi-flyby tour</td></tr>
-    <tr><td class="col-mission"><a href="#m-geotail">Geotail</a></td><td class="col-id">1992-044</td><td class="col-id">22049</td><td class="col-id">1992-07-24</td><td><span class="badge b-C">C</span> Magnetotail HEO with Moon-driven libration</td></tr>
-    <tr><td>Polar</td><td class="col-id">1996-013</td><td class="col-id">—</td><td class="col-id">1996-02-24</td><td>Magnetosphere</td></tr>
-    <tr><td>ACE</td><td class="col-id">1997-045</td><td class="col-id">—</td><td class="col-id">1997-08-25</td><td>L1 solar-wind monitor</td></tr>
-    <tr><td>SOHO</td><td class="col-id">1995-065</td><td class="col-id">—</td><td class="col-id">1995-12-02</td><td>L1 (operational)</td></tr>
-    <tr><td class="col-mission"><a href="#m-dscovr">DSCOVR</a></td><td class="col-id">2015-007</td><td class="col-id">40390 / 40391</td><td class="col-id">2015-02-11</td><td>Spacecraft at L1; <span class="badge b-C">C</span> F9 S2 cislunar HEO (last fitted 2022)</td></tr>
-    <tr><td class="col-mission"><a href="#m-spektrr">Spektr-R (RadioAstron)</a></td><td class="col-id">2011-037</td><td class="col-id">37755</td><td class="col-id">2011-07-18</td><td><span class="badge b-C">C</span> VLBI HEO; passivated 2019</td></tr>
-    <tr class="return-row"><td class="col-mission"><a href="#m-spektrrg">Spektr-RG</a></td><td class="col-id">2019-040</td><td class="col-id">44432 / 44433</td><td class="col-id">2019-07-13</td><td>Spacecraft at SE-L2; <span class="badge b-W">W</span> booster returns Jun 2038</td></tr>
-    <tr><td class="col-mission"><a href="#m-gaia">Gaia</a></td><td class="col-id">2013-074</td><td class="col-id">39479</td><td class="col-id">2013-12-19</td><td>Decommissioned 2025-Mar to graveyard heliocentric</td></tr>
-    <tr class="return-row"><td class="col-mission"><a href="#m-herschelplanck">Herschel + Planck</a></td><td class="col-id">2009-026</td><td class="col-id">—</td><td class="col-id">2009-05-14</td><td>SE-L2 (decommissioned); <span class="badge b-W">W</span> booster returns Dec 2034</td></tr>
-    <tr class="return-row"><td class="col-mission"><a href="#m-jwst">JWST</a></td><td class="col-id">2021-130</td><td class="col-id">50463 / 50464</td><td class="col-id">2021-12-25</td><td>SE-L2; <span class="badge b-W">W</span> ESC-D returns Jun 2047</td></tr>
-    <tr><td class="col-mission"><a href="#m-euclid">Euclid</a></td><td class="col-id">2023-092</td><td class="col-id">57209 / 57210</td><td class="col-id">2023-07-01</td><td>SE-L2; <span class="badge b-H">H</span> F9 S2 heliocentric</td></tr>
-    <tr><td class="col-mission"><a href="#m-tess">TESS</a></td><td class="col-id">2018-038</td><td class="col-id">43435 / 43436</td><td class="col-id">2018-04-18</td><td><span class="badge b-C">C</span> Spacecraft lunar 2:1 resonant; <span class="badge b-H">H</span> F9 S2 heliocentric via lunar gravity assist</td></tr>
-    <tr class="return-row"><td class="col-mission"><a href="#m-solo">Solar Orbiter</a></td><td class="col-id">2020-010</td><td class="col-id">45167</td><td class="col-id">2020-02-10</td><td>Heliocentric; <span class="badge b-W">W</span> Centaur returns Feb 2035</td></tr>
-    <tr><td class="col-mission"><a href="#m-parker">Parker Solar Probe</a></td><td class="col-id">2018-065</td><td class="col-id">— / 43593</td><td class="col-id">2018-08-12</td><td>Closest-Sun probe; <span class="badge b-H">H</span> Delta-IV S2 heliocentric</td></tr>
-    <tr><td class="col-mission"><a href="#m-aditya">Aditya-L1</a></td><td class="col-id">2023-132</td><td class="col-id">57754 / 57755</td><td class="col-id">2023-09-02</td><td>Spacecraft at L1 (operational); PS4 upper stage in drag-decaying HEO (apo 17 170 km, peri 220 km)</td></tr>
-    <tr><td class="col-mission"><a href="#m-tesla">Tesla Roadster</a></td><td class="col-id">2018-017</td><td class="col-id">43205</td><td class="col-id">2018-02-06</td><td><span class="badge b-H">H</span> Heliocentric a=1.33 AU, e=0.26</td></tr>
-    <tr class="return-row"><td class="col-mission"><a href="#m-cert2">Cert-2 Vulcan Centaur</a></td><td class="col-id">2024-179</td><td class="col-id">61448</td><td class="col-id">2024-10-04</td><td><span class="badge b-W">W</span> Heliocentric; returns Nov 2026, Dec 2027, Dec 2028</td></tr>
+    <tr><td>ISEE-3 / ICE</td><td class="col-id">1978-079</td><td class="col-id col-wrap">11004</td><td class="col-id">1978-08-12</td><td class="col-status">First L1 halo orbiter, later comet flyby; <span class="badge b-H">H</span> derelict heliocentric since 2014</td></tr>
+    <tr><td>WIND</td><td class="col-id">1994-071</td><td class="col-id col-wrap">23333 / 23350</td><td class="col-id">1994-11-01</td><td class="col-status">SE-L1 (operating); <span class="badge b-R">R</span> Delta II stage 2 reentered 1994-11-29</td></tr>
+    <tr><td>SOHO</td><td class="col-id">1995-065</td><td class="col-id col-wrap">23726</td><td class="col-id">1995-12-02</td><td class="col-status">SE-L1 (operating)</td></tr>
+    <tr><td>ACE</td><td class="col-id">1997-045</td><td class="col-id col-wrap">24912</td><td class="col-id">1997-08-25</td><td class="col-status">SE-L1 (operating)</td></tr>
+    <tr><td class="col-mission"><a href="#m-wmap">WMAP</a></td><td class="col-id">2001-027</td><td class="col-id col-wrap">26859 / 26860</td><td class="col-id">2001-06-30</td><td class="col-status"><span class="badge b-H">H</span> retired to a heliocentric orbit 2010; <span class="badge b-R">R</span> Delta II stage 2 reentered 2001-07-07</td></tr>
+    <tr><td class="col-mission"><a href="#m-herschelplanck">Herschel + Planck</a></td><td class="col-id">2009-026</td><td class="col-id col-wrap">34937 / 34938 / 34939</td><td class="col-id">2009-05-14</td><td class="col-status"><span class="badge b-W">W</span> Planck returns Jun 2027, Herschel Oct 2027 (distant); <span class="badge b-W">W</span> ESC-A returns Dec 2034</td></tr>
+    <tr><td class="col-mission"><a href="#m-gaia">Gaia</a></td><td class="col-id">2013-074</td><td class="col-id col-wrap">39479 / 39480</td><td class="col-id">2013-12-19</td><td class="col-status"><span class="badge b-W">W</span> retired to a heliocentric orbit Mar 2025, distant return 2039; <span class="badge b-H">H</span> Fregat heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-dscovr">DSCOVR</a></td><td class="col-id">2015-007</td><td class="col-id col-wrap">40390 / 40391</td><td class="col-id">2015-02-11</td><td class="col-status">SE-L1 (operating); <span class="badge b-C">C</span> F9 stage 2 in deep HEO, untracked since 2022</td></tr>
+    <tr><td class="col-mission"><a href="#m-tesla">Tesla Roadster</a></td><td class="col-id">2018-017</td><td class="col-id col-wrap">43205</td><td class="col-id">2018-02-06</td><td class="col-status"><span class="badge b-W">W</span> Roadster + Falcon Heavy stage 2 returns Jan 2047</td></tr>
+    <tr><td class="col-mission"><a href="#m-parker">Parker Solar Probe</a></td><td class="col-id">2018-065</td><td class="col-id col-wrap">43592 / 43593</td><td class="col-id">2018-08-12</td><td class="col-status">Solar perihelia; <span class="badge b-H">H</span> Delta IV stage 2 heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-spektrrg">Spektr-RG</a></td><td class="col-id">2019-040</td><td class="col-id col-wrap">44432 / 44433</td><td class="col-id">2019-07-13</td><td class="col-status">SE-L2, station-keeping (amateur-tracked 2026); <span class="badge b-W">W</span> Block DM returns Jun 2038</td></tr>
+    <tr><td class="col-mission"><a href="#m-solo">Solar Orbiter</a></td><td class="col-id">2020-010</td><td class="col-id col-wrap">45167 / 45168</td><td class="col-id">2020-02-10</td><td class="col-status">Inner-heliosphere orbit; <span class="badge b-W">W</span> Centaur returns Feb 2035</td></tr>
+    <tr><td class="col-mission"><a href="#m-jwst">JWST</a></td><td class="col-id">2021-130</td><td class="col-id col-wrap">50463 / 50464</td><td class="col-id">2021-12-25</td><td class="col-status">SE-L2 (operating); <span class="badge b-W">W</span> ESC-A returns Jun 2047</td></tr>
+    <tr><td class="col-mission"><a href="#m-euclid">Euclid</a></td><td class="col-id">2023-092</td><td class="col-id col-wrap">57209 / 57210</td><td class="col-id">2023-07-01</td><td class="col-status">SE-L2 (operating); <span class="badge b-H">H</span> F9 stage 2 heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-aditya">Aditya-L1</a></td><td class="col-id">2023-132</td><td class="col-id col-wrap">57754 / 57755</td><td class="col-id">2023-09-02</td><td class="col-status">SE-L1 (operating); PS4 stage decaying, apogee now below GEO</td></tr>
+    <tr><td class="col-mission"><a href="#m-cert2">Cert-2 Vulcan Centaur</a></td><td class="col-id">2024-179</td><td class="col-id col-wrap">61448</td><td class="col-id">2024-10-04</td><td class="col-status"><span class="badge b-W">W</span> heliocentric; Earth perigee 2029-02-27 (q 8 900 ± 4 600 km, atmospheric entry possible)</td></tr>
+    <tr><td class="col-mission"><a href="#m-imap">IMAP + SWFO-L1 + Carruthers</a></td><td class="col-id">2025-215</td><td class="col-id col-wrap">65725 / 65726 / 65727 / 65728</td><td class="col-id">2025-09-24</td><td class="col-status">Three spacecraft at SE-L1 (operating); <span class="badge b-H">H</span> F9 stage 2 heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-roman">Roman Space Telescope</a></td><td class="col-id">2026-199</td><td class="col-id col-wrap">100532 / 100533</td><td class="col-id">2026-08-30</td><td class="col-status">Transfer to SE-L2 (arrival ~Dec 2026); <span class="badge b-H">H</span> Falcon Heavy stage 2 heliocentric since late Sep 2026, amateur-tracked</td></tr>
   </tbody>
 </table>
 
 <h3 id="t-heo">2.5 High-Earth-orbit science</h3>
 
 <table>
-  <thead><tr><th>Mission</th><th>COSPAR</th><th>NORAD</th><th>Launch</th><th>Notes</th></tr></thead>
+  <thead><tr><th>Mission</th><th>COSPAR</th><th>NORAD</th><th>Launch</th><th>Status</th></tr></thead>
   <tbody>
-    <tr><td>Vela 1A/B</td><td class="col-id">1963-039</td><td class="col-id">674 / 692</td><td class="col-id">1963-10-17</td><td><span class="badge b-C">C</span> Nuclear-test detection; ~100 000 km circular</td></tr>
-    <tr><td>OGO-1</td><td class="col-id">1964-054</td><td class="col-id">879</td><td class="col-id">1964-09-05</td><td><span class="badge b-R">R</span> Apogee 149 000 km; reentered 2020-08-29</td></tr>
-    <tr><td>IMP-7</td><td class="col-id">1972-073</td><td class="col-id">6197</td><td class="col-id">1972-09-23</td><td><span class="badge b-C">C</span> Apogee 200 000+ km; still in HEO</td></tr>
-    <tr><td>IMP-8</td><td class="col-id">1973-078</td><td class="col-id">6893</td><td class="col-id">1973-10-26</td><td><span class="badge b-C">C</span> Apogee ~270 000 km; still in HEO</td></tr>
-    <tr><td>SOLRAD 11A/B</td><td class="col-id">1976-023</td><td class="col-id">8748 / 8753</td><td class="col-id">1976-03-15</td><td><span class="badge b-C">C</span> NRL surveillance from ~118 000 km</td></tr>
-    <tr><td class="col-mission"><a href="#m-ibex">IBEX</a></td><td class="col-id">2008-051</td><td class="col-id">33401</td><td class="col-id">2008-10-19</td><td><span class="badge b-C">C</span> Heliosphere imager, lunar-resonant orbit</td></tr>
-    <tr><td class="col-mission"><a href="#m-cluster">Cluster II</a></td><td class="col-id">2000-045</td><td class="col-id">26463 / 26464</td><td class="col-id">2000-08-09</td><td>Plasma quartet; <span class="badge b-R">R</span> FM6 reentered 2025-10-22</td></tr>
-    <tr><td class="col-mission"><a href="#m-themis">THEMIS / ARTEMIS</a></td><td class="col-id">2007-004</td><td class="col-id">30580 / 30797 / 30798 / 30799</td><td class="col-id">2007-02-17</td><td>A/D/E lunar-resonant; <span class="badge b-R">R</span> G reentered 2024-05-12</td></tr>
-    <tr><td class="col-mission"><a href="#m-integral">INTEGRAL</a></td><td class="col-id">2002-048</td><td class="col-id">27540</td><td class="col-id">2002-10-17</td><td><span class="badge b-C">C</span> Gamma-ray observatory in HEO P=2.7 d</td></tr>
+    <tr><td>Vela 1A/B</td><td class="col-id">1963-039</td><td class="col-id col-wrap">674 / 692</td><td class="col-id">1963-10-17</td><td class="col-status"><span class="badge b-C">C</span> derelict nuclear-test detectors, P ≈ 4.5 d, apogee 170 000–184 000 km alt</td></tr>
+    <tr><td>OGO-1</td><td class="col-id">1964-054</td><td class="col-id col-wrap">879</td><td class="col-id">1964-09-05</td><td class="col-status"><span class="badge b-R">R</span> reentered 2020-08-29</td></tr>
+    <tr><td>IMP-7</td><td class="col-id">1972-073</td><td class="col-id col-wrap">6197</td><td class="col-id">1972-09-23</td><td class="col-status"><span class="badge b-C">C</span> derelict, P 12.4 d</td></tr>
+    <tr><td>IMP-8</td><td class="col-id">1973-078</td><td class="col-id col-wrap">6893</td><td class="col-id">1973-10-26</td><td class="col-status"><span class="badge b-C">C</span> derelict, P 12.0 d</td></tr>
+    <tr><td>SOLRAD 11A/B</td><td class="col-id">1976-023</td><td class="col-id col-wrap">8748 / 8749 / 8752 / 8753</td><td class="col-id">1976-03-15</td><td class="col-status"><span class="badge b-C">C</span> both satellites and both kick motors derelict in HEO (~118 000 × 120 000 km alt; PKM 36 000 × 103 000 km)</td></tr>
+    <tr><td>ISEE-1 / 2</td><td class="col-id">1977-102</td><td class="col-id col-wrap">10422 / 10423 / 10425</td><td class="col-id">1977-10-22</td><td class="col-status"><span class="badge b-R">R</span> ISEE-1 and ISEE-2 reentered 1987-09-26, Delta stage 2 on 1987-10-31</td></tr>
+    <tr><td class="col-mission"><a href="#m-geotail">Geotail</a></td><td class="col-id">1992-044</td><td class="col-id col-wrap">22049 / 22051</td><td class="col-id">1992-07-24</td><td class="col-status"><span class="badge b-C">C</span> derelict since 2022-11-28, P 5.2 d</td></tr>
+    <tr><td class="col-mission"><a href="#m-chandra">Chandra</a></td><td class="col-id">1999-040</td><td class="col-id col-wrap">25867 / 25869</td><td class="col-id">1999-07-23</td><td class="col-status">Operating, P 2.6 d; <span class="badge b-C">C</span> IUS stage 2 in 691 × 72 625 km alt</td></tr>
+    <tr><td class="col-mission"><a href="#m-xmm">XMM-Newton</a></td><td class="col-id">1999-066</td><td class="col-id col-wrap">25989 / 25990</td><td class="col-id">1999-12-10</td><td class="col-status">Operating, P 2.0 d; <span class="badge b-C">C</span> Ariane 5 stage in 19 791 × 92 844 km alt</td></tr>
+    <tr><td class="col-mission"><a href="#m-cluster">Cluster II</a></td><td class="col-id">2000-041, 2000-045</td><td class="col-id col-wrap">26410 / 26411 / 26463 / 26464</td><td class="col-id">2000-07-16, 2000-08-09</td><td class="col-status"><span class="badge b-R">R</span> all four reentered 2024-09-08 to 2026-09-01</td></tr>
+    <tr><td class="col-mission"><a href="#m-integral">INTEGRAL</a></td><td class="col-id">2002-048</td><td class="col-id col-wrap">27540 / 27542</td><td class="col-id">2002-10-17</td><td class="col-status"><span class="badge b-C">C</span> science ended 2025-02-28; reentry expected ~Feb 2029; <span class="badge b-R">R</span> Block DM reentered 2010-11-03</td></tr>
+    <tr><td class="col-mission"><a href="#m-themis">THEMIS / ARTEMIS</a></td><td class="col-id">2007-004</td><td class="col-id col-wrap">30580–30582, 30797–30799</td><td class="col-id">2007-02-17</td><td class="col-status"><span class="badge b-C">C</span> THEMIS A/D/E in 1.14-d HEO; ARTEMIS P1/P2 in lunar orbit; <span class="badge b-R">R</span> Delta II stage 2 reentered 2024-05-12</td></tr>
+    <tr><td class="col-mission"><a href="#m-ibex">IBEX</a></td><td class="col-id">2008-051</td><td class="col-id col-wrap">33401 / 33404</td><td class="col-id">2008-10-19</td><td class="col-status"><span class="badge b-C">C</span> lunar-synchronised HEO, P 9.1 d (operating)</td></tr>
+    <tr><td class="col-mission"><a href="#m-spektrr">Spektr-R (RadioAstron)</a></td><td class="col-id">2011-037</td><td class="col-id col-wrap">37755 / 46736</td><td class="col-id">2011-07-18</td><td class="col-status"><span class="badge b-C">C</span> derelict since 2019, P 8.3 d; <span class="badge b-R">R</span> Fregat reentered 2021-08-09</td></tr>
+    <tr><td class="col-mission"><a href="#m-mms">MMS</a></td><td class="col-id">2015-011</td><td class="col-id col-wrap">40482–40485 / 40486</td><td class="col-id">2015-03-13</td><td class="col-status">Four spacecraft, P 3.5 d (operating); <span class="badge b-R">R</span> Centaur reentered 2017-08-26</td></tr>
+    <tr><td class="col-mission"><a href="#m-tess">TESS</a></td><td class="col-id">2018-038</td><td class="col-id col-wrap">43435 / 43436</td><td class="col-id">2018-04-18</td><td class="col-status"><span class="badge b-C">C</span> P/2 lunar-resonant HEO (operating); <span class="badge b-H">H</span> F9 stage 2 heliocentric</td></tr>
+    <tr><td class="col-mission"><a href="#m-proba3">Proba-3</a></td><td class="col-id">2024-233</td><td class="col-id col-wrap">62256 / 62257 / 62258</td><td class="col-id">2024-12-05</td><td class="col-status">Formation-flying pair in 1 035 × 60 170 km alt (operating); <span class="badge b-C">C</span> PSLV PS4 in 1 046 × 60 825 km alt</td></tr>
+    <tr><td class="col-mission"><a href="#m-smile">SMILE</a></td><td class="col-id">2026-109</td><td class="col-id col-wrap">69123</td><td class="col-id">2026-05-19</td><td class="col-status">6 830 × 119 159 km alt, P 2.1 d (operating); launched to LEO, no stage beyond GEO</td></tr>
   </tbody>
 </table>
 
-<h3 id="t-artsat">2.6 Bill Gray's unidentified deep-space artsats</h3>
+<h3 id="t-artsat">2.6 Unidentified deep-space artsats</h3>
 
 <table>
   <thead><tr><th>ID</th><th>NORAD/INTL</th><th>First seen</th><th>Status</th></tr></thead>
   <tbody>
-    <tr class="return-row"><td class="col-mission"><a href="#m-2020so">2020 SO</a></td><td class="col-id">1966-084B / 02426</td><td class="col-id">2020-09-17</td><td><span class="badge b-W">W</span> Surveyor-2 Atlas-Centaur; returns Mar 2036</td></tr>
-    <tr><td class="col-mission"><a href="#m-6q0">6Q0B44E / XL8D89E</a></td><td class="col-id">89996</td><td class="col-id">2006/2016</td><td>High-flier P~80–95 d, unidentified</td></tr>
-    <tr><td class="col-mission"><a href="#m-wt1190f">WT1190F</a></td><td class="col-id">89997</td><td class="col-id">2015-Oct</td><td><span class="badge b-R">R</span> Reentered 2015-11-13 Indian Ocean</td></tr>
-    <tr class="return-row"><td class="col-mission"><a href="#m-rk">RK252A5 = 2010 KQ</a></td><td class="col-id">79999</td><td class="col-id">2010</td><td><span class="badge b-W">W</span> P~1 yr; returns Aug 2035</td></tr>
-    <tr><td class="col-mission"><a href="#m-we0913a">WE0913A</a></td><td class="col-id">2014-065B</td><td class="col-id">2015-03</td><td><span class="badge b-I">I</span> Lunar impact 2022-03-04, double crater</td></tr>
-    <tr class="return-row"><td>2018 AV</td><td class="col-id">—</td><td class="col-id">2018</td><td><span class="badge b-W">W</span> Returns Jul 2037</td></tr>
-    <tr class="return-row"><td>2024 BY15</td><td class="col-id">—</td><td class="col-id">2024</td><td><span class="badge b-W">W</span> Returns Jan 2048</td></tr>
-    <tr><td>ETBOs (e.g. A10bMLz)</td><td class="col-id">79xxx</td><td class="col-id">2018+</td><td>"Empty Trash Bag Objects" — high A/M-ratio insulation fragments</td></tr>
+    <tr><td class="col-mission"><a href="#m-2020so">2020 SO</a></td><td class="col-id col-wrap">1966-084B / 2426</td><td class="col-id">2020-09-17</td><td class="col-status"><span class="badge b-W">W</span> = Surveyor-2 Centaur; returns 2036</td></tr>
+    <tr><td class="col-mission"><a href="#m-6q0">6Q0B44E / XL8D89E</a></td><td class="col-id col-wrap">89996 (BG)</td><td class="col-id">2006 / 2016</td><td class="col-status"><span class="badge b-C">C</span> high-flier, P ≈ 73 d, unidentified</td></tr>
+    <tr><td class="col-mission"><a href="#m-wt1190f">WT1190F</a></td><td class="col-id col-wrap">89997 (BG)</td><td class="col-id">2015-10</td><td class="col-status"><span class="badge b-R">R</span> reentered 2015-11-13 off Sri Lanka</td></tr>
+    <tr><td class="col-mission"><a href="#m-rk">RK252A5 = 2010 KQ</a></td><td class="col-id col-wrap">79999 (BG)</td><td class="col-id">2010</td><td class="col-status"><span class="badge b-W">W</span> P ≈ 1 yr, probably artificial; returns 2035</td></tr>
+    <tr><td class="col-mission"><a href="#m-we0913a">WE0913A</a></td><td class="col-id col-wrap">2014-065B / 40284</td><td class="col-id">2015-03</td><td class="col-status"><span class="badge b-I">I</span> = Chang'e-5T1 CZ-3C stage; impacted 2022-03-04</td></tr>
+    <tr><td>2018 AV2</td><td class="col-id col-wrap">—</td><td class="col-id">2018</td><td class="col-status"><span class="badge b-W">W</span> returns Jul 2037</td></tr>
+    <tr><td>2024 BY15</td><td class="col-id col-wrap">—</td><td class="col-id">2024</td><td class="col-status"><span class="badge b-W">W</span> return expected 2047–48</td></tr>
+    <tr><td>ETBOs (e.g. A10bMLz)</td><td class="col-id col-wrap">79xxx (BG)</td><td class="col-id">2018+</td><td class="col-status">Bill Gray's class of high area-to-mass objects in 1–5 d orbits, dominated by radiation pressure</td></tr>
   </tbody>
 </table>
 
 <hr>
 
-<h2 id="ch3">3. Per-stage Before / Now / Future detail entries</h2>
+<h2 id="ch3">3. Per-object Before / Now / Future</h2>
 
-<p class="small">Each entry uses the freshest available source for the "now" line: <code>BG</code> = Bill Gray hex TLE comment, <code>JPL</code> = JPL Horizons SPK ephemeris (today's epoch), <code>SATCAT</code> = Space-Track decay date, <code>ST-GP</code> = Space-Track GP element set (only if epoch &lt; 1 yr).</p>
+<p class="small"><i>Before</i> = launch and initial trajectory; <i>Now</i> = current state, with source and epoch; <i>Future</i> = next predicted encounter, decay or planned event. Source tags as in §1.3.</p>
 
-<h4>Apollo program</h4>
+<h4>3.1 Lunar missions</h4>
 
 <div class="detail" id="m-apollo8"><h3>Apollo 8 (1968-118)</h3>
-<p><span class="label">Before</span>First crewed circumlunar; S-IVB Earth-escape.</p>
-<p><span class="label">Now</span>Heliocentric, no recent fit.</p>
-<p><span class="label">Future</span>Long-term solar orbit; no published return event.</p></div>
+<p><span class="label">Before</span>First crewed circumlunar flight; the S-IVB (3627) was sent past the Moon to Earth escape.</p>
+<p><span class="label">Now (SATCAT)</span>Heliocentric; no modern fit.</p></div>
 
 <div class="detail" id="m-apollo9"><h3>Apollo 9 (1969-018)</h3>
-<p><span class="label">Before</span>LM dress-rehearsal in LEO; S-IVB raised to Earth-escape.</p>
-<p><span class="label">Now</span>Reentered Earth atmosphere 1981.</p></div>
+<p><span class="label">Before</span>LM test flight in Earth orbit. After LM separation the S-IVB (3770) was restarted onto an Earth-escape trajectory.</p>
+<p><span class="label">Now (SATCAT)</span>S-IVB heliocentric. The LM ascent stage (3771), left in low Earth orbit, reentered 1981-10-23.</p></div>
 
 <div class="detail" id="m-apollo10"><h3>Apollo 10 (1969-043)</h3>
-<p><span class="label">Before</span>Lunar dress rehearsal; S-IVB heliocentric escape.</p>
-<p><span class="label">Now</span>Heliocentric.</p></div>
+<p><span class="label">Before</span>Lunar dress rehearsal; S-IVB (3943) sent past the Moon to escape.</p>
+<p><span class="label">Now (SATCAT)</span>S-IVB and LM ascent stage "Snoopy" (3949) heliocentric; the descent stage (3948) was left in lunar orbit. Snoopy was tentatively matched in 2019 to the near-Earth asteroid 2018 AP7; if that holds it comes back near Earth in 2037.</p></div>
 
 <div class="detail" id="m-apollo11"><h3>Apollo 11 (1969-059)</h3>
-<p><span class="label">Before</span>First lunar landing; S-IVB intended for heliocentric escape.</p>
-<p><span class="label">Now</span>Presumed heliocentric; the 2002-W04 candidate identification was withdrawn.</p></div>
+<p><span class="label">Before</span>First lunar landing; S-IVB (4040) put on a heliocentric slingshot.</p>
+<p><span class="label">Now (SATCAT)</span>Heliocentric; never re-observed. The 2002 candidate identification was withdrawn. The LM ascent stage "Eagle" (4041) was left in lunar orbit; its fate is unknown.</p></div>
 
 <div class="detail" id="m-apollo12"><h3>Apollo 12 / J002E3 (1969-099)</h3>
-<p><span class="label">Before</span>First pinpoint landing. The S-IVB was intended for heliocentric escape via lunar slingshot, but the slingshot was incomplete.</p>
-<p><span class="label">Now</span>Heliocentric, low-relative-velocity Earth crosser. Periodically (~40-yr cycle) gets recaptured into a temporary geocentric orbit; was briefly Earth-bound 2002-09 to 2003-06.</p>
-<p><span class="label">Future</span>Warn entry 2032-Jun-01 flags expected return Jul 2032.</p></div>
+<p><span class="label">Before</span>The S-IVB (4226) slingshot past the Moon was incomplete, leaving it in a weakly bound Earth–Sun–Moon orbit.</p>
+<p><span class="label">Now</span>Heliocentric, low-relative-velocity Earth co-orbital. Temporarily recaptured into a geocentric orbit 2002-09 to 2003-06, when it was discovered as J002E3.</p>
+<p><span class="label">Future (BG Warn 2032-Jun-01)</span>returns Jul 2032.</p></div>
 
-<div class="detail" id="m-apollo13to17"><h3>Apollo 13–17 S-IVB</h3>
-<p>Each S-IVB was deliberately retargeted post-TLI to impact the Moon for the ALSEP active-seismic experiments.</p></div>
-
-<h4>Soviet / lunar precursors</h4>
+<div class="detail" id="m-apollo13to17"><h3>Apollo 13–17 S-IVB (1970-029, 1971-008, 1971-063, 1972-031, 1972-096)</h3>
+<p>Each S-IVB was retargeted after TLI to strike the Moon as a calibrated seismic source for the Apollo seismometers.</p></div>
 
 <div class="detail" id="m-luna24"><h3>Luna 24 (1976-081)</h3>
 <p><span class="label">Before</span>Last Soviet lunar sample return (170 g).</p>
-<p><span class="label">Now</span>Block-D upper stage presumed heliocentric (debated).</p></div>
-
-<h4>Chinese lunar program</h4>
+<p><span class="label">Now</span>Block D upper stage presumed heliocentric; no observations.</p></div>
 
 <div class="detail" id="m-change1"><h3>Chang'e 1 (2007-051)</h3>
-<p>First Chinese lunar orbiter; spacecraft impacted Moon 2009-03-01.</p></div>
+<p>First Chinese lunar orbiter; deliberately impacted the Moon 2009-03-01.</p></div>
+
+<div class="detail" id="m-lro"><h3>LRO + LCROSS (2009-031)</h3>
+<p><span class="label">Before</span>Atlas V 401 from CCSFS 2009-06-18. The Centaur stayed attached to the LCROSS shepherd through a lunar-flyby looping orbit.</p>
+<p><span class="label">Now (SATCAT, JPL −85)</span>LRO (35315) operating in lunar orbit. The Centaur (35317) struck Cabeus crater 2009-10-09 and LCROSS (35316) followed it four minutes later through the ejecta plume (SATCAT DECAY 2009-10-09, comment LUNAR IMPACT) — the first deliberate upper-stage impact since Apollo.</p></div>
 
 <div class="detail" id="m-change2"><h3>Chang'e 2 (2010-050)</h3>
-<p><span class="label">Before</span>CZ-3C launched 2010-10-01 from Xichang. After lunar imaging the spacecraft escaped to SE-L2 and then flew by asteroid 4179 Toutatis 2012-12-13.</p>
-<p><span class="label">Cislunar phase (booster)</span>The CZ-3C upper stage (37175) lingered in the Earth-Moon system for about 9 years. Year-by-year fits in <code>~/tles/10050b*.tle</code> show geocentric perigee/apogee in km from 2010 through 2019 (e.g. 2019: q = 64 780 km, Q = 940 814 km — apogee approaching 2.5 lunar distances). The 2020 fit (<code>10050b20.tle</code>) is the first to show apogee in AU units (Q ≈ 0.0081 AU ≈ 1.21 M km), indicating passage through Earth's Hill sphere (~1.5 M km). Escape to heliocentric therefore occurred between late 2019 and mid-2020 via cumulative lunar perturbations.</p>
-<p><span class="label">Now (BG 2021-05-07 epoch)</span>Heliocentric, a = 0.998 AU, e = 0.021, i = 0.07°, P ≈ 1 yr / 364.33 d. Earth co-orbital with measurable nongrav (A1 = +2.23e-9 AU/d² radial, A2 = −2.49e-10 AU/d²).</p>
-<p><span class="label">Future</span>Warn 2033-Nov-01 — returns Dec 2033.</p></div>
+<p><span class="label">Before</span>CZ-3C from Xichang 2010-10-01; lunar capture 2010-10-06.</p>
+<p><span class="label">Probe</span>Left lunar orbit 2011-06-09 for an SE-L2 Lissajous orbit (arrival 2011-08-25), departed in 2012 for asteroid 4179 Toutatis and flew past it 2012-12-13 at ~08:30 UTC; published reconstructions put the closest approach 0.8–3.2 km above the surface. The signal faded during 2014 beyond 100 million km.</p>
+<p><span class="label">Probe now (fit to 44 optical observations from 8 stations, 2012-08-08 to 09-06)</span>the radiation-pressure fit reproduces Bill Gray's 2012 solution (AMR 0.0271 m²/kg, 0.31″ RMS). After 2013 the heliocentric orbit settles at a ≈ 1.042 AU, P ≈ 388 d.</p>
+<p><span class="label">Probe future</span>the no-manoeuvre extrapolation returns to <b>7.87 million km (20.5 LD) on 2029-06-16</b>, formal 95% range 2029-06-15 to 06-18 and 7.80–7.94 million km, matching CNSA's 2014 forecast of ~7 million km in 2029. No source supports a 2026 return. The result is conditional: three trajectory corrections after the observed arc (2012-10-09, 11-30, 12-12) are not in the model.</p>
+<p><span class="label">Cislunar phase (booster)</span>The CZ-3C stage (37175) stayed bound to Earth for about 11 years. Evaluating Bill Gray's year-by-year TLE files gives geocentric distance ranges of 54 600–638 000 km (2018), 47 700–947 000 km (2019) and 45 800–1 496 000 km (2020); after a last perigee of ~24 900 km in 2021 it crossed 1.5 million km on 2021-09-10 and did not come back. <code>10050b21.tle</code> (epoch 2021-05-07) is already a heliocentric fit, header "object is now in heliocentric orbit".</p>
+<p><span class="label">Booster now (BG <code>10050b21.tle</code>)</span>a = 0.998 AU, e = 0.021, i = 0.07°, P = 364.33 d; Earth MOID 0.0001 AU; measurable non-gravitational terms (A1 = +2.23e-9, A2 = −2.49e-10 AU/d²).</p>
+<p><span class="label">Booster future (BG Warn 2033-Nov-01)</span>returns Dec 2033.</p></div>
+
+<div class="detail" id="m-grail"><h3>GRAIL (2011-046)</h3>
+<p>Delta II 7920H from CCSFS 2011-09-10, low-energy transfer via SE-L1. GRAIL-A/B (37801/37802) impacted the Moon 2012-12-17 at the end of the mission. The Delta II second stage (37803) is heliocentric (SATCAT).</p></div>
 
 <div class="detail" id="m-change3"><h3>Chang'e 3 (2013-070)</h3>
-<p><span class="label">Before</span>CZ-3B from Xichang 2013-12-01; first Chinese lunar lander + Yutu rover.</p>
-<p><span class="label">Now (ST-GP fresh, 2025-10-21 epoch)</span>Booster (39459) period 16.0 d, apogee 474 757 km, perigee 48 543 km, e = 0.795, i = 33.6°. Cislunar HEO with apogee past Moon.</p>
-<p><span class="label">Future</span>Slow lunar-perturbation evolution; eventual ejection to heliocentric or atmospheric reentry over decades.</p></div>
+<p><span class="label">Before</span>CZ-3B Y23 from Xichang 2013-12-01; TLI 2013-12-01 18:19 UTC (a back-integrated 280 km perigee). The third stage (39459) passed the Moon 2013-12-06 11:16 UTC at 4 781 km from its centre, about 1.4 h after Chang'e 3 entered lunar orbit; the ~1 km/s kick raised a from 183 000 to ~400 000 km and left it bound to Earth.</p>
+<p><span class="label">Cislunar phase</span>2014–2016 chaotic, apogee 550–650 000 km, close lunar passes 2014-07-16 (19 943 km, Δi +23°), 2015-06-09 (56 111 km) and 2016-09-16 (10 128 km, lifting perigee to ~200 000 km). 2017–2023 quiet: no pass inside 110 000 km, P 25–33 d. 2024–2025 passes at 62–93 000 km pumped e from 0.3 to 0.85 and shortened P to ~16 d. 39 encounters are catalogued, all following the gravity-assist sign rule (passing behind the Moon raises a, ahead lowers it).</p>
+<p><span class="label">Now (reconstruction fitted to BG 2025 positions and ST-GP to 2026-09-10; nominal 2026-10-09)</span>a = 268 458 km, e = 0.809, q / Q = 51 326 / 485 591 km, i = 78.0° (50° to the lunar orbit plane), P = 16.0 d. ST-GP 2026-10-13: 43 008 × 471 583 km alt, i = 76.2°. The lowest perigee since launch, <b>22 728 km on 2026-03-29</b>, was inside the GEO radius; the inclination rise from 34° (Oct 2025) to 78° is a smooth lunisolar e–i exchange, not a flyby.</p>
+<p><span class="label">Future</span>Perigee is rising: 52 383 km on 2026-10-13 06:47, ~150 000 km by mid-2027 and ~220 000 km by end-2027, as the orbit turns polar (i ≈ 90°, e → 0.24). No reentry risk through 2027. Timing uncertainty grows from ±8 min now to ±1 h by Dec 2026; the brightest recovery passes from Beijing are 2026-10-27, 11-13 and 11-30 (V ≈ 15).</p></div>
 
 <div class="detail" id="m-ce5t1"><h3>Chang'e 5-T1 (2014-065)</h3>
-<p>Sample-return technology demonstrator. The CZ-3C upper stage 2014-065B was identified by Bill Gray in 2022 as the WE0913A lunar impactor — see <a href="#m-we0913a">WE0913A</a>.</p></div>
+<p>Sample-return test flight. The CZ-3C third stage (40284) is the WE0913A lunar impactor — see <a href="#m-we0913a">WE0913A</a>.</p></div>
 
-<div class="detail" id="m-queqiao1"><h3>Queqiao 1 (2018-045)</h3>
-<p><span class="label">Before</span>CZ-4C from Xichang 2018-05-20; relay for far-side Chang'e-4.</p>
-<p><span class="label">Now</span>Spacecraft (43470) operational at EM-L2 halo orbit. Stage (43473) reentered 2018-09-25 (SATCAT) just four months after launch.</p></div>
+<div class="detail" id="m-queqiao1"><h3>Queqiao 1 + Longjiang-1/2 (2018-045)</h3>
+<p><span class="label">Before</span>CZ-4C from Xichang 2018-05-20 carrying the Queqiao relay and the Longjiang-1/2 lunar microsatellites.</p>
+<p><span class="label">Now</span>Queqiao-1 (43470) operating in its EM-L2 halo orbit; no public ephemeris. Longjiang-1 (43471) lost attitude after its transfer burn and was left in a ~20 000 × 400 000 km Earth orbit, untracked. Longjiang-2 (43472) reached lunar orbit and was deliberately crashed 2019-07-31. The CZ-4C third stage (43473) <b>reentered 2018-09-25</b> (SATCAT), four months after launch.</p></div>
 
-<div class="detail" id="m-change4"><h3>Chang'e 4 / Longjiang-1/2 (2018-103)</h3>
-<p><span class="label">Before</span>CZ-3B from Xichang 2018-12-07; first lunar far-side lander. The CZ-3B upper stage (43846) did a perilune ~85 000 km from the Moon on 2018-12-12 but that flyby did <b>not</b> eject it; Bill Gray's 2019 pseudo-MPEC explicitly notes "I don't see it hitting the earth or moon in the next few years".</p>
-<p><span class="label">Cislunar phase (booster)</span>Year-by-year fits in <code>~/tles/18103b*.tle</code> show geocentric perigee/apogee in km from 2019 through 2022 — typical values q ≈ 100–170 000 km, Q ≈ 450–740 000 km (slowly elongating from lunar/solar perturbations). The 2023 fit (<code>18103b23.tle</code>) is the first to report apogee in AU units (Q ≈ 0.00684 AU ≈ 1.02 M km), and by <code>18103b24.tle</code> (2024-01) Bill Gray's TLE comment states "object is now heliocentric". So the booster lingered in the Earth-Moon system for about 4 years before escaping in 2022-2023 via cumulative lunar perturbations.</p>
-<p><span class="label">Now (BG 2024-01 fit)</span>Heliocentric, e = 0.259, P = 130.6 d.</p>
-<p><span class="label">Future</span>Warn 2041-Sep-01 — returns Nov 2041.</p></div>
+<div class="detail" id="m-change4"><h3>Chang'e 4 (2018-103)</h3>
+<p><span class="label">Before</span>CZ-3B from Xichang 2018-12-07; first far-side lander. The CZ-3B third stage (43846) passed ~85 000 km from the Moon on 2018-12-12; that flyby did <b>not</b> eject it.</p>
+<p><span class="label">Cislunar phase</span>Evaluating Bill Gray's TLE files gives geocentric distances of 108 600–691 000 km (2021) and 108 600–1 204 000 km (2022). The stage went just past 1.5 million km for 38 days in 2023 (maximum 1 564 000 km on 2023-07-21) and fell back; Bill Gray's last bound fit (epoch 2024-01-19) has q = 806 368 km and Q = 1.37 million km, P = 130.6 d. It crossed 1.5 million km for good on <b>2024-08-16</b> and was 8.7 million km away by 2024-12-31 — about 5.7 years in Earth–Moon space.</p>
+<p><span class="label">Now (BG <code>18103b24.tle</code>, header "object is now heliocentric")</span>Earth co-orbital heliocentric orbit, q ≈ 0.94 AU, Q ≈ 0.99 AU.</p>
+<p><span class="label">Future (BG Warn 2041-Sep-01)</span>returns Nov 2041.</p></div>
 
 <div class="detail" id="m-beresheet"><h3>Beresheet (2019-009)</h3>
-<p><span class="label">Before</span>SpaceIL/IAI private lunar lander; F9 from CCSFS 2019-02-22 as secondary rideshare on the Nusantara Satu launch (also carried S5 / SSL-S5 USAF experimental smallsat).</p>
-<p><span class="label">Now</span>Beresheet (44049) crashed on Moon 2019-04-11 (SATCAT comment "LUNAR IMPACT"). F9 second stage (44050) reentered 2021-01-03 (SATCAT) — nearly two years in a high-energy Earth orbit before atmospheric reentry.</p></div>
+<p><span class="label">Before</span>SpaceIL lander, secondary payload on the Nusantara Satu F9 launch from CCSFS 2019-02-22 (also carrying the S5 smallsat).</p>
+<p><span class="label">Now (SATCAT)</span>Beresheet (44049) crashed on the Moon 2019-04-11 (LUNAR IMPACT). The F9 second stage (44050) <b>reentered 2021-01-03</b> after nearly two years in a high-energy Earth orbit.</p></div>
 
 <div class="detail" id="m-c2"><h3>Chandrayaan-2 (2019-042)</h3>
-<p>GSLV-Mk-III from Sriharikota 2019-07-22. Orbiter (44441) operational in lunar polar orbit; Vikram lander crashed 2019-09-07. <b>GSLV C25 cryogenic upper stage (44442) reentered 2019-10-16</b> — atmospheric drag at the low perigee of its highly eccentric injection orbit decayed the stage rapidly.</p></div>
+<p>GSLV Mk III from Sriharikota 2019-07-22. The orbiter (44441, JPL −152) is operating in lunar polar orbit; the Vikram lander crashed 2019-09-06. The GSLV C25 cryogenic stage (44442) <b>reentered 2019-10-16</b> (SATCAT), about three months after launch, from the low perigee of its injection orbit.</p></div>
 
 <div class="detail" id="m-change5"><h3>Chang'e 5 (2020-087)</h3>
-<p><span class="label">Before</span>CZ-5 from Wenchang 2020-11-23; sample return delivered 1.731 kg of Mons Rümker basalt 2020-12-17.</p>
-<p><span class="label">Now</span>Service module 47097 on extended mission. The Space-Track GP for this object (epoch 2024-02-22 — now 2 yr stale — period 23.9 d, apogee 476 740 km, perigee 211 596 km) shows a long-period Earth-bound orbit consistent with the public-record narrative of an SE-L1 transfer in 2021-03 expressed in geocentric coordinates. Booster 47098 reentered 2020-11-30 (SATCAT) just seven days after launch.</p></div>
+<p><span class="label">Before</span>CZ-5 from Wenchang 2020-11-23; 1.731 kg of Mons Rümker samples landed 2020-12-17. The CZ-5 stage (47098) <b>reentered 2020-11-30</b> (SATCAT), seven days after launch.</p>
+<p><span class="label">Extended mission</span>The orbiter (47097) went to SE-L1 in 2021-03 and later to a lunar DRO (2022). Bill Gray's last bound fit (epoch 2024-02-20) has q / Q = 251 659 / 513 009 km, P = 27.2 d.</p>
+<p><span class="label">Now (BG <code>20087a24.tle</code>, header "object is now heliocentric")</span>escaped to an Earth co-orbital heliocentric orbit during 2024; Space-Track's last GP (2024-02-22) is stale.</p></div>
 
-<div class="detail" id="m-capstone"><h3>CAPSTONE / Lunar Photon (2022-070)</h3>
-<p><span class="label">Before</span>Electron from New Zealand 2022-06-28 with Photon kick stage; Photon performed TLI on day 6 (2022-07-04) and released CAPSTONE.</p>
-<p><span class="label">Now</span>CAPSTONE (52914) operational in NRHO at the Moon. Lunar Photon (52916) escaped Earth-Moon system to heliocentric per Bill Gray's TLE comment and APL optical observations Dec 2022.</p></div>
+<div class="detail" id="m-capstone"><h3>CAPSTONE + Lunar Photon (2022-070)</h3>
+<p><span class="label">Before</span>Electron from New Zealand 2022-06-28; the Photon kick stage did the translunar burn 2022-07-04 and released CAPSTONE onto a ballistic lunar transfer. CAPSTONE entered its 9:2 southern NRHO on 2022-11-13.</p>
+<p><span class="label">Now (JPL −1176 to 2026-07-15; fit to 10 amateur observations 2026-09-12)</span>NASA's mission is complete (Horizons: "no further updates"). CAPSTONE (52914) left the NRHO and the Moon at the end of Aug 2026 and is now in a geocentric HEO: a = 255 431 km, e = 0.285, i = 36.6°, P = 14.87 d. Lunar Photon (52916) escaped to heliocentric orbit (BG <code>22070c.tle</code>; SATCAT "HELIOCENTRIC").</p></div>
 
 <div class="detail" id="m-danuri"><h3>Danuri / KPLO (2022-094)</h3>
-<p><span class="label">Before</span>Dedicated F9 from CCSFS 2022-08-04; ballistic-lunar transfer (135 d) with F9 second stage performing single re-ignition for Earth-escape burn.</p>
-<p><span class="label">Now</span>Spacecraft in lunar polar orbit. F9 S2 on heliocentric escape (no independent observational confirmation; rests on the launch profile).</p></div>
+<p><span class="label">Before</span>Dedicated F9 from CCSFS 2022-08-04; ballistic lunar transfer via SE-L1 (~135 d), the F9 second stage burning to Earth escape.</p>
+<p><span class="label">Now</span>Danuri (53365, JPL −155) operating in lunar polar orbit, mission extended to Dec 2027. The F9 second stage (53366) is heliocentric (SATCAT "HELIOCENTRIC ORBIT (SUN)"; no independent track).</p></div>
 
 <div class="detail" id="m-artemis1"><h3>Artemis I — Orion + ICPS (2022-156A/B)</h3>
-<p><span class="label">Before</span>SLS Block 1 from KSC 2022-11-16; ICPS performed TLI ~2 hr post-launch and disposal burn ~3.5 hr post-launch.</p>
-<p><span class="label">Now</span>Orion (54257) splashed 2022-12-11 (SATCAT). ICPS (54258) on heliocentric trajectory; latest ST-GP is launch-day capture only.</p>
-<p><span class="label">Future</span>Some launch windows place the heliocentric disposal near a 3-body periodic orbit; the stage can return to Earth vicinity within a year for those geometries.</p></div>
+<p><span class="label">Before</span>SLS Block 1 from KSC 2022-11-16; the ICPS did TLI about 1.5 h after launch and a disposal burn after releasing Orion and the cubesats.</p>
+<p><span class="label">Now</span>Orion (54257) splashed down 2022-12-11 (SATCAT). ICPS (54258) heliocentric with its Orion stage adapter (BG fits to 2023-04).</p>
+<p><span class="label">Future</span>Some launch windows put the ICPS disposal close to a three-body periodic orbit that returns to Earth's vicinity within a year; no return is forecast for this one.</p></div>
 
-<div class="detail" id="m-artemis1cubes"><h3>Artemis I cubesats (2022-156C/D/…/ZZZ)</h3>
-<p>EQUULEUS (lunar libration-point demo, success), NEA Scout (deployment failed), BioSentinel (heliocentric, ongoing), LunIR (failed), LunaH-Map (failed), ArgoMoon (success), CuSP, OMOTENASHI (failed), Team Miles (failed). Bill Gray tracks several of these via 79xxx-prefixed private NORADs.</p></div>
+<div class="detail" id="m-artemis1cubes"><h3>Artemis I cubesats (2022-156C–M)</h3>
+<p>Released from the ICPS stage adapter. Heliocentric: ArgoMoon, BioSentinel (still operating), CuSP, LunaH-Map, LunIR, Team Miles, NEA Scout (never contacted), OMOTENASHI (landing failed). EQUULEUS (contact lost 2023-08) and Lunar IceCube (lost 2022-11) remain somewhere in Earth–Moon space, untracked.</p></div>
 
 <div class="detail" id="m-hakuto1"><h3>HAKUTO-R M1 + Lunar Flashlight (2022-168)</h3>
-<p><span class="label">Before</span>F9 from CCSFS 2022-12-11; ispace M1 (Mission 1) + Lunar Flashlight cubesat + JAXA Lunar Sensor on a low-energy ballistic-lunar transfer.</p>
-<p><span class="label">Now</span>M1 spacecraft (54696) crashed on Moon 2023-04-25 (SATCAT comment is the stale launch-time "HELIOCENTRIC ORBIT", not yet updated to reflect lunar impact). Lunar Flashlight (54697) heliocentric — failed to enter lunar orbit and went past. <b>F9 second stage (54698) heliocentric</b> per SATCAT comment "HELIOCENTRIC ORBIT (SUN)"; the stage stayed with the payload through TLI and escaped the Earth-Moon system on the lunar flyby.</p></div>
+<p><span class="label">Before</span>F9 from CCSFS 2022-12-11; ispace M1 lander, NASA Lunar Flashlight cubesat, low-energy lunar transfer.</p>
+<p><span class="label">Now</span>M1 (54696) crashed on the Moon 2023-04-25 (SATCAT still carries its launch-time "HELIOCENTRIC" label). Lunar Flashlight (54697) never reached lunar orbit and is heliocentric. <b>F9 second stage (54698) heliocentric</b> (SATCAT), having escaped on the lunar flyby.</p></div>
 
 <div class="detail" id="m-c3"><h3>Chandrayaan-3 (2023-098)</h3>
-<p><span class="label">Before</span>LVM3-M4 from Sriharikota 2023-07-14; first Indian lunar landing (south pole) 2023-08-23.</p>
-<p><span class="label">Now</span>Lander/rover (57320) on Moon (SATCAT 2023-08-23 = lunar arrival). LVM3 C25 cryogenic upper stage (57321) reentered 2023-11-15 ~09:12 UTC over the North Pacific. Propulsion module (57770) on extended mission in cislunar HEO; Bill Gray maintains fresh fits through 2025-06 (period 12-14 d, apogee 300-320 000 km, perigee 125-185 000 km — multiple maneuvers visible across element-set epochs).</p></div>
+<p><span class="label">Before</span>LVM3-M4 from Sriharikota 2023-07-14; landing near the south pole 2023-08-23. The LVM3 C25 cryogenic stage (57321) <b>reentered 2023-11-15</b> ~09:12 UTC over the North Pacific (SATCAT, ISRO).</p>
+<p><span class="label">Propulsion module</span>returned to Earth orbit in 2023-11; BG fits through 2025 show P 12–14 d, q 125–185 000 km, Q 300–320 000 km, with manoeuvres between element sets. GCAT books it "lost" (2025-12-29, 365 307 × 983 024 km).</p>
+<p><span class="label">Now (fit to amateur observations, latest 2026-08-11)</span>a = 366 786 km, e = 0.627, i = 28.6°, P = 25.6 d (June 2026 orbit). Space-Track's last GP (2025-06-27) is stale.</p>
+<p><span class="label">Future</span>a predicted lunar pass at ~28 000 km on 2026-08-19 sends it out to ~1 million km by 2026-08-30 — possibly its escape. Not observed since 2026-08-11.</p></div>
+
+<div class="detail" id="m-luna25"><h3>Luna 25 (2023-118)</h3>
+<p>Soyuz-2.1b / Fregat from Vostochny 2023-08-10. The lander (57600) crashed 2023-08-19 after a faulty orbit-lowering burn. The Fregat (57601) made its own lunar flyby into a high Earth orbit (4 371 × 373 425 km alt) and <b>reentered 2024-02-26</b> (SATCAT) — a rare case of a lunar-flyby stage coming back within months.</p></div>
 
 <div class="detail" id="m-slim"><h3>SLIM + XRISM (2023-137)</h3>
-<p><span class="label">Before</span>H-IIA F47 from Tanegashima 2023-09-06; SLIM "Moon Sniper" precision lander.</p>
-<p><span class="label">Now</span>SLIM (57803) on Moon (SATCAT 2024-01-19 = lunar landing). XRISM operational. H-IIA F47 second stage (57804) reentered 2025-01-03 (SATCAT); Bill Gray's TLE predicted "close to 2024 Dec 31".</p></div>
+<p><span class="label">Before</span>H-IIA F47 from Tanegashima 2023-09-06; XRISM to LEO, SLIM on a long low-energy transfer.</p>
+<p><span class="label">Now (SATCAT)</span>SLIM (57803) landed 2024-01-19; XRISM operating. The H-IIA second stage (57804), left in a 157 × 77 284 km alt orbit, <b>reentered 2025-01-03</b>; Bill Gray's <code>23137e24.tle</code> had predicted "close to 2024 Dec 31".</p></div>
 
 <div class="detail" id="m-peregrine"><h3>Peregrine + Cert-1 Centaur (2024-006)</h3>
-<p><span class="label">Before</span>First Vulcan flight from CCSFS 2024-01-08; Astrobotic Peregrine lander + mass simulator.</p>
-<p><span class="label">Now</span>Peregrine (58751) reentered 2024-01-18 over the South Pacific after a helium leak prevented lunar landing. Cert-1 Centaur (58752) on heliocentric trajectory per Bill Gray's TLE comment.</p></div>
+<p><span class="label">Before</span>First Vulcan flight from CCSFS 2024-01-08.</p>
+<p><span class="label">Now</span>Peregrine (58751) <b>reentered 2024-01-18</b> over the South Pacific after a propellant leak ended the landing attempt. The Centaur (58752) passed the Moon into heliocentric orbit (BG <code>24006b.tle</code>).</p></div>
 
-<div class="detail" id="m-im1"><h3>IM-1 (Odysseus, Nova-C) + F9 S2 (2024-030)</h3>
-<p><span class="label">Before</span>F9 from KSC 2024-02-15 with Intuitive Machines Nova-C lander.</p>
-<p><span class="label">Now</span>Lander (58963) on Moon (SATCAT 2024-02-22 = touchdown; tipped over but operated for several days). F9 second stage (58964) on heliocentric returner trajectory; Bill Gray's TLE carries split element sets "before lunar encounter" / "after encounter".</p>
-<p><span class="label">Future</span>Warn 2044-Oct-01 — returns Apr 2045.</p></div>
+<div class="detail" id="m-im1"><h3>IM-1 (Odysseus) + F9 stage 2 (2024-030)</h3>
+<p><span class="label">Before</span>F9 from KSC 2024-02-15.</p>
+<p><span class="label">Now</span>Nova-C (58963) landed 2024-02-22, tipped over, operated for several days. The F9 second stage (58964) went heliocentric on its lunar encounter; Bill Gray's <code>24030b.tle</code> carries separate "before" and "after encounter" element sets.</p>
+<p><span class="label">Future (BG Warn 2044-Oct-01)</span>returns Apr 2045.</p></div>
 
 <div class="detail" id="m-droab"><h3>DRO-A / DRO-B (2024-048)</h3>
-<p><span class="label">Before</span>CZ-2C + Yuanzheng-1S kick stage from Xichang 2024-03-13. The YZ-1S suffered an anomaly during its second burn, leaving the still-joined DRO-A/B pair in an apogee-134 000 km orbit instead of the intended ~292 000 km. The spacecraft were spinning once per 1.8 s and had partial solar-array deployment failures.</p>
-<p><span class="label">Recovery</span>DRO-B's attitude-control thrusters (chemical, not ion) killed the spin over 20 min; a rescue plan was formulated within 40 hours by the Innovation Academy for Microsatellites and the Technology and Engineering Center for Space Utilization. Over the next four months the pair executed four chemical orbital maneuvers plus lunar gravity assists, traversing ~8.5 million km, and reached the intended distant retrograde orbit on 2024-07-15.</p>
-<p><span class="label">Catalogue</span>Space-Track lists five objects from the launch:</p>
+<p><span class="label">Before</span>CZ-2C + Yuanzheng-1S from Xichang 2024-03-13. The YZ-1S failed during its second burn, leaving the still-joined pair at apogee ~134 000 km instead of ~292 000 km, spinning once per 1.8 s with partly deployed arrays.</p>
+<p><span class="label">Recovery</span>DRO-B's chemical attitude thrusters stopped the spin in ~20 min; over four months the pair made four chemical orbit manoeuvres plus lunar gravity assists, covering ~8.5 million km, and reached the distant retrograde orbit on 2024-07-15.</p>
+<p><span class="label">Now (ST-GP 2026-10-20; BG <code>24048a26.tle</code>, <code>24048d26.tle</code>)</span></p>
 <ul>
-  <li><b>DRO-A (59228 / 2024-048A)</b> — payload in cislunar / DRO-class orbit. Bill Gray + ST-GP fresh; 2026-03-29 GP epoch: P = 19.18 d, apogee 418 653 km, perigee 173 990 km, e = 0.404, i = 27.9°. Bill Gray's sat_id log first identified the object 2024-11-27 from observation A11vOjZ; a 5 m/s burn on 2024-11-20 had pushed it slightly off the predicted ephemeris.</li>
-  <li>CZ-2C R/B (59229 / 2024-048B) — first-stage rocket body, reentered 2024-03-30.</li>
-  <li>CZ-2C DEB (59230 / 2024-048C) — debris, reentered 2024-03-23.</li>
-  <li><b>DRO-B (60058 / 2024-048D)</b> — companion payload; 2026 fit gives P = 46.76 d, apogee 807 060 km, perigee 276 715 km, e = 0.484, i = 27.5°. Deep cislunar. Bill Gray notes DRO-B "spent a long time at low elongations" and was far enough off prediction that sat_id missed it for many months; first identified 2025-10-26 (C4557E1 = 2025 US6) and again 2025-11-29 (A11vZ2j = ZTF1097), with a small maneuver on 2025-11-18 between recoveries.</li>
-  <li><b>YZ-1S R/B (60326 / 2024-048E)</b> — kick stage; P = 2.11 d, apogee 125 519 km, perigee 788 km. Lower-altitude object, drag-decaying slowly.</li>
-</ul></div>
+  <li><b>DRO-A (59228 / 2024-048A)</b> — 162 946 × 441 154 km alt, i = 26.3°, P = 19.7 d in this set; SGP4 cannot represent a three-body orbit, so successive GP sets swing between P ≈ 20 and 47 d. Bill Gray first identified it in survey data 2024-11-27 (A11vOjZ), after a 5 m/s burn on 2024-11-20.</li>
+  <li>CZ-2C stage (59229) reentered 2024-03-30; debris 59230 reentered 2024-03-23.</li>
+  <li><b>DRO-B (60058 / 2024-048D)</b> — moved from the DRO to a 3:2 Earth–Moon resonant orbit in Mar 2025; ST-GP 2026-10-20: 258 898 × 479 937 km alt, P = 26.5 d. Recovered in survey data 2025-10-26 (C4557E1 = 2025 US6) and 2025-11-29 (A11vZ2j), with a small manoeuvre on 2025-11-18.</li>
+  <li><b>YZ-1S stage (60326 / 2024-048E)</b> — 1 173 × 125 170 km alt, P = 2.11 d (ST-GP 2026-10-23); also measured on the NEOCP in Sep–Oct 2026 (C46MU91 and three linked tracklets).</li>
+</ul>
+<p>Both spacecraft were reported still experimenting in Mar 2026.</p></div>
 
 <div class="detail" id="m-queqiao2"><h3>Queqiao-2 + Tiandu-1 / Tiandu-2 (2024-051)</h3>
-<p><span class="label">Before</span>CZ-8 from Wenchang 2024-03-19. Queqiao-2 is the relay for Chang'e-6 and later far-side missions; Tiandu-1/2 are tech-demo smallsats for cislunar nav/comm experiments.</p>
-<p><span class="label">Now</span>Catalog re-checked — four objects, not three:</p>
+<p><span class="label">Before</span>CZ-8 Y3 from Wenchang 2024-03-20. Queqiao-2 relays for the Chang'e far-side and south-pole missions; Tiandu-1/2 test cislunar navigation and laser/microwave links. Tiandu-2 separated from Tiandu-1 in lunar orbit 2024-04-03.</p>
+<p><span class="label">Now</span></p>
 <ul>
-  <li>Queqiao-2 (59276 / 2024-051A) in highly elliptical lunar orbit (apolune ~16 000 km).</li>
-  <li><b>CZ-8 R/B (59277 / 2024-051B) reentered 2024-04-24</b> ~36 days after launch.</li>
-  <li>Tiandu-1 (59278 / 2024-051C) in lunar orbit.</li>
-  <li>Tiandu-2 (59279 / 2024-051D) in lunar orbit.</li>
+  <li>Queqiao-2 (59276) in a 24-h elliptical frozen lunar orbit (~300 × 16 900 km alt), operating; no public ephemeris.</li>
+  <li><b>CZ-8 stage (59277) reentered 2024-04-24</b> (SATCAT) from its ~76 × 373 800 km transfer orbit.</li>
+  <li><b>Tiandu-1 (59278)</b> left lunar orbit in early 2025 for a geocentric HEO; BG <code>24051c26.tle</code> (epoch 2025-12-03): q / Q = 108 905 / 304 505 km, i = 34.5°, P = 10.8 d. Recovered in 2026 from amateur NEOCP astrometry: one orbit fits 2026-08-02 to 09-20 (67 observations, 0.57″; P = 11.19 d, q / Q = 138 / 285 000 km, i = 34.9°, AMR 0.030 m²/kg); after a manoeuvre between 09-20 and 10-01, the 2026-10-01 to 10-15 batch (64 observations, 0.44″) gives P = 11.76 d, q / Q = 149 563 / 287 258 km, i = 34.19°. Active and manoeuvring; each fit stays coherent for about two weeks. SATCAT still says "SELENOCENTRIC".</li>
+  <li>Tiandu-2 (59279) still in lunar orbit (~289 × 10 000 km); no public tracking.</li>
 </ul></div>
 
 <div class="detail" id="m-change6"><h3>Chang'e 6 (2024-083)</h3>
-<p><span class="label">Before</span>CZ-5 from Wenchang 2024-05-03; first far-side sample return from the South Pole-Aitken / Apollo basin. Lander touchdown 2024-06-01; ascender docked with the orbiter+returner pair in lunar orbit; the orbiter+returner pair left lunar orbit and headed back to Earth.</p>
-<p><span class="label">Now (orbiter — extended mission)</span>The return capsule re-entered Earth and delivered 1.935 kg of sample 2024-06-25. Rather than reentering with it, the orbiter (service module) fired its engines to avoid atmospheric reentry and transferred to Sun-Earth L2, where it was captured <b>2024-09-09</b> — extending the pattern set by Chang'e 5's SE-L1 trip and Chang'e 2's L2/Toutatis voyage. The orbiter has since departed SE-L2 and returned to cislunar space for further operations.</p>
-<p><span class="label">Catalogue</span>Three objects:</p>
+<p><span class="label">Before</span>CZ-5 Y8 from Wenchang 2024-05-03. Landing in the Apollo basin 2024-06-01; the returner brought 1.935 kg of far-side samples to Earth 2024-06-25.</p>
+<p><span class="label">Extended mission</span>The orbiter (59627) avoided reentry, was captured at SE-L2 on 2024-09-09 and later returned to Earth–Moon space. In Nov–Dec 2025 it was in a low-inclination, high-eccentricity geocentric orbit (i 29°, e 0.77–0.79, P 75–85 d, q ~170 000 km, Q 1.33–1.47 million km). A reconfiguration in mid-Dec 2025 (onset Dec 8–10) put it into i ≈ 84°, e 0.23, P 36 d; BG <code>24083a26.tle</code> (epoch 2025-12-15): q / Q = 389 100 / 450 691 km, P = 31.3 d.</p>
+<p><span class="label">Now (fits to amateur NEOCP astrometry, Jan–Oct 2026)</span>P held at 33–36 d, q 356–402 000 km, Q 478–569 000 km; node regressing 0.20–0.24°/d and inclination falling from 85° to 74.5° (2026-08-01 fit: e = 0.165, P = 33.7 d, q / Q = 368 / 513 000 km). No two observing windows fit one orbit, the signature of frequent manoeuvres; a burn of at least 30 m/s between 2026-07-06 and 07-15 was followed by lunar passes on 07-15 (~45 000 km) and 07-29 (~39 000 km). The latest tracklet (2026-10-01, 4 observations) fixes only the plane, i = 74 ± 11°.</p>
+<p><span class="label">Catalogue</span></p>
 <ul>
-  <li>Chang'e 6 spacecraft (59627 / 2024-083A). SATCAT comment is the stale "SELENOCENTRIC ORBIT (MOON)" reflecting the lunar-orbiter phase, not yet updated.</li>
-  <li><b>CZ-5 R/B (59628 / 2024-083B) reentered 2024-05-16</b> ~13 days after launch — the same disposal path as Chang'e-5's, not the Tianwen-1 / Chang'e-4 heliocentric path.</li>
-  <li>ICECUBE-Q (59629 / 2024-083C) — Pakistani 7 kg cubesat rideshare; SATCAT comment "HELIOCENTRIC ORBIT (SUN)".</li>
+  <li><b>CZ-5 stage (59628) reentered 2024-05-16</b> (SATCAT), 13 days after launch, as Chang'e 5's did.</li>
+  <li>ICUBE-Q (59629, SATCAT "ICECUBE-Q"), Pakistan's cubesat, was released into a 323 × 8 704 km alt lunar orbit 2024-05-08; SATCAT's "HELIOCENTRIC" label is a launch-time placeholder. Presumed to have impacted the Moon since; no date published.</li>
 </ul></div>
 
-<div class="detail" id="m-blueghost"><h3>Blue Ghost M1 + HAKUTO-R M2 + F9 S2 (2025-010)</h3>
+<div class="detail" id="m-blueghost"><h3>Blue Ghost M1 + HAKUTO-R M2 + F9 stage 2 (2025-010)</h3>
 <p><span class="label">Before</span>F9 from KSC 2025-01-15; Firefly Blue Ghost M1 + ispace HAKUTO-R M2 "Resilience".</p>
 <p><span class="label">Now</span></p>
 <ul>
-  <li>Blue Ghost (62716) on Moon (SATCAT 2025-03-02 = touchdown).</li>
-  <li>HAKUTO-R M2 (62717) crashed on Moon 2025-06-05.</li>
-  <li>2025-010C (62718) decayed 2025-03-15 per SATCAT — possibly a small rideshare free-flier; identification not certain in the searched data.</li>
-  <li><b>F9 S2 (62719)</b> — after ~1.6 yr in a chaotically-evolving deep-cislunar orbit (P ≈ 25–29.5 d, perigee ~230 000 km, apogee 488–613 000 km, i 15–41°), <b>impacted the Moon 2026-08-05 06:35:37 UTC (± ~5 s) at +19.4°, 266.8°E</b> — far side just beyond the western limb (Einstein/Moseley region), 2.42 km/s at 32° above horizontal. A dedicated astrometric campaign (P13 / Q62 / U62 / R43, last obs T−2.9 h) and Bill Gray's final prediction agree to 1.3 s / ~4.6 km. Site sunlit at impact; awaiting LRO fresh-crater imaging. Final hex TLE: <code>25010d26v6.tle</code>.</li>
+  <li>Blue Ghost (62716) landed in Mare Crisium 2025-03-02.</li>
+  <li>HAKUTO-R M2 (62717) crashed on the Moon 2025-06-05.</li>
+  <li>62718 is Falcon 9 debris (SATCAT "FALCON 9 DEB"; cislunar-eye: the upper section of the payload canister), reentered 2025-03-15.</li>
+  <li><b>F9 stage 2 (62719)</b> — after ~1.6 yr in a chaotically evolving orbit (P ≈ 25–29.5 d, q ~230 000 km, Q 488–613 000 km, i 15–41°), <b>impacted the Moon 2026-08-05 06:35:37 UTC (± ~5 s) at +19.4°, 266.8°E</b>, on the far side just beyond the western limb (Einstein/Moseley region), at 2.42 km/s and 32° above the horizontal. A dedicated campaign (P13 / Q62 / U62 / R43, last observation T−2.9 h) and Bill Gray's final prediction agree to 1.3 s and ~4.6 km. Space-Track now records DECAY 2026-08-05, comment LUNAR IMPACT. The site was sunlit at impact; LRO fresh-crater imaging pending. Final hex TLE: <code>25010d26v6.tle</code>.</li>
 </ul></div>
 
-<div class="detail" id="m-im2"><h3>IM-2 (Athena) + Lunar Trailblazer + F9 S2 (2025-038)</h3>
-<p><span class="label">Before</span>F9 from KSC 2025-02-26; rideshare with IM-2 Nova-C "Athena", NASA Lunar Trailblazer, AstroForge Odin, and Chimera commercial rideshare.</p>
-<p><span class="label">Now</span></p>
+<div class="detail" id="m-im2"><h3>IM-2 + Lunar Trailblazer + F9 stage 2 (2025-038)</h3>
+<p><span class="label">Before</span>F9 from KSC 2025-02-27 00:16 UTC with IM-2 "Athena", NASA's Lunar Trailblazer, AstroForge's Odin and Epic Aerospace's Chimera-1 tug.</p>
+<p><span class="label">Now (SATCAT unless noted)</span></p>
 <ul>
-  <li>IM-2 Athena (63100) reached Moon but tipped over; mission curtailed.</li>
-  <li>Lunar Trailblazer (63101) suffered comm-loss en route.</li>
-  <li>2025-038D (63102) — companion small payload.</li>
-  <li><b>F9 S2 (63103)</b> — Bill Gray 2025-03-17 fit shows heliocentric a = 0.983 AU, e = 0.031, i = 0.59°, P = 355.9 d (Earth co-orbital, slightly inside Earth's orbit).</li>
+  <li>IM-2 Athena (63099) landed 2025-03-06 and tipped over (SATCAT DECAY 2025-03-07, LUNAR LANDING).</li>
+  <li>Chimera-1 (63100) lost in a ~40 000 × 380 000 km Earth orbit; untracked.</li>
+  <li>Lunar Trailblazer (63101) lost contact the day after launch; mission ended 2025-07-31; heliocentric (JPL −242).</li>
+  <li>Odin (63102) lost contact; heliocentric.</li>
+  <li><b>F9 stage 2 (63103)</b> — BG <code>25038e.tle</code> (epoch 2025-03-17): heliocentric a = 0.983 AU, e = 0.031, i = 0.59°, P = 355.9 d, just inside Earth's orbit.</li>
 </ul>
-<p><span class="label">Future</span>Warn 2042-Dec-01 — returns Mar 2043.</p></div>
+<p><span class="label">Future (BG Warn 2042-Dec-01)</span>stage returns Mar 2043.</p></div>
 
-<h4>Mars / inner-planet</h4>
+<div class="detail" id="m-artemis2"><h3>Artemis II (2026-069)</h3>
+<p><span class="label">Before</span>SLS Block 1 from KSC LC-39B 2026-04-01 22:35:12 UTC. The ICPS-2 (68655) raised Orion to a ~185 × 70 377 km, 23.5-h HEO and served as the target for a crew proximity-operations test; Orion's service module performed TLI 2026-04-02 23:49 UTC.</p>
+<p><span class="label">Flyby (JPL −1024)</span>closest approach to the Moon 2026-04-06 23:01 UTC at 8 282 km from its centre (6 545 km altitude) on a free-return path.</p>
+<p><span class="label">Now (SATCAT)</span>Orion (68538) splashed down off San Diego 2026-04-11 00:07 UTC; the service module burned up 2026-04-10. <b>ICPS-2 reentered 2026-04-02</b> after its disposal burn. Of the four cubesats released in the HEO, TACHELES (68539) and K-RadCube (68541) reentered 2026-04-02 and ATENEA (not catalogued) presumably did the same; SWC-1 (68540) raised its perigee and remains in a 475 × 70 229 km alt orbit (ST-GP 2026-04-17).</p></div>
 
-<div class="detail" id="m-cassini"><h3>Cassini-Huygens (1997-061)</h3>
-<p><span class="label">Before</span>Titan IVB-Centaur from CCSFS 1997-10-15; Saturn arrival 2004-07-01.</p>
-<p><span class="label">Now</span>Spacecraft (25008) made EOM Saturn atmospheric entry 2017-09-15. Centaur stage on heliocentric trajectory; tracked by Bill Gray.</p></div>
+<h4>3.2 Mars / inner-planet missions</h4>
 
-<div class="detail" id="m-insight"><h3>InSight (2018-042)</h3>
-<p><span class="label">Before</span>Atlas-V 401 from Vandenberg 2018-05-05.</p>
-<p><span class="label">Now (JPL Horizons, today)</span>Spacecraft at r = 1.39 AU, |v| = 26.4 km/s (at Mars). Centaur heliocentric.</p></div>
+<div class="detail" id="m-akatsuki"><h3>Akatsuki (2010-020)</h3>
+<p>H-IIA from Tanegashima 2010-05-20. Missed its first Venus orbit insertion in 2010 and entered Venus orbit 2015-12-07. The H-IIA second stage is heliocentric.</p></div>
 
 <div class="detail" id="m-exomars"><h3>ExoMars 2016 — TGO + Schiaparelli (2016-017)</h3>
-<p><span class="label">Before</span>Proton-M / Briz-M from Baikonur 2016-03-14; TGO + Schiaparelli + Briz-M (2016-017B) + propellant tank (2016-017C).</p>
-<p><span class="label">Now</span>TGO at Mars (operational). Schiaparelli crashed at Mars 2016-10-19. Briz-M and tank both heliocentric per Bill Gray; the SATCAT decay date 2019-01-06 for 41553 reflects Space-Track losing track of the deep-space object, not actual reentry.</p></div>
+<p><span class="label">Before</span>Proton-M / Breeze-M from Baikonur 2016-03-14.</p>
+<p><span class="label">Now</span>TGO (41388) operating at Mars; Schiaparelli crashed at Mars 2016-10-19. The Breeze-M (41389) is heliocentric (SATCAT, no DECAY), as is its jettisoned propellant tank.</p></div>
+
+<div class="detail" id="m-insight"><h3>InSight (2018-042)</h3>
+<p>Atlas V 401 from Vandenberg 2018-05-05. The lander operated on Mars until 2022-12; the Centaur is heliocentric.</p></div>
+
+<div class="detail" id="m-bepi"><h3>BepiColombo (2018-080)</h3>
+<p><span class="label">Before</span>Ariane 5 from Kourou 2018-10-20; the Ariane 5 stage (43654) is heliocentric (SATCAT).</p>
+<p><span class="label">Now (JPL −121)</span>on its final approach to Mercury after six Mercury flybys: 178 000 km from Mercury on 2026-11-01, closing to ~3 000 km by mid-Dec 2026 — a weak capture into Mercury orbit.</p></div>
 
 <div class="detail" id="m-hope"><h3>Hope (EMM, 2020-047)</h3>
-<p>H-IIA from Tanegashima 2020-07-19. Spacecraft at Mars; H-IIA second stage (45919) heliocentric per Bill Gray.</p></div>
+<p>H-IIA from Tanegashima 2020-07-19. The spacecraft is at Mars; the H-IIA second stage (45919) is heliocentric (BG).</p>
+<p><span class="label">Future (BG Warn 2049-Apr-01)</span>stage returns late Jul 2049.</p></div>
 
 <div class="detail" id="m-tianwen1"><h3>Tianwen-1 (2020-049)</h3>
 <p><span class="label">Before</span>CZ-5 from Wenchang 2020-07-23.</p>
-<p><span class="label">Now</span>Spacecraft (45935) at Mars (orbiter operational, Zhurong rover landed 2021-05-15 on Utopia Planitia). CZ-5 second stage (45936) heliocentric: ~1.02 × 1.60 AU, i ≈ 1.1° per Bill Gray's pseudo-MPEC.</p></div>
+<p><span class="label">Now</span>Orbiter (45935) operating at Mars; Zhurong landed 2021-05-15. The CZ-5 second stage (45936) is heliocentric, ~1.02 × 1.60 AU, i ≈ 1.1° (BG).</p>
+<p><span class="label">Future (BG Warn 2046-Jun-01)</span>stage returns late Aug 2046.</p></div>
 
 <div class="detail" id="m-mars2020"><h3>Mars 2020 Perseverance (2020-052)</h3>
-<p>Atlas-V 541 from CCSFS 2020-07-30. Centaur (45984) heliocentric (single launch-day GP, no further fit); spacecraft + Ingenuity at Mars.</p></div>
-
-<div class="detail" id="m-akatsuki"><h3>Akatsuki (2010-020)</h3>
-<p>H-IIA from Tanegashima 2010-05-21. After failed first Venus orbit insertion 2010, re-entered Venus orbit 2015-12-07. H-IIA S2 heliocentric.</p></div>
-
-<div class="detail" id="m-bepi"><h3>BepiColombo (2018-080)</h3>
-<p><span class="label">Before</span>Ariane-5 from Kourou 2018-10-20.</p>
-<p><span class="label">Now (JPL Horizons, today)</span>r = 0.362 AU, |v| = 51.4 km/s — close to Mercury. Mercury orbit insertion currently scheduled 2026; cruise-stage separation 2025.</p></div>
+<p>Atlas V 541 from CCSFS 2020-07-30. Perseverance on Mars; the Centaur (45984) is heliocentric (BG fits to 2020-08).</p></div>
 
 <div class="detail" id="m-escapade"><h3>ESCAPADE Blue/Gold + NG-2 GS2 (2025-260)</h3>
-<p><span class="label">Before</span>New Glenn NG-2 from CCSFS 2025-11-13; first interplanetary New Glenn flight. Twin Mars probes for solar-wind/atmospheric-escape science.</p>
-<p><span class="label">Now (JPL Horizons, today)</span></p>
-<ul>
-  <li>ESCAPADE-Blue (SPK −9, COSPAR 2025-260A): heliocentric, r ≈ 1.012 AU.</li>
-  <li>ESCAPADE-Gold (SPK −10, COSPAR 2025-260B): heliocentric, r ≈ 1.013 AU.</li>
-  <li><b>NG-2 GS2 (SPK −9901495, COSPAR 2025-260C, NORAD 66453)</b>: heliocentric, r = 1.054 AU, |v| ≈ 28.6 km/s. JPL has a dedicated source file <code>EscaPADE-2nd_stage</code> for this stage. Bill Gray tracks it locally as <code>25260c.tle</code>.</li>
-</ul></div>
+<p><span class="label">Before</span>New Glenn NG-2 from CCSFS 2025-11-13, the first interplanetary New Glenn flight, put the twin Mars probes on a loiter orbit around SE-L2.</p>
+<p><span class="label">Now (JPL −9 / −10, tracking to 2026-10-12)</span>loiter finished; on 2026-10-25 Blue is 1.21 million km from Earth on the return leg.</p>
+<p><span class="label">Future (JPL)</span>powered Earth flybys with trans-Mars injection burns — Blue 2026-11-07 ~10:00 UTC at 8 036 km from Earth's centre, Gold 2026-11-09 10:59 UTC at 7 388 km; Mars arrival about 11 months later.</p>
+<p><span class="label">Stage</span><b>NG-2 GS2 (66453, JPL −9901495)</b> was safed after deployment and nudged to a slightly positive C3; heliocentric, 32 million km from Earth on 2026-10-25. JPL's file <code>EscaPADE-2nd_stage</code> is a ballistic extrapolation of the last telemetry; Bill Gray tracks it as <code>25260c.tle</code>. BG Warn 2052-Aug-01: returns Oct–Nov 2052.</p></div>
 
-<h4>Outer-planet, asteroid, comet</h4>
+<div class="detail" id="m-mmx"><h3>MMX — Martian Moons eXploration (2026-236)</h3>
+<p><span class="label">Before</span>H3 F10 (H3-24) from Tanegashima 2026-10-19 19:41:03 UTC, direct Earth escape; MMX separated ~71 min after liftoff. Space-Track catalogues MMX (101109) and the H3 second stage (101110) with placeholder 589 km elements.</p>
+<p><span class="label">Now (JPL −239, JAXA post-launch trajectory revised 2026-10-22, tracking to 2026-10-20)</span>1.53 million km from Earth on 2026-10-25, heliocentric r = 0.992 AU. Mars arrival Aug 2027; Phobos sampling, departure 2030, Earth return 2031.</p>
+<p><span class="label">Stage (fit to 22 amateur observations 2026-10-20/21 from W05, P87, M21 and P13, 0.16″)</span>tracked as MMX002, never posted to the NEOCP. Direct escape hyperbola, geocentric e = 1.170, perigee 6 804 km at 2026-10-19 20:49:43 TT, v∞ = 3.16 km/s (C3 ≈ 10 km²/s²). Heliocentric a = 1.2686 AU, e = 0.2196, q = 0.990 AU, Q = 1.547 AU, i = 0.53°, P = 521.9 d — the MMX transfer orbit.</p>
+<p><span class="label">Stage future (fit)</span>passes Mars 2027-09-02 at ~451 000 km (a gentle flyby inside Mars's Hill sphere). Seven orbits take 3 651 d, almost exactly ten years, so the stage returns to Earth <b>2036-10-12 to 10-16 at 0.4–1.0 million km</b>; the spread is set by its unknown area-to-mass ratio (0.96 million km gravity-only, 0.73 million km at AMR 0.013 m²/kg). A longer arc is needed.</p></div>
+
+<h4>3.3 Outer-planet, asteroid, comet missions</h4>
+
+<div class="detail" id="m-cassini"><h3>Cassini-Huygens (1997-061)</h3>
+<p>Titan IVB / Centaur from CCSFS 1997-10-15; Saturn arrival 2004-07-01. The spacecraft (25008) ended in Saturn's atmosphere 2017-09-15. The Centaur is heliocentric.</p></div>
 
 <div class="detail" id="m-stardust"><h3>Stardust (1999-003)</h3>
-<p>Delta-II from CCSFS 1999-02-07. Wild-2 sample delivered 2006-01-15. Stage heliocentric.</p></div>
+<p>Delta II from CCSFS 1999-02-07. Wild-2 samples landed 2006-01-15. Stage heliocentric.</p></div>
 
 <div class="detail" id="m-genesis"><h3>Genesis (2001-034)</h3>
-<p>Delta-II from CCSFS 2001-08-08. Solar-wind sample return (parachute failed, sample partially recovered 2004-09-08). Stage heliocentric.</p></div>
-
-<div class="detail" id="m-deepimpact"><h3>Deep Impact / EPOXI (2005-001)</h3>
-<p>Delta-II from CCSFS 2005-01-12; Tempel-1 impact 2005-07-04. Both spacecraft and impactor heliocentric.</p></div>
-
-<div class="detail" id="m-rosetta"><h3>Rosetta (2004-006)</h3>
-<p>Ariane-5 G+ from Kourou 2004-03-02; 67P/Churyumov-Gerasimenko orbit 2014–2016. Spacecraft and Sylda heliocentric.</p></div>
-
-<div class="detail" id="m-stereo"><h3>STEREO-A/B (2006-047)</h3>
-<p>Delta-II from CCSFS 2006-10-26. STEREO-A operational, STEREO-B contact lost 2014-10-01. Stage 2006-047C heliocentric.</p></div>
+<p>Delta II from CCSFS 2001-08-08. The solar-wind sample capsule (28453) landed hard in Utah 2004-09-08 (parachute failure). The bus (26884) and the Delta II second stage (26886) are heliocentric (SATCAT).</p></div>
 
 <div class="detail" id="m-haya1"><h3>Hayabusa (2003-019)</h3>
-<p>M-V from Uchinoura 2003-05-09. Itokawa sample delivered 2010-06-13. Stage heliocentric.</p></div>
+<p>M-V from Uchinoura 2003-05-09. Itokawa samples landed 2010-06-13. M-V third stage heliocentric.</p></div>
+
+<div class="detail" id="m-rosetta"><h3>Rosetta (2004-006)</h3>
+<p>Ariane 5G+ from Kourou 2004-03-02; at comet 67P 2014–2016. Ariane 5 stage and Sylda (2004-006C) heliocentric.</p></div>
+
+<div class="detail" id="m-deepimpact"><h3>Deep Impact / EPOXI (2005-001)</h3>
+<p>Delta II from CCSFS 2005-01-12; impactor struck Tempel 1 2005-07-04. Flyby spacecraft and stage heliocentric.</p></div>
+
+<div class="detail" id="m-stereo"><h3>STEREO-A/B (2006-047)</h3>
+<p>Delta II from CCSFS 2006-10-26; lunar swing-bys to heliocentric orbits. STEREO-A (29510) operating; STEREO-B (29511) lost 2014-10-01. Stage (2006-047C) heliocentric.</p></div>
 
 <div class="detail" id="m-haya2"><h3>Hayabusa 2 (2014-076)</h3>
-<p><span class="label">Before</span>H-IIA from Tanegashima 2014-12-03.</p>
-<p><span class="label">Now</span>Spacecraft on extended mission to 1998 KY26 (arrival 2031). H-IIA second stage heliocentric ~0.92 × 1.09 AU, i = 6.8° per Bill Gray.</p>
-<p><span class="label">Future</span>Earth flybys 2027-Dec and 2028-Jun (spacecraft).</p></div>
+<p><span class="label">Before</span>H-IIA from Tanegashima 2014-12-03. Ryugu samples delivered 2020-12-05.</p>
+<p><span class="label">Now (JPL −37, tracking to 2026-09-29)</span>extended mission; flew past asteroid (98943) Torifune 2026-07-05 ~09:30 UTC. The H-IIA second stage (40323) is heliocentric, ~0.92 × 1.09 AU, i = 6.8° (BG).</p>
+<p><span class="label">Future (BG Warn lines)</span>Earth flybys Dec 2027 and Jun 2028; arrival at 1998 KY26 in 2031.</p></div>
 
-<div class="detail" id="m-osirisrex"><h3>OSIRIS-REx → APEX (2016-055)</h3>
-<p><span class="label">Before</span>Atlas-V 411 from CCSFS 2016-09-08.</p>
-<p><span class="label">Now (JPL Horizons SPK −64, today)</span>r = 1.252 AU; spacecraft completed Bennu sample return 2023-09-24, now on extended OSIRIS-APEX mission to Apophis.</p>
-<p><span class="label">Future</span>Apophis flyby 2027-Mar; further Earth flybys 2027-Feb-01, 2029-Feb.</p></div>
+<div class="detail" id="m-osirisrex"><h3>OSIRIS-REx → OSIRIS-APEX (2016-055)</h3>
+<p><span class="label">Before</span>Atlas V 411 from CCSFS 2016-09-08. Bennu sample capsule landed 2023-09-24.</p>
+<p><span class="label">Flybys (JPL −64)</span>first Earth gravity assist of the Apophis extension <b>2025-09-23 ~17:00 UTC at 9 814 km</b> from Earth's centre.</p>
+<p><span class="label">Future (JPL −64; BG Warn 2027-Feb-01, 2029-Feb-01)</span>Earth flyby 2027-03-16 03:30 UTC at 10 561 km; Earth flyby 2029-04-13 23:05 UTC at 7 528 km, a few hours after Apophis's own close approach, then rendezvous with (99942) Apophis. The Centaur (41758) is heliocentric.</p></div>
 
 <div class="detail" id="m-lucy"><h3>Lucy (2021-093)</h3>
-<p><span class="label">Before</span>Atlas-V 401 from CCSFS 2021-10-16.</p>
-<p><span class="label">Now (JPL Horizons SPK −49, today)</span>r = 4.508 AU, |v| = 11.36 km/s — at Trojan-asteroid distance. Centaur (49329) heliocentric, Earth-co-orbital, a≈1.0 AU.</p></div>
+<p><span class="label">Before</span>Atlas V 401 from CCSFS 2021-10-16.</p>
+<p><span class="label">Flybys (JPL −49)</span>second Earth gravity assist 2024-12-13 04:16 UTC at 6 737 km from Earth's centre; asteroid (52246) Donaldjohanson 2025-04-20 17:51 UTC at ~990 km.</p>
+<p><span class="label">Future</span>Trojan Eurybates in Aug 2027; third Earth flyby 2030-12-27 00:36 UTC at 6 995 km (JPL). The Centaur (49329, JPL −490) is Earth co-orbital; BG Warn 2051-Aug-01: returns Oct 2051.</p></div>
 
 <div class="detail" id="m-dart"><h3>DART + LICIACube (2021-110)</h3>
-<p><span class="label">Before</span>F9 from Vandenberg 2021-11-24; direct Earth-escape, no deorbit burn.</p>
-<p><span class="label">Now</span>DART (49497) impacted Dimorphos 2022-09-26. F9 S2 (49498) per Bill Gray (2021-12-03 epoch, still valid): heliocentric a = 1.0039 AU, e = 0.066, i = 3.89°, P = 1.006 yr / 367.4 d. Earth co-orbital with slow drift.</p>
-<p><span class="label">Future</span>Warn 2026-Mar-01 — returns May 2026.</p></div>
-
-<div class="detail" id="m-psyche"><h3>Psyche (2023-157)</h3>
-<p><span class="label">Before</span>FH from KSC 2023-10-13; center-core expended.</p>
-<p><span class="label">Now (JPL Horizons SPK −255, today)</span>r = 1.428 AU. FH S2 heliocentric.</p></div>
-
-<div class="detail" id="m-hera"><h3>Hera (2024-180)</h3>
-<p><span class="label">Before</span>F9 from CCSFS 2024-10-07; FAA waiver permitted heliocentric disposal of the second stage (no deorbit burn).</p>
-<p><span class="label">Now (JPL Horizons SPK −91, today)</span>Spacecraft at r = 2.116 AU, |v| = 17.74 km/s — en route to Didymos system (arrival 2026-12). F9 S2 (Bill Gray ID 24180Z) heliocentric.</p></div>
-
-<div class="detail" id="m-clipper"><h3>Europa Clipper (2024-182)</h3>
-<p><span class="label">Before</span>FH from KSC 2024-10-14; center+sides+S2 all expended.</p>
-<p><span class="label">Now (JPL Horizons SPK −159, today)</span>Spacecraft at r = 1.877 AU, |v| = 19.76 km/s — en route to Jupiter (arrival 2030).</p>
-<p><span class="label">Future</span>Warn 2026-Dec-01 — Earth flyby.</p></div>
+<p><span class="label">Before</span>F9 from Vandenberg 2021-11-24, direct Earth escape, no stage disposal burn.</p>
+<p><span class="label">Now</span>DART (49497) struck Dimorphos 2022-09-26 (SATCAT ASTEROID IMPACT). The F9 second stage (49498) is Earth co-orbital (BG <code>21110b25.tle</code>: a = 1.0039 AU, e = 0.066, i = 3.89°, P = 367.4 d).</p>
+<p><span class="label">Return (JPL −149498)</span>the forecast May 2026 return was distant — closest approach <b>2026-05-11 04:42 UTC at 2.72 million km</b> (0.018 AU), 2.8 km/s. Bill Gray retired the Warn line; the stage was 37.5 million km away on 2026-10-25 and has no further return listed.</p></div>
 
 <div class="detail" id="m-juice"><h3>JUICE (2023-053)</h3>
-<p><span class="label">Before</span>Ariane-5 from Kourou 2023-04-14; ESC-A burned to Earth-escape at T+25:25 then separated.</p>
-<p><span class="label">Now (JPL Horizons SPK −28, today)</span>r = 1.574 AU, |v| = 18.73 km/s. ESC-A second stage (56177) heliocentric.</p>
-<p><span class="label">Future</span>Earth flybys 2026-Sep, 2028-Jan.</p></div>
+<p><span class="label">Before</span>Ariane 5 ECA from Kourou 2023-04-14; the ESC-A upper stage (56177) burned to Earth escape and separated.</p>
+<p><span class="label">Flybys (JPL −28)</span>lunar–Earth double gravity assist — Moon 2024-08-19 21:15 UTC at 2 490 km from its centre, Earth 2024-08-20 21:56 UTC at 13 211 km; Venus 2025-08-31 05:29 UTC at 11 140 km; <b>second Earth flyby 2026-09-28 11:45 UTC at 15 017 km</b> from Earth's centre (~8 640 km altitude).</p>
+<p><span class="label">Now (JPL −28, 2026-10-25)</span>26 million km from Earth, heliocentric r = 0.874 AU.</p>
+<p><span class="label">Future</span>third Earth flyby Jan 2029 (BG Warn 2028-Oct-01); Jupiter arrival Jul 2031. ESC-A heliocentric; BG Warn 2040-Jun-01: stage returns Aug 2040.</p></div>
 
-<h4>Sun-Earth Lagrange / heliocentric science</h4>
+<div class="detail" id="m-psyche"><h3>Psyche (2023-157)</h3>
+<p><span class="label">Before</span>Falcon Heavy from KSC 2023-10-13; the second stage (58050) is heliocentric.</p>
+<p><span class="label">Flyby (JPL −255)</span>Mars gravity assist <b>2026-05-15 19:28 UTC at 8 000 km</b> from Mars's centre.</p>
+<p><span class="label">Future</span>arrival at asteroid (16) Psyche in 2029.</p></div>
+
+<div class="detail" id="m-hera"><h3>Hera (2024-180)</h3>
+<p><span class="label">Before</span>F9 from CCSFS 2024-10-07; the second stage (61732; Bill Gray ID 24180Z) was left heliocentric under an FAA waiver.</p>
+<p><span class="label">Flyby (JPL −91)</span>Mars gravity assist <b>2025-03-12 12:51 UTC at 9 060 km</b> from Mars's centre, imaging Deimos.</p>
+<p><span class="label">Future</span>arrival at the Didymos–Dimorphos system late 2026. BG Warn 2051-Jul-01: stage returns Nov 2051.</p></div>
+
+<div class="detail" id="m-clipper"><h3>Europa Clipper (2024-182)</h3>
+<p><span class="label">Before</span>Falcon Heavy from KSC 2024-10-14, all cores and the second stage (61508) expended; the stage is heliocentric.</p>
+<p><span class="label">Flyby (JPL −159)</span>Mars gravity assist <b>2025-03-01 17:57 UTC at 4 275 km</b> from Mars's centre.</p>
+<p><span class="label">Future (JPL −159; BG Warn 2026-Dec-01)</span>Earth gravity assist 2026-12-03 20:14 UTC at 9 607 km from Earth's centre; Jupiter arrival Apr 2030.</p></div>
+
+<div class="detail" id="m-tianwen2"><h3>Tianwen-2 (2025-114)</h3>
+<p>CZ-3B from Xichang 2025-05-28. The spacecraft (64197) has been at Earth quasi-satellite (469219) Kamo'oalewa since ~Jul 2026; it departs in 2027 for an Earth flyby with sample-capsule release (Nov 2027), then continues to comet 311P. The CZ-3B third stage (64198) escaped with it and is heliocentric (SATCAT); no public ephemeris for either.</p></div>
+
+<h4>3.4 Sun–Earth Lagrange / heliocentric science</h4>
 
 <div class="detail" id="m-wmap"><h3>WMAP (2001-027)</h3>
-<p><span class="label">Before</span>Delta-II from CCSFS 2001-06-30. Used lunar gravity assist to reach SE-L2.</p>
-<p><span class="label">Now</span>Spacecraft was placed in heliocentric graveyard orbit at end of mission 2010-09. The Space-Track latest GP for NORAD 26859 is from 2001-07-27 — this is the launch-day parking orbit, frozen in the catalogue, not a current state. JPL Horizons does not have a dedicated SPK.</p></div>
-
-<div class="detail" id="m-geotail"><h3>Geotail (1992-044)</h3>
-<p>HEO with Moon-driven libration, P = 5.2 d, apogee 194 490 km, perigee 47 154 km (ST-GP fresh). Operational until 2022; passive thereafter.</p></div>
-
-<div class="detail" id="m-dscovr"><h3>DSCOVR (2015-007)</h3>
-<p><span class="label">Before</span>F9 from CCSFS 2015-02-11; first F9 launch beyond GEO.</p>
-<p><span class="label">Now</span>Spacecraft (40390) at SE-L1 (operational). F9 S2 (40391) is the "WE0913A misattribution" object: Bill Gray initially attributed the WE0913A lunar impactor to this stage in 2022-01, then corrected the identification to the Chang'e-5T1 R/B in 2022-02. Last fits on either side: Bill Gray 2022-12, Space-Track GP epoch 2022-02-11 — both more than 3 yr stale; current state unverified. Last fitted state was deep cislunar with P ≈ 24.4 d, apogee ~641 287 km, perigee ~56 374 km, e ≈ 0.82, i ≈ 34.5°.</p></div>
-
-<div class="detail" id="m-spektrr"><h3>Spektr-R / RadioAstron (2011-037)</h3>
-<p>Zenit-3F + Fregat from Baikonur 2011-07-18. Russian VLBI radio observatory in HEO. Bill Gray fresh; ST-GP fresh (2025-10-01). Period 8.83 d, apogee 299 414 km, perigee 48 785 km, i = 86.3°. Passivated 2019, still tracked. Fairing 11037ND reentered 2021-08-09.</p></div>
-
-<div class="detail" id="m-spektrrg"><h3>Spektr-RG (2019-040)</h3>
-<p>Proton-M / Block-DM-03 from Baikonur 2019-07-13. Russian/German X-ray survey at SE-L2 (operational). Block DM-SL booster (44433) heliocentric.</p>
-<p><span class="label">Future</span>Warn 2038-Apr-01 — booster returns Jun 2038.</p></div>
-
-<div class="detail" id="m-gaia"><h3>Gaia (2013-074)</h3>
-<p><span class="label">Before</span>Soyuz-Fregat from Kourou 2013-12-19.</p>
-<p><span class="label">Now (JPL Horizons SPK −139479, today)</span>r = 1.023 AU, |v| = 29.82 km/s — at SE-L2. Mission decommissioned 2025-Mar with maneuver to graveyard heliocentric orbit.</p></div>
+<p><span class="label">Before</span>Delta II from CCSFS 2001-06-30; lunar gravity assist to SE-L2. The Delta II second stage (26860) <b>reentered 2001-07-07</b> (SATCAT).</p>
+<p><span class="label">Now</span>Retired 2010 to a heliocentric orbit; Space-Track's only GP (2001) is the launch parking orbit; no Horizons SPK.</p></div>
 
 <div class="detail" id="m-herschelplanck"><h3>Herschel + Planck (2009-026)</h3>
-<p>Ariane-5 ECA from Kourou 2009-05-14. Both spacecraft at SE-L2 (decommissioned 2013). Booster heliocentric.</p>
-<p><span class="label">Future</span>Herschel returns 2027-Oct (spacecraft), Planck 2027-Jun, booster 2034-Dec.</p></div>
+<p><span class="label">Before</span>Ariane 5 ECA from Kourou 2009-05-14, both spacecraft to SE-L2.</p>
+<p><span class="label">Now</span>Both retired in 2013 to heliocentric orbits (JPL −486, −489). The ESC-A stage (34939 = 2009-026C) is heliocentric; Bill Gray's Warn line labels it 2009-026B, which in SATCAT is Planck.</p>
+<p><span class="label">Future (JPL; BG Warn 2027-Mar-01, 2027-Aug-01, 2034-Sep-01)</span>Planck passes 12.8 million km from Earth on 2027-06-08; Herschel 8.3 million km on 2027-10-14; the ESC-A returns Dec 2034.</p></div>
 
-<div class="detail" id="m-jwst"><h3>JWST (2021-130)</h3>
-<p><span class="label">Before</span>Ariane-5 ECA from Kourou 2021-12-25; multi-year engineered disposal designed by CNES/ESA/ArianeGroup so JWST sits on a low-energy SE-L2 transfer while ESC-D escapes to heliocentric.</p>
-<p><span class="label">Now (JPL Horizons SPK −170, today)</span>JWST at r = 1.016 AU, |v| = 29.82 km/s (at SE-L2, operational). ESC-D (50464) heliocentric (perihelion 2021-Dec).</p>
-<p><span class="label">Future</span>Warn 2047-Jan-01 — ESC-D returns Jun 2047.</p></div>
+<div class="detail" id="m-gaia"><h3>Gaia (2013-074)</h3>
+<p><span class="label">Before</span>Soyuz-Fregat from Kourou 2013-12-19. The Fregat (39480) is heliocentric (SATCAT).</p>
+<p><span class="label">Now (JPL −139479)</span>science ended 2025-01-15; burns on 2025-03-07 and 03-27 took Gaia from SE-L2 to a heliocentric retirement orbit, and it was passivated.</p>
+<p><span class="label">Future (BG Warn 2039-Jan-01)</span>distant return beyond 10 million km, reaching mag 24 in Sep 2039; Bill Gray's optical orbit confirms the ~14-year cycle.</p></div>
 
-<div class="detail" id="m-euclid"><h3>Euclid (2023-092)</h3>
-<p>F9 from KSC 2023-07-01. Spacecraft at SE-L2 (operational). F9 second stage (57210) heliocentric (no fresh fit since launch).</p></div>
-
-<div class="detail" id="m-tess"><h3>TESS (2018-038)</h3>
-<p><span class="label">Before</span>F9 from CCSFS 2018-04-18; spacecraft used phasing-loop maneuvers and a 2018-05-17 lunar gravity assist to enter its lunar 2:1 resonant orbit (P/2).</p>
-<p><span class="label">Now</span>Spacecraft (43435) in cislunar HEO, Bill Gray + ST-GP fresh: P = 13.7 d, apogee 345 653 km, perigee 124 603 km, i = 56.8°. Passively stable indefinitely. F9 second stage (43436) heliocentric per Space-Track SATCAT comment "HELIOCENTRIC ORBIT (SUN)"; the stage was on a higher-energy trajectory than TESS and escaped the Earth-Moon system through the lunar flyby. Neither Bill Gray nor JPL Horizons has a dedicated fit for the stage.</p></div>
-
-<div class="detail" id="m-solo"><h3>Solar Orbiter (2020-010)</h3>
-<p><span class="label">Before</span>Atlas-V 411 from CCSFS 2020-02-10.</p>
-<p><span class="label">Now (JPL Horizons SPK −144, today)</span>r = 0.832 AU, |v| = 25.43 km/s.</p>
-<p><span class="label">Future</span>Warn 2035-Jan-01 — Centaur returns Feb 2035.</p></div>
-
-<div class="detail" id="m-parker"><h3>Parker Solar Probe (2018-065)</h3>
-<p><span class="label">Before</span>Delta IV Heavy + Star-48BV from CCSFS 2018-08-12.</p>
-<p><span class="label">Now (JPL Horizons SPK −96, today)</span>r = 0.725 AU, |v| = 12.80 km/s (between perihelia). Delta-IV S2 (43593) heliocentric.</p></div>
-
-<div class="detail" id="m-aditya"><h3>Aditya-L1 (2023-132)</h3>
-<p>PSLV-C57 from Sriharikota 2023-09-02. Spacecraft (57754) at SE-L1 since 2024-01. <b>PSLV PS4 upper stage (57755)</b> is freshly tracked: ST-GP epoch 2026-04-29 gives apogee 17 170 km, perigee 220 km, e = 0.56, i = 19.1°, P = 307 min — already significantly drag-decayed from the launch GP (apogee 71 868 km, perigee 254 km). Long-term reentry expected on a years-to-decade timescale.</p></div>
+<div class="detail" id="m-dscovr"><h3>DSCOVR (2015-007)</h3>
+<p><span class="label">Before</span>F9 from CCSFS 2015-02-11, the first Falcon 9 launch beyond GEO.</p>
+<p><span class="label">Now</span>DSCOVR (40390, JPL −78) operating at SE-L1. The F9 second stage (40391) is the object Bill Gray first named as the WE0913A impactor (2022-01) before re-identifying WE0913A as the Chang'e-5T1 stage (2022-02). Its last fits — BG <code>15007b22.tle</code> (2022-12), ST-GP 2022-02-11 (56 374 × 641 287 km alt, P ≈ 24.4 d, i = 34.5°) — are more than three years old; current state unverified.</p></div>
 
 <div class="detail" id="m-tesla"><h3>Tesla Roadster (2018-017)</h3>
-<p><span class="label">Before</span>FH demo from KSC 2018-02-06; Centaur burned past Earth-escape on a Mars-crossing trajectory.</p>
-<p><span class="label">Now (BG 2018-02-28 epoch; JPL Horizons SPK −143205, today)</span>r = 1.619 AU, |v| = 20.65 km/s. Heliocentric a = 1.326 AU, e = 0.257, i = 1.08°, P = 557.9 d. Aphelion 1.66 AU (just inside Mars).</p>
-<p><span class="label">Future</span>Long-term dynamical studies give ~6% Earth-impact probability over the next million years; first close approach 2091.</p></div>
+<p><span class="label">Before</span>Falcon Heavy demo from KSC 2018-02-06; the second stage, with the Roadster attached, burned past escape onto a Mars-crossing orbit.</p>
+<p><span class="label">Now (JPL −143205)</span>a = 1.326 AU, e = 0.257, i = 1.08°, P = 557.9 d, aphelion 1.66 AU.</p>
+<p><span class="label">Future (BG Warn 2046-Nov-01)</span>returns Jan 2047 (distant). Published long-term integrations give the first close Earth encounter in 2091.</p></div>
+
+<div class="detail" id="m-parker"><h3>Parker Solar Probe (2018-065)</h3>
+<p>Delta IV Heavy + Star 48BV from CCSFS 2018-08-12. Spacecraft (43592, JPL −96) on its final solar orbit; the Delta IV second stage (43593) and Star 48BV (43594) are heliocentric (SATCAT).</p></div>
+
+<div class="detail" id="m-spektrrg"><h3>Spektr-RG (2019-040)</h3>
+<p>Proton-M / Block DM-03 from Baikonur 2019-07-13. The spacecraft (44432) is at SE-L2; amateur NEOCP astrometry tracked it Jun–Oct 2026 (find_orb heliocentric fits, AMR 0.026 m²/kg) and shows station-keeping burns on 2026-09-07 and between 09-21 and 10-04. The Block DM (44433) is heliocentric.</p>
+<p><span class="label">Future (BG Warn 2038-Apr-01)</span>stage returns Jun 2038.</p></div>
+
+<div class="detail" id="m-solo"><h3>Solar Orbiter (2020-010)</h3>
+<p>Atlas V 411 from CCSFS 2020-02-10. Spacecraft (45167, JPL −144) on Venus-assisted inclined solar orbits. The Centaur (45168) is heliocentric.</p>
+<p><span class="label">Future (BG Warn 2035-Jan-01)</span>Centaur returns Feb 2035.</p></div>
+
+<div class="detail" id="m-jwst"><h3>JWST (2021-130)</h3>
+<p><span class="label">Before</span>Ariane 5 ECA from Kourou 2021-12-25; the trajectory was shaped so that JWST rides a low-energy transfer to SE-L2 while the ESC-A stage (50464) escapes.</p>
+<p><span class="label">Now (JPL −170)</span>JWST operating at SE-L2. ESC-A heliocentric (BG <code>21130b.tle</code>).</p>
+<p><span class="label">Future (BG Warn 2047-Jan-01)</span>stage returns Jun 2047.</p></div>
+
+<div class="detail" id="m-euclid"><h3>Euclid (2023-092)</h3>
+<p>F9 from KSC 2023-07-01. Euclid (57209, JPL −680) operating at SE-L2. The F9 second stage (57210) is heliocentric (BG fits to 2023-10; SATCAT's "L2" label is a placeholder).</p></div>
+
+<div class="detail" id="m-aditya"><h3>Aditya-L1 (2023-132)</h3>
+<p>PSLV-C57 from Sriharikota 2023-09-02. Aditya-L1 (57754, JPL −156) operating at SE-L1 since 2024-01. The PSLV PS4 stage (57755) is decaying: ST-GP 2026-10-23 gives 245 × 16 787 km alt, i = 19.2°, P = 301.5 min, against 254 × 71 868 km alt at launch. Reentry expected within years.</p></div>
 
 <div class="detail" id="m-cert2"><h3>Cert-2 Vulcan Centaur (2024-179)</h3>
-<p><span class="label">Before</span>Second Vulcan flight from CCSFS 2024-10-04 with mass simulator; Centaur V did two burns, the second to Earth-escape; stage was passivated.</p>
-<p><span class="label">Now (BG 2025-11-16 build; JPL Horizons SPK −161448, today)</span>r = 0.962 AU, |v| = 30.83 km/s. Earth co-orbital heliocentric.</p>
-<p><span class="label">Future</span>Three returns:</p>
-<ul>
-  <li><b>2026-Nov-10</b> — first close approach.</li>
-  <li><b>2027-Dec-10</b> — second close approach.</li>
-  <li><b>2028-Dec-23</b> — third close approach.</li>
-</ul></div>
+<p><span class="label">Before</span>Second Vulcan flight from CCSFS 2024-10-04 with an inert mass simulator; the Centaur V's second burn went to Earth escape and the stage was passivated.</p>
+<p><span class="label">Now (BG <code>24179a25.tle</code>, fit to 21 observations 2025-10-19 to 11-16)</span>Earth co-orbital heliocentric orbit; Bill Gray: "No updates (until it returns in late 2026)".</p>
+<p><span class="label">Future</span><b>Earth perigee 2029-02-27 10:05 TT, q = 8 867 ± 4 574 km</b> (geocentric e = 1.076, i = 35°). The 1σ range includes Earth's radius, so atmospheric entry is possible. JPL's older solution (−161448) gives 7 497 km at 08:27 UTC that day, after distant passes of 8.1 million km (2026-12-21) and 4.9 million km (2028-02-14). Bill Gray's three Warn lines — 2026-Nov-10, 2027-Dec-10, 2028-Dec-23 — are reminders for the recovery windows before that perigee, not separate close approaches.</p></div>
 
-<h4>High-Earth-orbit science</h4>
+<div class="detail" id="m-imap"><h3>IMAP + SWFO-L1 + Carruthers (2025-215)</h3>
+<p>F9 from KSC 2025-09-24 on a ~217 × 2.27 million km trajectory. IMAP (65725, JPL −43), SWFO-L1 / SOLAR-1 (65726, JPL −231) and Carruthers (65727, JPL −171) are operating at SE-L1. Space-Track set DECAY 2025-09-26 with comment "L1 LAGRANGIAN ORBIT" for all four objects — a departure, not a reentry. The F9 second stage (65728) went heliocentric, probably around Jan 2026 (GCAT); no ephemeris.</p></div>
 
-<div class="detail" id="m-ibex"><h3>IBEX (2008-051)</h3>
-<p>Pegasus-XL air launch 2008-10-19; onboard solid motor to lunar-resonant cislunar HEO. Bill Gray fresh + ST-GP fresh: P = 9.13 d, apogee 312 517 km, perigee 43 843 km, e = 0.73, i = 46.3°. Operational mission.</p></div>
+<div class="detail" id="m-roman"><h3>Nancy Grace Roman Space Telescope (2026-199)</h3>
+<p><span class="label">Before</span>Falcon Heavy from KSC LC-39A 2026-08-30 11:26:04 UTC; perigee 6 578 km on a C3 = −0.66 km²/s² transfer (BG <code>26199a.tle</code>, built from Horizons). No lunar flyby: closest lunar distance 321 500 km on 2026-08-31 (JPL).</p>
+<p><span class="label">Now (JPL −211, GSFC post-launch trajectory, tracking to 2026-10-18)</span>1.49 million km from Earth on 2026-10-25, completing its ~90-day transfer; SE-L2 orbit insertion expected ~Dec 2026. SATCAT: 100532 "L2 LAGRANGIAN ORBIT".</p>
+<p><span class="label">Stage (fit to 313 amateur observations 2026-08-30 to 10-17, 16 linked NEOCP designations, 0.76″)</span>the Falcon Heavy second stage (100533) — SATCAT also labels it "L2" — left Earth's Hill sphere in late Sep 2026 and was 2.5 million km away on 2026-10-17. Heliocentric a = 1.0205 AU, e = 0.0137, i = 0.11°, q = 1.0065 AU, Q = 1.0344 AU, P = 376.5 d, AMR 0.0128 m²/kg, Earth MOID 0.0101 AU. Its synodic period with Earth is ~33 yr, so no near-term return.</p></div>
 
-<div class="detail" id="m-cluster"><h3>Cluster II (2000-045)</h3>
-<p>Soyuz-Fregat from Baikonur 2000-08-09 (FM5/6/7/8). Plasma-physics quartet in matched HEO. FM6 (26463) reentered 2025-10-22; FM7 (26464) still tracked, P = 2.25 d, apogee 131 522 km, perigee 879 km, retrograde i = 149.97°.</p></div>
+<h4>3.5 High-Earth-orbit science</h4>
 
-<div class="detail" id="m-themis"><h3>THEMIS / ARTEMIS (2007-004)</h3>
-<p>Delta-II from CCSFS 2007-02-17, five-spacecraft magnetosphere quintet. After 2009, A/B were repurposed as the ARTEMIS lunar libration-point mission; THEMIS-A/D/E are now in lunar-resonant cislunar HEO (P = 1.14 d, apogee ~78 000 km, perigee ~750–1 275 km, eccentricity 0.84). THEMIS-G (30799) reentered 2024-05-12.</p></div>
+<div class="detail" id="m-geotail"><h3>Geotail (1992-044)</h3>
+<p>Delta II from CCSFS 1992-07-24; lunar swing-bys 1992–94 shaped its orbit. Switched off 2022-11-28. ST-GP 2026-10-25: 48 824 × 191 856 km alt, i = 45.8°, P = 5.2 d. Its Delta II second stage (22051) is catalogued only with its 1992 lunar-transfer ellipse (185 × 359 918 km alt); fate unverified.</p></div>
+
+<div class="detail" id="m-chandra"><h3>Chandra X-ray Observatory (1999-040)</h3>
+<p>Shuttle STS-93 deployment 1999-07-23, then the two-stage IUS. Chandra (25867, JPL −151) operating, ~12 700 × 136 100 km alt, P 2.6 d. The IUS second stage (25869) remains in a 691 × 72 625 km alt orbit (ST-GP 2026-10-22, P 1.03 d); the first stage (25868) is in a 230 × 10 258 km alt orbit.</p></div>
+
+<div class="detail" id="m-xmm"><h3>XMM-Newton (1999-066)</h3>
+<p>Ariane 5 from Kourou 1999-12-10. XMM (25989, JPL −125989) operating, P 2.0 d. The Ariane 5 stage (25990) shares a similar orbit: 19 791 × 92 844 km alt, i = 71.6°, P 1.81 d (ST-GP 2026-10-23).</p></div>
+
+<div class="detail" id="m-cluster"><h3>Cluster II (2000-041, 2000-045)</h3>
+<p>Two Soyuz-Fregat launches from Baikonur: 2000-07-16 (FM7 Samba 26410, FM6 Salsa 26411) and 2000-08-09 (FM5 Rumba 26463, FM8 Tango 26464). ESA lowered all four for reentry at the end of the mission: <b>FM6 2024-09-08, FM5 2025-10-22, FM7 2026-08-31, FM8 2026-09-01</b> (SATCAT). Both Fregat stages reentered within a day of their launches.</p></div>
 
 <div class="detail" id="m-integral"><h3>INTEGRAL (2002-048)</h3>
-<p>Proton-K / DM-2 from Baikonur 2002-10-17. ESA gamma-ray observatory in HEO, P = 2.7 d, apogee 145 201 km, perigee 4 304 km, i = 90.3°.</p></div>
+<p>Proton-K / Block DM-2 from Baikonur 2002-10-17. Science ended 2025-02-28; ESA monitors it until reentry, expected ~Feb 2029. ST-GP 2026-10-22: 3 638 × 145 841 km alt, i = 88.7°, P = 2.66 d. The Block DM (27542) reentered 2010-11-03.</p></div>
 
-<h4>Bill Gray unidentified</h4>
+<div class="detail" id="m-themis"><h3>THEMIS / ARTEMIS (2007-004)</h3>
+<p>Delta II from CCSFS 2007-02-17, five magnetosphere probes. THEMIS-A/D/E (30580 / 30797 / 30798) remain in 1.14-d HEOs (~1 000 × 78 000 km alt, SATCAT). THEMIS-B/C became ARTEMIS P1/P2 (30581 / 30582, JPL −192 / −193) and have been in lunar orbit since 2011. The Delta II second stage (30799, 2007-004G) <b>reentered 2024-05-12</b>.</p></div>
 
-<div class="detail" id="m-2020so"><h3>2020 SO = Surveyor-2 Atlas-Centaur (1966-084B / NORAD 02426)</h3>
-<p>Discovered as a near-Earth asteroid 2020-09-17 by Pan-STARRS; identified by spectroscopy and dynamical history as the Surveyor-2 Centaur stage from 1966-09-20 launch. Earth-co-orbital heliocentric with brief geocentric capture late 2020 to early 2021.</p>
-<p><span class="label">Future</span>Warn 2036-Mar-01 — returns 2036.</p></div>
+<div class="detail" id="m-ibex"><h3>IBEX (2008-051)</h3>
+<p>Pegasus XL air launch 2008-10-19; its own solid motor raised the apogee. IBEX (33401) operating in a lunar-synchronised HEO; last ST-GP 2025-07-25 (43 843 × 312 517 km alt, i = 46.3°, P = 9.1 d), last BG fit to 2026-01. The rocket body catalogued as Pegasus R/B(2) (33404) has only launch-week elements (apogee ~205 000 km alt); fate unverified.</p></div>
+
+<div class="detail" id="m-spektrr"><h3>Spektr-R / RadioAstron (2011-037)</h3>
+<p>Zenit-3F / Fregat from Baikonur 2011-07-18. Last contact 2019-01-11; mission ended 2019-05-30. ST-GP 2026-10-05: 6 019 × 328 318 km alt, i = 19.8°, P = 8.3 d; JPL −557 also covers it. The Fregat stage (46736 = 2011-037ND) <b>reentered 2021-08-09</b> (SATCAT).</p></div>
+
+<div class="detail" id="m-mms"><h3>MMS (2015-011)</h3>
+<p>Atlas V 421 from CCSFS 2015-03-13. The four spacecraft (40482–40485) fly in formation in a ~10 900 × 171 400 km alt orbit, P 3.5 d (SATCAT). The Centaur (40486) <b>reentered 2017-08-26</b>.</p></div>
+
+<div class="detail" id="m-tess"><h3>TESS (2018-038)</h3>
+<p><span class="label">Before</span>F9 from CCSFS 2018-04-18; phasing loops and a 2018-05-17 lunar gravity assist put TESS into its P/2 lunar-resonant orbit.</p>
+<p><span class="label">Now (ST-GP 2026-09-21, JPL −95)</span>119 094 × 364 455 km alt, i = 56.2°, P = 14.2 d; operating in its third extended mission. Passively stable. The F9 second stage (43436) took a more energetic path, escaped at the lunar flyby and is heliocentric (SATCAT); no dedicated fit.</p></div>
+
+<div class="detail" id="m-proba3"><h3>Proba-3 (2024-233)</h3>
+<p>PSLV-C59 from Sriharikota 2024-12-05 into a 600 × 60 530 km HEO. The coronagraph and occulter spacecraft (62256 / 62258) fly in formation at 1 035 × 60 170 km alt. The PSLV PS4 stage (62257) is in a 1 046 × 60 825 km alt orbit, i = 60.0° (ST-GP 2026-10-22), with an apogee well beyond GEO.</p></div>
+
+<div class="detail" id="m-smile"><h3>SMILE (2026-109)</h3>
+<p>Vega C VV29 from Kourou 2026-05-19 into a ~700 km LEO; twelve main-engine burns raised the spacecraft (69123, JPL −463) to its science orbit by 2026-06-20. ST-GP 2026-10-20: 6 830 × 119 159 km alt, i = 70.0°, P = 2.10 d. No launcher stage went beyond GEO.</p></div>
+
+<h4>3.6 Unidentified deep-space artsats</h4>
+
+<div class="detail" id="m-2020so"><h3>2020 SO = Surveyor-2 Centaur (1966-084B / NORAD 2426)</h3>
+<p>Found as a near-Earth asteroid 2020-09-17 by Pan-STARRS and identified by spectroscopy and orbit history as the Centaur from the 1966-09-20 Surveyor 2 launch. Earth co-orbital; temporarily captured into a geocentric orbit 2020-11 to 2021-03.</p>
+<p><span class="label">Future (BG Warn 2036-Mar-01)</span>returns 2036.</p></div>
 
 <div class="detail" id="m-6q0"><h3>6Q0B44E / XL8D89E (Bill Gray 89996)</h3>
-<p>First seen 2006 / 2016. P ~ 80–95 d, high-flier, unidentified.</p></div>
+<p>First seen 2006 and 2016; a high-flier with P ≈ 73 d and Q ≈ 892 000 km in Bill Gray's fit through 2025. Unidentified.</p></div>
 
 <div class="detail" id="m-wt1190f"><h3>WT1190F (Bill Gray 89997)</h3>
-<p>Discovered Oct 2015. Re-entered 2015-11-13 ~06:18 UTC over the Indian Ocean south of Sri Lanka. Provided unique aerothermal/fragmentation dataset observed by NASA/ESA aircraft.</p></div>
+<p>Found 2015-10; <b>reentered 2015-11-13 ~06:18 UTC</b> over the Indian Ocean south of Sri Lanka, observed from aircraft.</p></div>
 
 <div class="detail" id="m-rk"><h3>RK252A5 = "2010 KQ" (Bill Gray 79999)</h3>
-<p>Earth-co-orbital, P ~ 1 yr, suspected artificial.</p>
-<p><span class="label">Future</span>Warn 2035-Aug-01 — returns 2035.</p></div>
+<p>Earth co-orbital, P ≈ 1 yr, probably artificial.</p>
+<p><span class="label">Future (BG Warn 2035-Aug-01)</span>returns 2035.</p></div>
 
-<div class="detail" id="m-we0913a"><h3>WE0913A = Chang'e-5T1 R/B (2014-065B)</h3>
-<p><span class="label">Before</span>CZ-3C upper stage from 2014-10-23 launch of the Chang'e-5T1 sample-return precursor; achieved Earth-escape via a highly eccentric trans-lunar trajectory.</p>
-<p><span class="label">Discovery</span>Catalina Sky Survey 2015-03-14 as A1064O7 → WE0913A. Bill Gray attributed it to DSCOVR F9 S2 (2015-007B) on 2022-01-21 after detecting an imminent lunar impact. JPL's Jon Giorgini independent fit traced the orbit back to October 2014, leading Gray to re-identify the object as the Chang'e-5T1 R/B on 2022-02-12.</p>
-<p><span class="label">Impact</span>2022-03-04 12:25 UTC on the lunar far-side near Hertzsprung crater. LRO imaged the crater 2022-05-25 — double crater (18 m east + 16 m west) suggesting an attached payload of unknown identity.</p></div>
+<div class="detail" id="m-we0913a"><h3>WE0913A = Chang'e-5T1 CZ-3C stage (2014-065B)</h3>
+<p><span class="label">Before</span>Third stage of the 2014-10-23 Chang'e-5T1 launch, left in a highly eccentric Earth orbit after the lunar flyby.</p>
+<p><span class="label">Discovery</span>Catalina Sky Survey 2015-03-14 (A1064O7 → WE0913A). Bill Gray first linked it to the DSCOVR F9 stage (2022-01-21) on finding an imminent lunar impact; JPL's independent fit traced the orbit back to Oct 2014, and he re-identified it as the Chang'e-5T1 stage on 2022-02-12.</p>
+<p><span class="label">Impact</span><b>2022-03-04 12:25 UTC</b> on the far side near Hertzsprung crater. LRO imaged a double crater (18 m east + 16 m west) on 2022-05-25, implying a second large mass attached to the stage.</p></div>
 
 <hr>
 
-<h2 id="ch4">4. Bill Gray's "Warn" calendar</h2>
+<h2 id="ch4">4. Flyby and return calendar</h2>
 
-<p class="small">Manually-curated alert list. When these dates pass, Bill Gray's NEOCP-screening pipeline flags the corresponding object as a known returner so it isn't re-discovered as a fake NEO candidate.</p>
+<p class="small">Past events since 2024 with their outcomes, then forecast events. Bill Gray's <code>Warn</code> lines are reminders dated weeks to months ahead of an event, so that TLEs are made before a known object comes back into survey range; he retires a line (removes the keyword) once the event has passed, as for OSIRIS-APEX in 2025 and DART's stage in 2026.</p>
+
+<h3>4.1 Past flybys and returns (2024–2026)</h3>
 
 <table>
-  <thead><tr><th>Warn date</th><th>Object</th><th>Mission / stage</th><th>Event</th></tr></thead>
+  <thead><tr><th>Date</th><th>Object</th><th>Event</th><th>Result</th></tr></thead>
   <tbody>
-    <tr><td>2025-Jun-01</td><td>OSIRIS-APEX</td><td>spacecraft</td><td>Earth flyby 2025-Sep</td></tr>
-    <tr><td>2026-Mar-01</td><td>2021-110B</td><td><a href="#m-dart">DART F9 S2</a></td><td>returns May 2026</td></tr>
-    <tr><td>2026-Jul-01</td><td>JUICE</td><td><a href="#m-juice">spacecraft</a></td><td>Earth flyby 2026-Sep</td></tr>
-    <tr class="return-row"><td><b>2026-Nov-10</b></td><td><b>2024-179A</b></td><td><a href="#m-cert2"><b>Cert-2 Vulcan Centaur</b></a></td><td><b>first return</b></td></tr>
-    <tr><td>2026-Dec-01</td><td>Europa Clipper</td><td><a href="#m-clipper">spacecraft</a></td><td>Earth flyby 2026-Dec</td></tr>
-    <tr><td>2027-Feb-01</td><td>OSIRIS-APEX</td><td>spacecraft</td><td>Earth flyby 2027-Mar</td></tr>
-    <tr><td>2027-Mar-01</td><td>Planck</td><td><a href="#m-herschelplanck">spacecraft</a></td><td>Earth flyby 2027-Jun</td></tr>
-    <tr><td>2027-Aug-01</td><td>Herschel</td><td><a href="#m-herschelplanck">spacecraft</a></td><td>Earth flyby 2027-Oct</td></tr>
-    <tr><td>2027-Sep-01</td><td>Hayabusa 2</td><td><a href="#m-haya2">spacecraft</a></td><td>Earth flyby 2027-Dec</td></tr>
-    <tr class="return-row"><td><b>2027-Dec-10</b></td><td>2024-179A</td><td><a href="#m-cert2">Cert-2 Vulcan Centaur</a></td><td>second return</td></tr>
-    <tr><td>2028-Mar-01</td><td>Hayabusa 2</td><td><a href="#m-haya2">spacecraft</a></td><td>Earth flyby 2028-Jun</td></tr>
-    <tr><td>2028-Oct-01</td><td>JUICE</td><td><a href="#m-juice">spacecraft</a></td><td>Earth flyby 2029-Jan</td></tr>
-    <tr class="return-row"><td><b>2028-Dec-23</b></td><td>2024-179A</td><td><a href="#m-cert2">Cert-2 Vulcan Centaur</a></td><td>third return</td></tr>
-    <tr><td>2029-Feb-01</td><td>OSIRIS-APEX</td><td>spacecraft</td><td>Earth flyby 2029-Apr</td></tr>
-    <tr><td>2032-Jun-01</td><td>J002E3</td><td><a href="#m-apollo12">Apollo 12 S-IVB</a></td><td>returns Jul 2032</td></tr>
-    <tr><td>2033-Nov-01</td><td>2010-050B</td><td><a href="#m-change2">Chang'e-2 booster</a></td><td>returns Dec 2033</td></tr>
-    <tr><td>2034-Sep-01</td><td>2009-026B</td><td><a href="#m-herschelplanck">Herschel/Planck booster</a></td><td>returns Dec 2034</td></tr>
-    <tr><td>2035-Jan-01</td><td>2020-010A booster</td><td><a href="#m-solo">Solar Orbiter Centaur</a></td><td>returns Feb 2035</td></tr>
-    <tr><td>2035-Aug-01</td><td>RK252A5 = 2010 KQ</td><td><a href="#m-rk">unidentified</a></td><td>returns 2035</td></tr>
-    <tr><td>2036-Mar-01</td><td>1966-084B / 2020 SO</td><td><a href="#m-2020so">Surveyor-2 Centaur</a></td><td>returns 2036</td></tr>
-    <tr><td>2037-May-01</td><td>2018 AV</td><td>unidentified</td><td>returns Jul 2037</td></tr>
-    <tr><td>2038-Apr-01</td><td>2019-040B</td><td><a href="#m-spektrrg">Spektr-RG booster</a></td><td>returns Jun 2038</td></tr>
-    <tr><td>2041-Sep-01</td><td>2018-103B</td><td><a href="#m-change4">Chang'e-4 booster</a></td><td>returns Nov 2041</td></tr>
-    <tr><td>2042-Dec-01</td><td>2025-038E</td><td><a href="#m-im2">IM-2 / Lunar-Trailblazer F9 S2</a></td><td>returns Mar 2043</td></tr>
-    <tr><td>2044-Oct-01</td><td>2024-030B</td><td><a href="#m-im1">IM-1 F9 S2</a></td><td>returns Apr 2045</td></tr>
-    <tr><td>2047-Jan-01</td><td>2021-130B</td><td><a href="#m-jwst">JWST ESC-D</a></td><td>returns Jun 2047</td></tr>
-    <tr><td>2048-Sep-01</td><td>2024 BY15</td><td>unidentified</td><td>returns Jan 2048</td></tr>
+    <tr><td class="col-id">2024-08-19/20</td><td><a href="#m-juice">JUICE</a></td><td>Lunar–Earth double gravity assist</td><td>Moon 2 490 km, Earth 13 211 km from centre (JPL)</td></tr>
+    <tr><td class="col-id">2024-08-16</td><td><a href="#m-change4">Chang'e 4 booster</a></td><td>Final exit from Earth's Hill sphere</td><td>8.7 million km by 2024-12-31 (BG TLEs)</td></tr>
+    <tr><td class="col-id">2024-12-13</td><td><a href="#m-lucy">Lucy</a></td><td>Second Earth gravity assist</td><td>6 737 km from centre (JPL)</td></tr>
+    <tr><td class="col-id">2025-03-01</td><td><a href="#m-clipper">Europa Clipper</a></td><td>Mars gravity assist</td><td>4 275 km from Mars's centre (JPL)</td></tr>
+    <tr><td class="col-id">2025-03-12</td><td><a href="#m-hera">Hera</a></td><td>Mars gravity assist, Deimos imaged</td><td>9 060 km from Mars's centre (JPL)</td></tr>
+    <tr><td class="col-id">2025-04-20</td><td><a href="#m-lucy">Lucy</a></td><td>Asteroid (52246) Donaldjohanson</td><td>~990 km (JPL)</td></tr>
+    <tr><td class="col-id">2025-08-31</td><td><a href="#m-juice">JUICE</a></td><td>Venus gravity assist</td><td>11 140 km from Venus's centre (JPL)</td></tr>
+    <tr><td class="col-id">2025-09-23</td><td><a href="#m-osirisrex">OSIRIS-APEX</a></td><td>First Earth gravity assist</td><td>9 814 km from centre (JPL); Warn line retired</td></tr>
+    <tr><td class="col-id">2026-03-29</td><td><a href="#m-change3">Chang'e 3 booster</a></td><td>Lowest perigee since launch</td><td>22 728 km from centre (reconstruction)</td></tr>
+    <tr><td class="col-id">2026-04-06</td><td><a href="#m-artemis2">Artemis II</a></td><td>Crewed lunar flyby</td><td>8 282 km from the Moon's centre, 6 545 km altitude (JPL)</td></tr>
+    <tr><td class="col-id">2026-05-11</td><td><a href="#m-dart">DART F9 stage 2</a></td><td>Forecast Earth return</td><td>2.72 million km, 2.8 km/s (JPL); Warn line retired</td></tr>
+    <tr><td class="col-id">2026-05-15</td><td><a href="#m-psyche">Psyche</a></td><td>Mars gravity assist</td><td>8 000 km from Mars's centre (JPL)</td></tr>
+    <tr><td class="col-id">2026-07-05</td><td><a href="#m-haya2">Hayabusa 2</a></td><td>Asteroid (98943) Torifune</td><td>Close flyby ~09:30 UTC (JPL)</td></tr>
+    <tr><td class="col-id">2026-07-15</td><td><a href="#m-change6">Chang'e-6 orbiter</a></td><td>Lunar pass after a ≥30 m/s burn</td><td>~45 000 km (amateur fits)</td></tr>
+    <tr><td class="col-id">2026-08-05</td><td><a href="#m-blueghost">Blue Ghost F9 stage 2</a></td><td>Lunar impact</td><td>06:35:37 UTC, +19.4°, 266.8°E</td></tr>
+    <tr><td class="col-id">2026-08-19</td><td><a href="#m-c3">Chandrayaan-3 PM</a></td><td>Predicted lunar pass at ~28 000 km</td><td>Not observed since 2026-08-11</td></tr>
+    <tr><td class="col-id">2026-09-28</td><td><a href="#m-juice">JUICE</a></td><td>Second Earth gravity assist</td><td>15 017 km from centre at 11:45 UTC (JPL); Warn 2026-Jul-01</td></tr>
+  </tbody>
+</table>
+
+<h3>4.2 Forecast events</h3>
+
+<table>
+  <thead><tr><th>Date</th><th>Object</th><th>Event</th><th>Source</th></tr></thead>
+  <tbody>
+    <tr><td class="col-id">2026-11-07</td><td><a href="#m-escapade">ESCAPADE Blue</a></td><td>Earth flyby + trans-Mars burn, 8 036 km</td><td>JPL −9</td></tr>
+    <tr><td class="col-id">2026-11-09</td><td><a href="#m-escapade">ESCAPADE Gold</a></td><td>Earth flyby + trans-Mars burn, 7 388 km</td><td>JPL −10</td></tr>
+    <tr><td class="col-id">2026-11-10</td><td><a href="#m-cert2">Cert-2 Centaur</a></td><td>First recovery window</td><td>BG Warn 2026-Nov-10</td></tr>
+    <tr><td class="col-id">2026-11 to 12</td><td><a href="#m-bepi">BepiColombo</a></td><td>Weak capture into Mercury orbit</td><td>JPL −121</td></tr>
+    <tr><td class="col-id">2026-12-03</td><td><a href="#m-clipper">Europa Clipper</a></td><td>Earth gravity assist, 9 607 km at 20:14 UTC</td><td>JPL −159; Warn 2026-Dec-01</td></tr>
+    <tr><td class="col-id">~2026-12</td><td><a href="#m-roman">Roman</a></td><td>SE-L2 orbit insertion</td><td>JPL −211</td></tr>
+    <tr><td class="col-id">2027-03-16</td><td><a href="#m-osirisrex">OSIRIS-APEX</a></td><td>Earth gravity assist, 10 561 km</td><td>JPL −64; Warn 2027-Feb-01</td></tr>
+    <tr><td class="col-id">2027-06-08</td><td><a href="#m-herschelplanck">Planck</a></td><td>Distant return, 12.8 million km</td><td>JPL −489; Warn 2027-Mar-01</td></tr>
+    <tr><td class="col-id">2027-09-02</td><td><a href="#m-mmx">MMX H3 stage 2</a></td><td>Mars flyby, ~451 000 km</td><td>fit</td></tr>
+    <tr><td class="col-id">2027-10-14</td><td><a href="#m-herschelplanck">Herschel</a></td><td>Distant return, 8.3 million km</td><td>JPL −486; Warn 2027-Aug-01</td></tr>
+    <tr><td class="col-id">2027-12</td><td><a href="#m-haya2">Hayabusa 2</a></td><td>Earth flyby</td><td>BG Warn 2027-Sep-01</td></tr>
+    <tr><td class="col-id">2027-12-10</td><td><a href="#m-cert2">Cert-2 Centaur</a></td><td>Second recovery window</td><td>BG Warn 2027-Dec-10</td></tr>
+    <tr><td class="col-id">2028-06</td><td><a href="#m-haya2">Hayabusa 2</a></td><td>Earth flyby</td><td>BG Warn 2028-Mar-01</td></tr>
+    <tr><td class="col-id">2028-12-23</td><td><a href="#m-cert2">Cert-2 Centaur</a></td><td>Third recovery window</td><td>BG Warn 2028-Dec-23</td></tr>
+    <tr><td class="col-id">2029-01</td><td><a href="#m-juice">JUICE</a></td><td>Third Earth gravity assist</td><td>BG Warn 2028-Oct-01</td></tr>
+    <tr><td class="col-id">2029-02-27</td><td><a href="#m-cert2">Cert-2 Centaur</a></td><td>Earth perigee, q = 8 867 ± 4 574 km; entry possible</td><td>BG <code>24179a25.tle</code>; JPL −161448</td></tr>
+    <tr><td class="col-id">2029-04-13</td><td><a href="#m-osirisrex">OSIRIS-APEX</a></td><td>Earth gravity assist, 7 528 km, then Apophis</td><td>JPL −64; Warn 2029-Feb-01</td></tr>
+    <tr><td class="col-id">2029-06-16</td><td><a href="#m-change2">Chang'e 2 probe</a></td><td>Distant re-approach, 7.87 million km (no-manoeuvre model)</td><td>fit</td></tr>
+    <tr><td class="col-id">2030-12-27</td><td><a href="#m-lucy">Lucy</a></td><td>Third Earth gravity assist, 6 995 km</td><td>JPL −49</td></tr>
+    <tr><td class="col-id">2032-07</td><td><a href="#m-apollo12">J002E3</a></td><td>Return</td><td>BG Warn 2032-Jun-01</td></tr>
+    <tr><td class="col-id">2033-12</td><td><a href="#m-change2">Chang'e 2 booster</a></td><td>Return</td><td>BG Warn 2033-Nov-01</td></tr>
+    <tr><td class="col-id">2034-12</td><td><a href="#m-herschelplanck">Herschel/Planck ESC-A</a></td><td>Return</td><td>BG Warn 2034-Sep-01</td></tr>
+    <tr><td class="col-id">2035-02</td><td><a href="#m-solo">Solar Orbiter Centaur</a></td><td>Return</td><td>BG Warn 2035-Jan-01</td></tr>
+    <tr><td class="col-id">2035</td><td><a href="#m-rk">2010 KQ</a></td><td>Return</td><td>BG Warn 2035-Aug-01</td></tr>
+    <tr><td class="col-id">2036</td><td><a href="#m-2020so">2020 SO</a></td><td>Return</td><td>BG Warn 2036-Mar-01</td></tr>
+    <tr><td class="col-id">2036-10-12 to 16</td><td><a href="#m-mmx">MMX H3 stage 2</a></td><td>Return, 0.4–1.0 million km</td><td>fit</td></tr>
+    <tr><td class="col-id">2037-07</td><td>2018 AV2</td><td>Return</td><td>BG Warn 2037-May-01</td></tr>
+    <tr><td class="col-id">2038-06</td><td><a href="#m-spektrrg">Spektr-RG Block DM</a></td><td>Return</td><td>BG Warn 2038-Apr-01</td></tr>
+    <tr><td class="col-id">2039-09</td><td><a href="#m-gaia">Gaia</a></td><td>Distant return, beyond 10 million km</td><td>BG Warn 2039-Jan-01</td></tr>
+    <tr><td class="col-id">2040-08</td><td><a href="#m-juice">JUICE ESC-A</a></td><td>Return</td><td>BG Warn 2040-Jun-01</td></tr>
+    <tr><td class="col-id">2041-11</td><td><a href="#m-change4">Chang'e 4 booster</a></td><td>Return</td><td>BG Warn 2041-Sep-01</td></tr>
+    <tr><td class="col-id">2043-03</td><td><a href="#m-im2">IM-2 F9 stage 2</a></td><td>Return</td><td>BG Warn 2042-Dec-01</td></tr>
+    <tr><td class="col-id">2045-04</td><td><a href="#m-im1">IM-1 F9 stage 2</a></td><td>Return</td><td>BG Warn 2044-Oct-01</td></tr>
+    <tr><td class="col-id">2046-08</td><td><a href="#m-tianwen1">Tianwen-1 CZ-5 stage 2</a></td><td>Return</td><td>BG Warn 2046-Jun-01</td></tr>
+    <tr><td class="col-id">2047-01</td><td><a href="#m-tesla">Tesla Roadster + FH stage 2</a></td><td>Return</td><td>BG Warn 2046-Nov-01</td></tr>
+    <tr><td class="col-id">2047-06</td><td><a href="#m-jwst">JWST ESC-A</a></td><td>Return</td><td>BG Warn 2047-Jan-01</td></tr>
+    <tr><td class="col-id">2047–48</td><td>2024 BY15</td><td>Return ("in coming year?")</td><td>BG Warn 2047-Jul-01</td></tr>
+    <tr><td class="col-id">2049-07</td><td><a href="#m-hope">Hope H-IIA stage 2</a></td><td>Return</td><td>BG Warn 2049-Apr-01</td></tr>
+    <tr><td class="col-id">2051-10</td><td><a href="#m-lucy">Lucy Centaur</a></td><td>Return</td><td>BG Warn 2051-Aug-01</td></tr>
+    <tr><td class="col-id">2051-11</td><td><a href="#m-hera">Hera F9 stage 2</a></td><td>Return</td><td>BG Warn 2051-Jul-01</td></tr>
+    <tr><td class="col-id">2052-10 to 11</td><td><a href="#m-escapade">NG-2 GS2</a></td><td>Return</td><td>BG Warn 2052-Aug-01</td></tr>
   </tbody>
 </table>
 
