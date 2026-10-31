@@ -21,7 +21,7 @@ v1 (April 2026) is in the git history of this folder; this README documents v2.
 | Sky position | \|b\| only; prediction always at l = 180° | any (l, b) or (RA, Dec), or click the all-sky map |
 | Band conversion | one fixed colour offset per band; several relations wrong (see audit) | per-star colour relations fitted to Gaia XP standardised photometry |
 | Statistics | P(≥1), P(≥3) for one sensor | P(≥k) per sensor, P(≥M of n sensors with ≥k), P(total ≥ K), footprint coverage |
-| Presets | none | 7 telescope plate scales, 20 guide-sensor formats |
+| Presets | none | 7 telescope plate scales, 24 guide-sensor formats |
 | Catalogue check | ESA TAP (blocked by CORS) → VizieR → uniform simulation | CORS-enabled GAVO TAP polygon queries; simulation from the local Gaia tables |
 | Response to an input change | chart only | full-sky map, two charts, coverage statistics in ~40–65 ms |
 
@@ -42,10 +42,10 @@ change it by several per cent across the field.
 | 4MOST · VISTA 4.1 m | 59.4 | 16.8 | wide-field corrector plate scale (4MOST consortium) | −24.62° | 2 A&G (1 active) | not public (WFS: 2k×2k, 13.5 µm) |
 | LAMOST · 4 m Schmidt | 96.96 | 10.3 | focal length 20 m | +40.40° | 4 | not public |
 | WFST · 2.5 m | 30.06 | 33.3 | prime focus f/2.48, EFL 6.2 m: 0.333″ per 10 µm pixel | +38.61° | 4 | not public |
-| MUST · 6.5 m | 116.87 | 8.56 | f = 24.105 m, F/3.70 (RD-008 quotes 118) | +38.61° | 6 (hexagonal ring) | e2v CCD230-42 full frame (baseline under trade study) |
+| MUST · 6.5 m | 116.87 | 8.56 | f = 24.105 m, F/3.70 (RD-008 quotes 118) | +38.61° | 6 (hexagonal ring) | — (detector under trade study) |
 | Custom | — | | any value | | | |
 
-"Use native guider" loads the sensor preset and camera count. Site latitude sets the
+"Use native guider" loads the sensor preset and camera count where the guider detector is public. Site latitude sets the
 observable declination band for the footprint statistics.
 
 ### Guide sensor (chip X, Y, pixel presets)
@@ -66,12 +66,19 @@ observable declination band for the footprint statistics.
 | | Gpixel GSENSE2020BSI | 2048 × 2048 | 6.5 |
 | | Gpixel GSENSE4040BSI | 4096 × 4096 | 9 |
 | | Gpixel GSENSE6060BSI | 6144 × 6144 | 10 |
+| | Gpixel GSENSE9016BSI | 4096 × 4096 | 9 |
+| | Gpixel GSENSE1517BSI | 4096 × 4096 | 15 |
+| | Gpixel GSENSE64105BSI | 10240 × 10240 | 6.4 |
+| | Gpixel GSENSE1081BSI | 8900 × 9120 | 10 |
 | | Hamamatsu ORCA-Quest qCMOS | 4096 × 2304 | 4.6 |
 | Consumer CMOS | Sony IMX455 (QHY600, ASI6200) | 9576 × 6388 | 3.76 |
 | | Sony IMX411 (QHY411) | 14208 × 10656 | 3.76 |
 | | Sony IMX571 (QHY268, ASI2600) | 6248 × 4176 | 3.76 |
 | | Sony IMX432 (ASI432MM) | 1608 × 1104 | 9 |
 | | Sony IMX174 (ASI174MM) | 1936 × 1216 | 5.86 |
+
+GSENSE9016BSI and GSENSE64105BSI from the Gpixel datasheets (V0.1.1, V0.2.1); GSENSE1517BSI (effective 4096 × 4096,
+4116 × 4100 readable) and GSENSE1081BSI from Gpixel's April 2026 astronomy-sensor presentation.
 
 Derived: pixel scale = pixel / plate scale (″/px); FOV = chip × pixel scale; area = FOV_x × FOV_y.
 For vignetting, edge margins or a frame-transfer store, enter the effective chip size.
@@ -92,7 +99,7 @@ All settings are kept in the URL hash (**Copy link** shares a configuration).
 1. **At the pointing** — expected stars per sensor λ (and density), P(≥1), P(≥k) per sensor and for all n,
    P(≥M of n sensors with ≥k), expected total and P(total ≥ K); each probability with a
    meets / marginal / short status. Gaia completeness at the pointing and the v1 prediction are shown for reference.
-2. **All-sky map** (Galactic or equatorial Mollweide) of λ or any of the probabilities, with the
+2. **All-sky map** (equatorial Mollweide by default, or Galactic) of λ or any of the probabilities, with the
    success-level contour, the footprint (outside dimmed) and Gaia-incomplete pixels hatched. Hover for values,
    click to move the pointing. Below it: footprint area, λ percentiles and the fraction of the footprint that meets each requirement.
 3. **Charts** — cumulative stars per sensor vs limiting magnitude (pointing and |b| = 90°, 60°, 30°, 20°, 10° medians),

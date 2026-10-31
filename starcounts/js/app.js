@@ -23,7 +23,7 @@
       note: 'Focal length 20 m: <b>96.96 µm/″ (10.3″/mm)</b>, 5° field. 4 guide CCDs about halfway out from the field centre.' },
     { id: 'wfst', name: 'WFST · 2.5 m', plate: 30.06, lat: 38.61, n: 4, ring: 1.4, sensor: null,
       note: 'Prime focus f/2.48, EFL 6.2 m: <b>0.333″ per 10 µm pixel</b>, 3° field. 4 guide CCDs on the focal plane.' },
-    { id: 'must', name: 'MUST · 6.5 m', plate: 116.87, lat: 38.61, n: 6, ring: 1.3, sensor: 'ccd230',
+    { id: 'must', name: 'MUST · 6.5 m', plate: 116.87, lat: 38.61, n: 6, ring: 1.3, sensor: null,
       note: 'f = 24.105 m, F/3.70: <b>116.87 µm/″</b> (RD-008 quotes 118). 6 guide cameras in a near-hexagonal ring at r ≈ 500–600 mm; detector under trade study.' },
     { id: 'custom', name: 'Custom', plate: null },
   ];
@@ -46,6 +46,10 @@
     { id: 'gs2020', name: 'Gpixel GSENSE2020BSI', x: 2048, y: 2048, pix: 6.5 },
     { id: 'gs4040', name: 'Gpixel GSENSE4040BSI', x: 4096, y: 4096, pix: 9 },
     { id: 'gs6060', name: 'Gpixel GSENSE6060BSI', x: 6144, y: 6144, pix: 10 },
+    { id: 'gs9016', name: 'Gpixel GSENSE9016BSI', x: 4096, y: 4096, pix: 9 },
+    { id: 'gs1517', name: 'Gpixel GSENSE1517BSI', x: 4096, y: 4096, pix: 15 },
+    { id: 'gs64105', name: 'Gpixel GSENSE64105BSI', x: 10240, y: 10240, pix: 6.4 },
+    { id: 'gs1081', name: 'Gpixel GSENSE1081BSI', x: 8900, y: 9120, pix: 10 },
     { id: 'orcaq', name: 'Hamamatsu ORCA-Quest qCMOS', x: 4096, y: 2304, pix: 4.6 },
     { group: 'Consumer CMOS (QHY / ZWO)' },
     { id: 'imx455', name: 'Sony IMX455 (QHY600, ASI6200)', x: 9576, y: 6388, pix: 3.76 },
@@ -91,7 +95,7 @@
   const DEF = {
     tel: 'must', plate: 116.87, lat: 38.61, sen: 'ccd230', chipX: 2048, chipY: 2064, pix: 15, n: 6,
     band: 'r', mb: 17, mf: 19, l: 180, b: 80, k: 3, M: 6, K: 18, thr: 95, bMin: 20, zMax: 60,
-    metric: 'lam', proj: 'gal', layout: 'ring', ring: 1.3,
+    metric: 'lam', proj: 'eq', layout: 'ring', ring: 1.3,
   };
   const S = { ...DEF };
 
