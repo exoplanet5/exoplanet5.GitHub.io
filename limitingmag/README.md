@@ -136,10 +136,10 @@ Short links: `index.html#scenario=rubin`, `#scenario=geo&mode=exp`. **Copy link*
   sky + dark per pixel ≥ 10 RN², i.e. read noise costs ≤ 5 % in SNR); **PSF sampling** (FWHM in pixels).
 - Conditions line: air mass, atmospheric transmission, sky and FWHM at the target, source rate, trail length, and the
   target's peak pixel against full well.
+- **Trade-offs** charts — **SNR vs magnitude** at the current exposure, with the ideal-detector curve, the threshold and
+  the saturated range; **limiting magnitude vs total integration**: stacking the current sub-exposure, one exposure of the
+  full time, and an ideal detector — shows where read noise or trailing stops paying.
 - **Noise budget**: electrons, variance and share for source, sky, dark and read noise; per-pixel, per-frame levels.
-- **SNR vs magnitude** at the current exposure, with the ideal-detector curve, the threshold and the saturated range.
-- **Limiting magnitude vs total integration**: stacking the current sub-exposure, one exposure of the full time, and an
-  ideal detector — shows where read noise or trailing stops paying.
 
 ---
 
