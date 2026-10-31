@@ -8,7 +8,7 @@ presets, saturation, moonlight and a measured-zero-point mode.
 **Open:** [`index.html`](index.html) — no build step, no external requests; works from `file://` and from GitHub Pages
 (<https://exoplanet5.github.io/limitingmag/>).
 
-v1 (April 2026) is in the git history of this folder; this README documents v2 (October 2026).
+v1 (April 2026) is kept unchanged in [`v1/`](v1/) — **Previous version** in the page header links to it; this README documents v2 (October 2026).
 
 ---
 
@@ -304,6 +304,7 @@ js/core.js            physics: atmosphere, PSF / pixel / trail integrals, noise 
 js/app.js             UI: presets, situations, URL state, results, charts
 tools/build_bands.py  builds js/bands.js and checks it against Rubin and Gaia zero points
 tests/                Node tests, v1 audit, brute-force geometry reference
+v1/                   the previous calculator (index.html, README.md), restored from commit 2a5cc99
 ```
 
 Rebuild the band table (needs numpy, astropy and the speclite filter files):

@@ -34,6 +34,7 @@ button, select, input { font: inherit; color: inherit; }
 .btn { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; color: var(--ink); }
 .btn:hover { border-color: var(--muted); }
 .btn.small { padding: 3px 9px; font-size: 0.8rem; }
+a.btn { text-decoration: none; display: inline-block; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
 .layout { display: grid; grid-template-columns: 370px minmax(0, 1fr); gap: 16px; align-items: start; }
@@ -145,6 +146,7 @@ footer { margin-top: 24px; color: var(--muted); font-size: 0.78rem; text-align: 
       <p>Detection limit, signal-to-noise ratio or exposure time for CCD and CMOS imaging of stars and moving targets</p>
     </div>
     <div class="top-right">
+      <a class="btn small" href="v1/index.html" title="Open the previous (v1, April 2026) calculator">Previous version</a>
       <button class="btn small" id="themeBtn" type="button" aria-label="Toggle light/dark theme">Light</button>
       <button class="btn small" id="linkBtn" type="button" title="Copy a link to this configuration">Copy link</button>
       <button class="btn small" id="resetBtn" type="button" title="Restore the default setup">Reset</button>
